@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of AnalPSTH</title>
+  <meta name="keywords" content="AnalPSTH">
+  <meta name="description" content="Script to do analysis for PlotPSTH; callable outside Xex">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html XeX --><!-- ../menu.html AnalysisFunctions --><!-- menu.html Analysis -->
+<h1>AnalPSTH
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>Script to do analysis for PlotPSTH; callable outside Xex</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">    Script to do analysis for PlotPSTH; callable outside Xex</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../XeX/UtilityFunctions/main/BinSpikes.html" class="code" title="function [countsmat,timesmat]=BinSpikes(Trials,indices,alignTimes,xVec,unitCode,AnalogCorrect)">BinSpikes</a>	returns binned spike counts for each Trial in a matrix.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../XeX/OutsideXex/doAnalysis.html" class="code" title="">doAnalysis</a>	This is a script so that it can be run in any format anywhere</li><li><a href="../../../XeX/UtilityFunctions/plotting/PlotPSTH.html" class="code" title="">PlotPSTH</a>	This function plots the PSTH, after calling AnalPSTH for analysis</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 
+0002 <span class="comment">%    Script to do analysis for PlotPSTH; callable outside Xex</span>
+0003 
+0004     FilterHere=1;
+0005     TotalFilter=FilterHere&amp;CurrentFilterVector;
+0006     <span class="keyword">if</span> length(TotalFilter)==1, TotalFilter=logical(ones(1,length(CurrentAlignTime)));<span class="keyword">end</span>;
+0007     SRMat=<a href="../../../XeX/UtilityFunctions/main/BinSpikes.html" class="code" title="function [countsmat,timesmat]=BinSpikes(Trials,indices,alignTimes,xVec,unitCode,AnalogCorrect)">BinSpikes</a>(Trials,RFTrialIndex(TotalFilter),CurrentAlignTime(TotalFilter),XVector, CurrentUnitNumber, CurrentAnalogCorrect );
+0008     PlotY=nanmean(SRMat)*1000/CurrentBinWidth; 
+0009     PlotX=PlotXVector; <span class="comment">%introduced april 24 NOtice inconsistency HERE with plotxvector !!!</span>
+0010     PlotN=length(find(TotalFilter)); <span class="comment">%scalar value with number of Trials</span>
+0011     PlotStd=nanstd(SRMat)*1000/(CurrentBinWidth*sqrt(PlotN)); <span class="comment">%sem of binned psth here</span></pre></div>
+<hr><address>Generated on Wed 13-Dec-2006 00:06:54 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

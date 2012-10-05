@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of NextMarkerSet</title>
+  <meta name="keywords" content="NextMarkerSet">
+  <meta name="description" content="This script sets NextMarker and NextMarkerEvalString">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html XeX --><!-- ../menu.html UtilityFunctions --><!-- menu.html gettingAndsettingParameters -->
+<h1>NextMarkerSet
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>This script sets NextMarker and NextMarkerEvalString</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">     This script sets NextMarker and NextMarkerEvalString
+     Also sets the LocalEvalString, which is then appended in the calling script to the EvalString for future use</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../XeX/AnalysisFunctions/AngularTuningCurve.html" class="code" title="">AngularTuningCurve</a>	Script to produce an angular tuning curve. Uses PlotTuningCurve to do the hard work</li><li><a href="../../../XeX/AnalysisFunctions/DiscHist.html" class="code" title="">DiscHist</a>	Script to produce an histogram. Uses PlotHist to do the hard work</li><li><a href="../../../XeX/AnalysisFunctions/DrawKDE.html" class="code" title="">DrawKDE</a>	Script to produce an kernel density estimate. Uses PlotKDE to do the hard work</li><li><a href="../../../XeX/AnalysisFunctions/DrawPSTH.html" class="code" title="">DrawPSTH</a>	Script to produce a PSTH. Uses PlotPSTH to do the hard work</li><li><a href="../../../XeX/AnalysisFunctions/DrawRasters.html" class="code" title="">DrawRasters</a>	Script to produce a rasterplot. Does the hard work by itself</li><li><a href="../../../XeX/AnalysisFunctions/DrawTuningCurve.html" class="code" title="">DrawTuningCurve</a>	Script to produce a tuning curve. Uses PlotTuningCurve to do the hard work</li><li><a href="../../../XeX/AnalysisFunctions/ISIH.html" class="code" title="">ISIH</a>	Script to produce an ISI histogram. Uses PlotISI to do the hard work</li><li><a href="../../../XeX/AnalysisFunctions/MakeHist.html" class="code" title="">MakeHist</a>	Script to produce an histogram. Uses PlotHist to do the hard work</li><li><a href="../../../XeX/AnalysisFunctions/PlotScatter.html" class="code" title="">PlotScatter</a>	Script to produce a scatter plot. Uses ScatterPlotter to do the hard work</li><li><a href="../../../XeX/AnalysisFunctions/SpikeDensity.html" class="code" title="">SpikeDensity</a>	Script to produce a spike-density. Uses PlotPSTD to do the hard work</li><li><a href="../../../XeX/UtilityFunctions/update/UpdateSlider.html" class="code" title="">UpdateSlider</a>	this is the major update graphic objects file. poorly called</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 
+0002 <span class="comment">%     This script sets NextMarker and NextMarkerEvalString</span>
+0003 <span class="comment">%     Also sets the LocalEvalString, which is then appended in the calling script to the EvalString for future use</span>
+0004 
+0005 <span class="keyword">if</span> CurrentUseProps==1, 
+0006   
+0007 NStr=num2str(CurrentAxis);
+0008 
+0009 LocalEvalString=[<span class="keyword">...</span>
+0010     <span class="string">'NextMarker=Axis'</span> NStr <span class="string">'Markers((2*Axis'</span> NStr <span class="string">'MarkerPointer+1):(2*Axis'</span> NStr <span class="string">'MarkerPointer+2));'</span><span class="keyword">...</span>
+0011     <span class="string">'Axis'</span> NStr <span class="string">'MarkerPointer=Axis'</span> NStr <span class="string">'MarkerPointer+1;'</span><span class="keyword">...</span>
+0012     <span class="string">'if Axis'</span> NStr <span class="string">'MarkerPointer&gt;(length(Axis'</span> NStr <span class="string">'Markers)/2 - 1), Axis'</span> NStr <span class="string">'MarkerPointer=0;end'</span><span class="keyword">...</span>
+0013     ];
+0014         
+0015     eval(LocalEvalString);
+0016     
+0017    
+0018 <span class="keyword">else</span>
+0019  NextMarker=<span class="string">''</span>;
+0020 <span class="keyword">end</span>
+0021 
+0022  NextMarkerEvalString=[<span class="keyword">...</span>
+0023      <span class="string">'set(TemporaryHandle,''color'',NextMarker(1),''linestyle'',NextMarker(2));'</span><span class="keyword">...</span>
+0024     ];</pre></div>
+<hr><address>Generated on Wed 13-Dec-2006 00:06:54 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

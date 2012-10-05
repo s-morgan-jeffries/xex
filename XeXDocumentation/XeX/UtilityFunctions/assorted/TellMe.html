@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of TellMe</title>
+  <meta name="keywords" content="TellMe">
+  <meta name="description" content="This function uses tts to speak out the stringvar if speaktovar is set, else fprintfs it to cmd window">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html XeX --><!-- ../menu.html UtilityFunctions --><!-- menu.html assorted -->
+<h1>TellMe
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>This function uses tts to speak out the stringvar if speaktovar is set, else fprintfs it to cmd window</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function TellMe(formatvar,stringvar,speakvar) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">    This function uses tts to speak out the stringvar if speaktovar is set, else fprintfs it to cmd window
+    TellMe(formatvar,stringvar,speakvar)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="tts.html" class="code" title="function tts(textIn)">tts</a>	tts  Text To Speech function, version 1.0</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="XeXUtters.html" class="code" title="function XeXUtters(DarkVar,SpeakToMe)">XeXUtters</a>	Legacy function (too slow) to speak out instead of printing to screen, if SpeakToMe is set</li><li><a href="../../../XeX/UtilityFunctions/gettingAndsettingParameters/GraphCommandProcessor.html" class="code" title="">GraphCommandProcessor</a>	Basically does what Plot data does, but reads in commands from a gfx</li><li><a href="../../../XeX/UtilityFunctions/loadinFiles/FTPScript.html" class="code" title="">FTPScript</a>	</li><li><a href="../../../XeX/UtilityFunctions/plotting/PlotPSTD.html" class="code" title="">PlotPSTD</a>	Script that plots spike-densities</li><li><a href="../../../XeX/UtilityFunctions/plotting/PlotPSTH.html" class="code" title="">PlotPSTH</a>	This function plots the PSTH, after calling AnalPSTH for analysis</li><li><a href="../../../XeX/UtilityFunctions/update/UpdateCellOrLoadGFX.html" class="code" title="">UpdateCellOrLoadGFX</a>	this script does all the hard work for updating a cell or loading</li><li><a href="../../../XeX/XeX.html" class="code" title="function varargout = XeX(varargin)">XeX</a>	XEX M-file for XeX.fig</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function TellMe(formatvar,stringvar,speakvar)</a>
+0002 
+0003 <span class="comment">%    This function uses tts to speak out the stringvar if speaktovar is set, else fprintfs it to cmd window</span>
+0004 <span class="comment">%    TellMe(formatvar,stringvar,speakvar)</span>
+0005 
+0006 <span class="keyword">if</span> speakvar==1
+0007     <a href="tts.html" class="code" title="function tts(textIn)">tts</a>(stringvar);
+0008 <span class="keyword">else</span>
+0009     fprintf(formatvar,stringvar);
+0010 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Wed 13-Dec-2006 00:06:54 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

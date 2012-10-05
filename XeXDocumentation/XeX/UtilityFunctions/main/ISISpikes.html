@@ -1,0 +1,93 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of ISISpikes</title>
+  <meta name="keywords" content="ISISpikes">
+  <meta name="description" content="function used in isi calculation, modeled after binspikes">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html XeX --><!-- ../menu.html UtilityFunctions --><!-- menu.html main -->
+<h1>ISISpikes
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function used in isi calculation, modeled after binspikes</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function [isi1s,isi2s]=ISISpikes(Trials,indices,alignTimes,xVec,unitCode,AnalogCorrect) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">    function used in isi calculation, modeled after binspikes
+    [isi1s,isi2s]=ISISpikes(Trials,indices,alignTimes,xVec,unitCode,AnalogCorrect)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../XeX/UtilityFunctions/assorted/un.html" class="code" title="function X1=un(X)">un</a>	This function takes in a vector (or a matrix) , and returns unique values (or rows). NaNs (and rows with NaNs) are removed.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../XeX/UtilityFunctions/plotting/PlotISI.html" class="code" title="">PlotISI</a>	Plots ISIs</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [isi1s,isi2s]=ISISpikes(Trials,indices,alignTimes,xVec,unitCode,AnalogCorrect)</a>
+0002 
+0003 <span class="comment">%    function used in isi calculation, modeled after binspikes</span>
+0004 <span class="comment">%    [isi1s,isi2s]=ISISpikes(Trials,indices,alignTimes,xVec,unitCode,AnalogCorrect)</span>
+0005 
+0006 
+0007 <span class="keyword">if</span> ~exist(<span class="string">'AnalogCorrect'</span>,<span class="string">'var'</span>) AnalogCorrect=1;<span class="keyword">end</span>
+0008 
+0009 
+0010 isi1s=nan*zeros(1,25000); <span class="comment">%25000 as a reasonable upper cutoff for the number of spikes</span>
+0011 isi2s=isi1s;
+0012 
+0013 xx=1;
+0014 runningCount=1;
+0015 
+0016 <span class="keyword">for</span> ind=indices
+0017     
+0018     cur=Trials(ind);
+0019     
+0020     ee=[cur.Events];
+0021     <span class="keyword">if</span> ~isempty(ee)
+0022     cc=double([ee.Code]);
+0023     tt=double([ee.Time]);
+0024     <span class="keyword">end</span>
+0025     
+0026     spikeTimes=[];
+0027     <a href="../../../XeX/UtilityFunctions/assorted/un.html" class="code" title="function X1=un(X)">un</a>=[cur.Units];
+0028     <span class="keyword">if</span> ~isempty(<a href="../../../XeX/UtilityFunctions/assorted/un.html" class="code" title="function X1=un(X)">un</a>)
+0029     temp=find([un.Code]==unitCode);
+0030     <span class="keyword">if</span> ~isempty(temp)
+0031     spikeTimes=double([<a href="../../../XeX/UtilityFunctions/assorted/un.html" class="code" title="function X1=un(X)">un</a>(temp).Times]);
+0032     <span class="keyword">end</span>
+0033     <span class="keyword">end</span>
+0034         
+0035     AnalogStartTime=cur.aStartTime;
+0036     AnalogEndTime=cur.aEndTime;
+0037     <span class="keyword">if</span> AnalogCorrect==1, spikeTimes=spikeTimes(spikeTimes&lt;=AnalogEndTime &amp; spikeTimes&gt;=AnalogStartTime);<span class="keyword">end</span>
+0038     
+0039     <span class="keyword">if</span> ~isempty(spikeTimes) &amp;&amp; ~isnan(alignTimes(xx))  <span class="comment">%just changed these from ind to xx</span>
+0040     isis=spikeTimes(2:end)-spikeTimes(1:(end-1));
+0041     
+0042     isi1s(runningCount:(runningCount+length(isis)-2))=isis(1:(end-1));
+0043     isi2s(runningCount:(runningCount+length(isis)-2))=isis(2:end);
+0044     
+0045     runningCount=runningCount+length(isis)-1;
+0046     <span class="keyword">end</span>
+0047     
+0048     xx=xx+1; 
+0049     
+0050 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Wed 13-Dec-2006 00:06:54 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

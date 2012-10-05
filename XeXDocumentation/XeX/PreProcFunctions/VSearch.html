@@ -1,0 +1,471 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of VSearch</title>
+  <meta name="keywords" content="VSearch">
+  <meta name="description" content="This function analyzes data from the search paradigm">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html XeX --><!-- menu.html PreProcFunctions -->
+<h1>VSearch
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This function analyzes data from the search paradigm</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function CurrentVariables=VSearch(Trials,klugestring,UseAx,SacOpts) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">    This function analyzes data from the search paradigm
+   It is crude and doesnt do any median based adjustments; better this way
+   for physiology
+   Different tack here, cos only first or at most
+   first two saccades are relevant: esp since we dont want to assume retinotopic
+   mapping
+   USING ADHOC 70 ms minlat, and mostly not bothering with niceties of
+   cleansac from old vsearch analysis protocol as in interlvproc
+   NOt DOING findmed_ilve either, cos due to 3/2 locations, unlikely to
+   have enough eye landings on all targets. Just base on stimulus
+   locations, also keeps consistent with search gang's analysis method
+   Micros maybe important, so mark separately esp for nearby RFs.
+    CurrentVariables=VSearch(Trials,klugestring,UseAx,SacOpts)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../XeX/UtilityFunctions/assorted/MarkerAnalyze.html" class="code" title="">MarkerAnalyze</a>	</li><li><a href="../../XeX/UtilityFunctions/assorted/attachvars.html" class="code" title="">attachvars</a>	This script evaluates what variables are present in the calling</li><li><a href="../../XeX/UtilityFunctions/assorted/inbetween.html" class="code" title="function y=inbetween(x,a,b,li,gi)">inbetween</a>	a simple function to do interval checking</li><li><a href="../../XeX/UtilityFunctions/assorted/un.html" class="code" title="function X1=un(X)">un</a>	This function takes in a vector (or a matrix) , and returns unique values (or rows). NaNs (and rows with NaNs) are removed.</li><li><a href="../../XeX/UtilityFunctions/main/SacFind.html" class="code" title="function [Saccades,FiltX,FiltY]=SacFind(Trial,CorrectCode,MinISI,MinLat,PlotVar,FigNum,Threshold,Ax)">SacFind</a>	The main XeX saccade parser</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function CurrentVariables=VSearch(Trials,klugestring,UseAx,SacOpts)</a>
+0002 
+0003 <span class="comment">%    This function analyzes data from the search paradigm</span>
+0004 <span class="comment">%   It is crude and doesnt do any median based adjustments; better this way</span>
+0005 <span class="comment">%   for physiology</span>
+0006 <span class="comment">%   Different tack here, cos only first or at most</span>
+0007 <span class="comment">%   first two saccades are relevant: esp since we dont want to assume retinotopic</span>
+0008 <span class="comment">%   mapping</span>
+0009 <span class="comment">%   USING ADHOC 70 ms minlat, and mostly not bothering with niceties of</span>
+0010 <span class="comment">%   cleansac from old vsearch analysis protocol as in interlvproc</span>
+0011 <span class="comment">%   NOt DOING findmed_ilve either, cos due to 3/2 locations, unlikely to</span>
+0012 <span class="comment">%   have enough eye landings on all targets. Just base on stimulus</span>
+0013 <span class="comment">%   locations, also keeps consistent with search gang's analysis method</span>
+0014 <span class="comment">%   Micros maybe important, so mark separately esp for nearby RFs.</span>
+0015 <span class="comment">%    CurrentVariables=VSearch(Trials,klugestring,UseAx,SacOpts)</span>
+0016         
+0017 <span class="comment">%   Initializing Trial by Trial Variables</span>
+0018 
+0019 ArrayNumber=nan*ones(1,length(Trials));
+0020 GoodTrial=ArrayNumber;
+0021 BadTrial=ArrayNumber;
+0022 PhotoBad=ArrayNumber;
+0023 TrialNumber=1:length(Trials);
+0024 
+0025 MarkerCode=ArrayNumber;
+0026 MarkerTrialNumber=ArrayNumber;
+0027 BGLum=ArrayNumber;
+0028 
+0029 AbortTrial=ArrayNumber;
+0030 FixationBreak=ArrayNumber;
+0031 GoodBarError=ArrayNumber;
+0032 
+0033 RewardTime=ArrayNumber;
+0034 ErrorTime=ArrayNumber;
+0035 FPOnTime=ArrayNumber;
+0036 GapTime=ArrayNumber;
+0037 ReactionTime=ArrayNumber;
+0038 RFOnTime=ArrayNumber;
+0039 RFOffTime=ArrayNumber;
+0040 
+0041 TargX=ArrayNumber;
+0042 TargY=TargX;
+0043 TargPat=ArrayNumber;
+0044 TargOrd=ArrayNumber;
+0045 TargCheck=ArrayNumber;
+0046 TargRed=ArrayNumber;
+0047 TargBlue=ArrayNumber;
+0048 TargGreen=ArrayNumber;
+0049 
+0050 PopType=ArrayNumber;
+0051 
+0052 PopX=ArrayNumber;
+0053 PopY=PopX;
+0054 PopOrd=ArrayNumber;
+0055 PopCheck=ArrayNumber;
+0056 PopRed=ArrayNumber;
+0057 PopGreen=ArrayNumber;
+0058 PopBlue=ArrayNumber;
+0059 NumStim=ArrayNumber;
+0060 
+0061 ArrayBak=[];
+0062 
+0063 NumSaccades=ArrayNumber;
+0064 
+0065 FirstSacX=ArrayNumber;
+0066 FirstSacY=ArrayNumber;
+0067 FirstSacTargDist=ArrayNumber;
+0068 
+0069 FirstSacOrd=ArrayNumber;
+0070 FSAtTarg=ArrayNumber;
+0071 FSAtPop=ArrayNumber;
+0072 FSAtOther=ArrayNumber;
+0073 FSToRF=ArrayNumber;
+0074 FSRFOrdist=ArrayNumber;
+0075 
+0076 FSPopOrdist=ArrayNumber;
+0077 FSTargOrdist=ArrayNumber;
+0078 
+0079 SecondSacX=ArrayNumber;
+0080 SecondSacY=ArrayNumber;
+0081 SecondSacOrd=ArrayNumber;
+0082 SSAtTarg=ArrayNumber;
+0083 SSAtPop=ArrayNumber;
+0084 SSToRF=ArrayNumber;
+0085 SSRFOrdist=ArrayNumber;
+0086 SecondSacTargDist=ArrayNumber;
+0087 
+0088 <span class="comment">%Will need some aligns linked to this at the end  !</span>
+0089 
+0090 FirstSacLat=ArrayNumber;
+0091 FirstSacDur=ArrayNumber;
+0092 SecondSacLat=ArrayNumber;
+0093 SecondSacDur=ArrayNumber;
+0094 
+0095 RewX=ArrayNumber;
+0096 RewY=ArrayNumber;
+0097 RewTargDist=ArrayNumber;
+0098 
+0099 OnX=ArrayNumber; <span class="comment">% eye position at rf onset</span>
+0100 OnY=ArrayNumber;
+0101 OnTargDist=ArrayNumber;
+0102 
+0103 <span class="comment">%RF related properties</span>
+0104 
+0105 WhatInRF=ArrayNumber;    <span class="comment">%assign values based on target, popout or distractor</span>
+0106 CurrentRF=getappdata(0,<span class="string">'RFLocation'</span>);
+0107 fprintf(<span class="string">'%s\n'</span>,[<span class="string">'Using RF Location of   '</span>   num2str(CurrentRF)]);
+0108 
+0109 ClosestOrd=ArrayNumber;
+0110 
+0111 
+0112 <span class="comment">%Variables List</span>
+0113 
+0114 MyVariableList={<span class="string">'ArrayNumber'</span>,<span class="string">'GoodTrial'</span>,<span class="string">'BadTrial'</span>,<span class="string">'PhotoBad'</span>,<span class="string">'TrialNumber'</span>,<span class="string">'AbortTrial'</span>,<span class="string">'FixationBreak'</span>,<span class="string">'GoodBarError'</span>,<span class="string">'RewardTime'</span>,<span class="string">'ErrorTime'</span>,<span class="string">'FPOnTime'</span>,<span class="string">'GapTime'</span>,<span class="string">'RFOnTime'</span>,<span class="string">'RFOffTime'</span>,<span class="string">'GoodBarError'</span>,<span class="keyword">...</span>
+0115     <span class="string">'ReactionTime'</span>,<span class="string">'TargX'</span>,<span class="string">'TargY'</span>,<span class="string">'TargPat'</span>,<span class="string">'TargOrd'</span>,<span class="string">'TargCheck'</span>,<span class="string">'PopType'</span>,<span class="string">'PopX'</span>,<span class="string">'PopY'</span>,<span class="string">'PopOrd'</span>,<span class="string">'NumStim'</span>,<span class="string">'NumSaccades'</span>,<span class="string">'FirstSacX'</span>,<span class="string">'FirstSacY'</span>,<span class="string">'FirstSacOrd'</span>,<span class="string">'FSAtTarg'</span>,<span class="string">'FSAtPop'</span>,<span class="string">'FSAtOther'</span>,<span class="string">'SecondSacX'</span>,<span class="keyword">...</span>
+0116     <span class="string">'SecondSacY'</span>,<span class="string">'SecondSacOrd'</span>,<span class="string">'SSAtTarg'</span>,<span class="string">'SSAtPop'</span>,<span class="string">'FirstSacLat'</span>,<span class="string">'FirstSacDur'</span>,<span class="string">'SecondSacLat'</span>,<span class="string">'SecondSacDur'</span>,<span class="string">'WhatInRF'</span>,<span class="string">'FirstSacTargDist'</span>,<span class="string">'SecondSacTargDist'</span>,<span class="string">'RewTargDist'</span>,<span class="string">'OnTargDist'</span>,<span class="string">'FSRFOrdist'</span>,<span class="string">'SSRFOrdist'</span>,<span class="string">'FSTargOrdist'</span>,<span class="string">'FSPopOrdist'</span>};
+0117 MyResponseVariableList={<span class="string">'ReactionTime'</span>,<span class="string">'GoodTrial'</span>,<span class="string">'BadTrial'</span>,<span class="string">'FSAtPop'</span>,<span class="string">'FSAtOther'</span>,<span class="string">'SSAtPop'</span>,<span class="string">'FSAtTarg'</span>,<span class="string">'SSAtTarg'</span>,<span class="string">'FirstSaclat'</span>,<span class="string">'FSPopOrdist'</span>,<span class="string">'FSTargOrdist'</span>};
+0118 
+0119 <span class="comment">%Start filling in arrays</span>
+0120 
+0121 <span class="keyword">for</span> TrialIndex=1:length(Trials)
+0122 
+0123     CurrentEvents=Trials(TrialIndex).Events;
+0124     CurrentCodes=double([CurrentEvents.Code]);
+0125     CodeIndices=1:length(CurrentCodes);
+0126     CurrentTimes=double([CurrentEvents.Time]);
+0127 
+0128     tracexx = double(Trials(TrialIndex).Signals(1).Signal);
+0129     traceyy = double(Trials(TrialIndex).Signals(2).Signal);
+0130 
+0131     <span class="comment">%checking for key codes here</span>
+0132 
+0133     is_reward=find(CurrentCodes==1012);
+0134     is_error=find(CurrentCodes==1013);
+0135     is_fp=find(CurrentCodes==1003);
+0136     is_rf=find(CurrentCodes==1007);
+0137     is_rfoff=find(CurrentCodes==1010);
+0138     is_photobad=find(CurrentCodes==1092);
+0139     is_abort=find(CurrentCodes==1090);
+0140     is_fixationbreak=find(CurrentCodes==1091);
+0141     is_gap=find(CurrentCodes==1004);
+0142 
+0143     <span class="comment">%GoodTrial, RewardTime, and ErrorTime</span>
+0144 
+0145     <span class="keyword">if</span> ~isempty(is_reward), GoodTrial(TrialIndex)=1;
+0146         RewardTime(TrialIndex)=CurrentTimes(is_reward(1));
+0147         RewX(TrialIndex)=tracexx(RewardTime(TrialIndex));
+0148         RewY(TrialIndex)=traceyy(RewardTime(TrialIndex));
+0149     <span class="keyword">elseif</span> ~isempty(is_error),
+0150         ErrorTime(TrialIndex)=CurrentTimes(is_error(1));
+0151         <span class="keyword">if</span> length(tracexx)&gt;=ErrorTime(TrialIndex),
+0152         RewX(TrialIndex)=tracexx(ErrorTime(TrialIndex));       
+0153         RewY(TrialIndex)=traceyy(ErrorTime(TrialIndex));       
+0154         <span class="keyword">end</span>
+0155     <span class="keyword">end</span>
+0156     
+0157 
+0158     <span class="keyword">if</span> ~isempty(is_fp), FPOnTime(TrialIndex)=CurrentTimes(is_fp(1));<span class="keyword">end</span>
+0159 
+0160         <span class="keyword">if</span> ~isempty(is_fp)
+0161             EarlyDrops=find(CurrentCodes&gt;=11000);
+0162             <span class="keyword">if</span> length(EarlyDrops)&gt;=2
+0163                MarkerCode(TrialIndex)=CurrentCodes(EarlyDrops(1))-11000;
+0164                BGLum(TrialIndex)=CurrentCodes(EarlyDrops(2))-11000;
+0165 <span class="comment">%             FPx(TrialIndex)=(CurrentCodes(EarlyDrops(3))-11000)/10;</span>
+0166 <span class="comment">%             FPy(TrialIndex)=(CurrentCodes(EarlyDrops(4))-11000)/10;</span>
+0167             <span class="keyword">end</span>
+0168         <span class="keyword">end</span>
+0169 
+0170     <span class="keyword">if</span> ~isempty(is_photobad), PhotoBad(TrialIndex)=1;<span class="keyword">end</span>
+0171     <span class="keyword">if</span> ~isempty(is_abort) AbortTrial(TrialIndex)=1;<span class="keyword">end</span>
+0172     <span class="keyword">if</span> ~isempty(is_fixationbreak) FixationBreak(TrialIndex)=1;<span class="keyword">end</span>
+0173 
+0174     <span class="keyword">if</span> ~isempty(is_rf), RFOnTime(TrialIndex)=CurrentTimes(is_rf(1));
+0175 
+0176                 <span class="keyword">if</span> length(tracexx)&gt;=RFOnTime(TrialIndex),
+0177         OnX(TrialIndex)=tracexx(RFOnTime(TrialIndex));
+0178         OnY(TrialIndex)=traceyy(RFOnTime(TrialIndex));
+0179                 <span class="keyword">end</span>
+0180 
+0181         <span class="keyword">if</span> ~isempty(is_reward) | ~isempty(is_error)    <span class="comment">% only calculate if there is a reward code or an error code</span>
+0182 
+0183             <span class="comment">%Number of stimuli</span>
+0184 
+0185             FindResult=find( <a href="../../XeX/UtilityFunctions/assorted/inbetween.html" class="code" title="function y=inbetween(x,a,b,li,gi)">inbetween</a>(CurrentCodes,3001,3035) &amp; <a href="../../XeX/UtilityFunctions/assorted/inbetween.html" class="code" title="function y=inbetween(x,a,b,li,gi)">inbetween</a>( CurrentTimes-RFOnTime(TrialIndex),0,65) );
+0186 
+0187             <span class="keyword">if</span> length(FindResult)&gt;=1
+0188                 NumStim(TrialIndex)=CurrentCodes(FindResult(1))-3000;
+0189             <span class="keyword">end</span>
+0190 
+0191             <span class="comment">%using the checksize drop to catch all rf codes and to verify</span>
+0192             <span class="comment">%numstim</span>
+0193 
+0194             FindResult=find( <a href="../../XeX/UtilityFunctions/assorted/inbetween.html" class="code" title="function y=inbetween(x,a,b,li,gi)">inbetween</a>(CurrentCodes,10001,10010) &amp; <a href="../../XeX/UtilityFunctions/assorted/inbetween.html" class="code" title="function y=inbetween(x,a,b,li,gi)">inbetween</a>(CurrentTimes-RFOnTime(TrialIndex),0,65) );
+0195 
+0196             <span class="keyword">if</span> length(FindResult) &lt; NumStim(TrialIndex), fprintf(<span class="string">'%s\n'</span>,<span class="string">'Something wrong with RF Code Drops, Not enough codes ?'</span>);
+0197             <span class="keyword">elseif</span> length(FindResult)&gt;NumStim(TrialIndex), FindResult=FindResult(1:NumStim(TrialIndex));  <span class="comment">%only taking the first NumStim(TrialIndex) values</span>
+0198             <span class="keyword">end</span>
+0199 
+0200             RFSet=repmat(struct(<span class="string">'number'</span>,nan,<span class="string">'x'</span>,nan,<span class="string">'y'</span>,nan,<span class="string">'pat'</span>,nan,<span class="string">'checksize'</span>,nan,<span class="string">'ord'</span>,nan,<span class="string">'fgr'</span>,nan,<span class="string">'fgg'</span>,nan,<span class="string">'fgb'</span>,nan),1,NumStim(TrialIndex)); <span class="comment">%initializing a structure to hold the rf property values</span>
+0201 
+0202             <span class="keyword">for</span> fillerindex=1:length(FindResult)    <span class="comment">%filling in using values obtained for FindResult</span>
+0203 
+0204                 RFSet(fillerindex).number=fillerindex;
+0205                 RFSet(fillerindex).checksize=CurrentCodes(FindResult(fillerindex))-10000;
+0206 
+0207                 <span class="keyword">if</span> fillerindex==1, StartingIndex=is_rf(1); <span class="keyword">else</span> StartingIndex=FindResult(fillerindex-1);<span class="keyword">end</span>
+0208 
+0209                 FindResult2= find ( CodeIndices &gt; StartingIndex &amp; CodeIndices &lt; FindResult(fillerindex) &amp; CurrentCodes&gt;=5700 &amp; CurrentCodes&lt;=6800 );
+0210                 RFSet(fillerindex).x=(CurrentCodes(FindResult2(1))-6000)/10;
+0211                 RFSet(fillerindex).y=(CurrentCodes(FindResult2(2))-6500)/10;
+0212 
+0213                 FindResult2= find ( CodeIndices &gt; StartingIndex &amp; CodeIndices &lt; FindResult(fillerindex) &amp; CurrentCodes&gt;=7000 );
+0214                 RFSet(fillerindex).pat=CurrentCodes(FindResult2(1))-7000;
+0215 
+0216                 StartingIndex=FindResult(fillerindex)-4;
+0217 
+0218                 FindResult2= find ( CodeIndices &gt; StartingIndex &amp; CodeIndices &lt; FindResult(fillerindex) &amp; CurrentCodes&gt;=5000 &amp; CurrentCodes&lt;=5855);
+0219 <span class="comment">%                 fprintf('%d\t',length(FindResult2));</span>
+0220 <span class="comment">%                 if length(FindResult2)==4, keyboard;end</span>
+0221                 <span class="keyword">if</span> length(FindResult2)==3
+0222                     RFSet(fillerindex).fgr=CurrentCodes(FindResult2(1))-5000;
+0223                     RFSet(fillerindex).fgg=CurrentCodes(FindResult2(2))-5300;
+0224                     RFSet(fillerindex).fgb=CurrentCodes(FindResult2(3))-5600;
+0225                 <span class="keyword">end</span>
+0226 
+0227             <span class="keyword">end</span>  <span class="comment">%     ending -&gt;   for fillerindex=1:length(FindResult)</span>
+0228 
+0229             RFangs=atan2([RFSet.y],[RFSet.x]);
+0230             RFangs(RFangs&lt;0)=2*pi+RFangs(RFangs&lt;0);
+0231             [SortedAngs,SortedIndices]=sort(RFangs);
+0232 
+0233             <span class="keyword">for</span> SortedIndex=1:length(SortedIndices)
+0234                 RFSet(SortedIndices(SortedIndex)).ord=SortedIndex-1; <span class="comment">%start at 0</span>
+0235             <span class="keyword">end</span>
+0236 
+0237             WhereisTarget=find([RFSet.pat]==28 | [RFSet.pat]==29);
+0238             <span class="keyword">if</span> ~isempty(WhereisTarget)
+0239                 TargX(TrialIndex)=RFSet(WhereisTarget).x;
+0240                 TargY(TrialIndex)=RFSet(WhereisTarget).y;
+0241                 TargPat(TrialIndex)=RFSet(WhereisTarget).pat;
+0242                 TargCheck(TrialIndex)=RFSet(WhereisTarget).checksize;
+0243              TargRed(TrialIndex)=RFSet(WhereisTarget).fgr;
+0244                 TargGreen(TrialIndex)=RFSet(WhereisTarget).fgg;
+0245                 TargBlue(TrialIndex)=RFSet(WhereisTarget).fgb;                
+0246                 TargOrd(TrialIndex)=RFSet(WhereisTarget).ord;
+0247             <span class="keyword">end</span>
+0248             
+0249             MaxGreen=nanmax([RFSet.fgg]);
+0250             WhereisPop=find([RFSet.fgg]==MaxGreen);  <span class="comment">%KLUGE : green 255 is popout</span>
+0251             
+0252             <span class="keyword">if</span> length(WhereisPop)==1
+0253                 PopX(TrialIndex)=RFSet(WhereisPop).x;
+0254                 PopY(TrialIndex)=RFSet(WhereisPop).y;
+0255                 PopOrd(TrialIndex)=RFSet(WhereisPop).ord;
+0256                 PopCheck(TrialIndex)=RFSet(WhereisPop).checksize;
+0257                 PopRed(TrialIndex)=RFSet(WhereisPop).fgr;
+0258                 PopGreen(TrialIndex)=RFSet(WhereisPop).fgg;
+0259                 PopBlue(TrialIndex)=RFSet(WhereisPop).fgb;                
+0260             
+0261                 <span class="keyword">if</span> PopX(TrialIndex)==TargX(TrialIndex) &amp; PopY(TrialIndex)==TargY(TrialIndex), PopType(TrialIndex)=3;
+0262                 <span class="keyword">else</span> PopType(TrialIndex)=1;
+0263                 <span class="keyword">end</span>
+0264 
+0265             <span class="keyword">else</span> PopType(TrialIndex)=2; <span class="comment">%no popout</span>
+0266 <span class="comment">%                 keyboard;</span>
+0267             <span class="keyword">end</span>
+0268                           
+0269         <span class="keyword">if</span> ~isempty(is_rfoff)
+0270             RFOffTime(TrialIndex)=CurrentTimes(is_rfoff(1));
+0271         <span class="keyword">end</span>
+0272         
+0273            <span class="comment">% Stimulus, X and Y locations !!</span>
+0274            
+0275            ThisTrialX=[RFSet.x];
+0276            ThisTrialY=[RFSet.y];
+0277            
+0278            <span class="comment">% Estimating What in RF</span>
+0279            
+0280            DistanceFromRF= ( ThisTrialX - CurrentRF(1) ).^2 + (ThisTrialY-CurrentRF(2)).^2;
+0281            ClosestToRF= find ( DistanceFromRF == nanmin(DistanceFromRF) );
+0282            <span class="keyword">if</span> length(ClosestToRF)&gt;1, fprintf(<span class="string">'%s\n'</span>,<span class="string">'More than 1 stimulus closest to RF !!!'</span>); ClosestToRF=ClosestToRF(1);<span class="keyword">end</span>
+0283            ClosestOrd(TrialIndex)=RFSet(ClosestToRF).ord;
+0284            <span class="keyword">if</span> ClosestOrd(TrialIndex)==TargOrd(TrialIndex), WhatInRF(TrialIndex)=3;   <span class="comment">%target in RF</span>
+0285            <span class="keyword">elseif</span> ClosestOrd(TrialIndex)==PopOrd(TrialIndex), WhatInRF(TrialIndex)=1;  <span class="comment">%popout distractor in RF</span>
+0286            <span class="keyword">else</span> WhatInRF(TrialIndex)=2;   <span class="comment">%distractor in RF</span>
+0287            <span class="keyword">end</span>
+0288            
+0289            
+0290             <span class="comment">%Saccade analysis</span>
+0291 
+0292             SacStruct=<a href="../../XeX/UtilityFunctions/main/SacFind.html" class="code" title="function [Saccades,FiltX,FiltY]=SacFind(Trial,CorrectCode,MinISI,MinLat,PlotVar,FigNum,Threshold,Ax)">SacFind</a>(Trials((TrialIndex)),1007,0,70);
+0293             SacAmps=[SacStruct.amplitude];
+0294             SaccadesSet=SacStruct(SacAmps&gt;=2);
+0295             
+0296             NumSaccades(TrialIndex)=length(SaccadesSet);
+0297             
+0298             <span class="keyword">if</span> NumSaccades(TrialIndex)&gt;=1
+0299            
+0300                 FirstSacX(TrialIndex)=SaccadesSet(1).endx;
+0301                 FirstSacY(TrialIndex)=SaccadesSet(1).endy;
+0302                 FirstSacLat(TrialIndex)=SaccadesSet(1).latency;
+0303                 FirstSacDur(TrialIndex)=SaccadesSet(1).duration;
+0304             
+0305                 StimulusDists= ( FirstSacX(TrialIndex)-ThisTrialX).^2 + (FirstSacY(TrialIndex) - ThisTrialY).^2 ; <span class="comment">%why sqrt unnecessarily :)</span>
+0306                 ClosestStimulus = find( StimulusDists == nanmin(StimulusDists) );
+0307                 <span class="keyword">if</span> length(ClosestStimulus)&gt;1, fprintf(<span class="string">'%s\n'</span>,<span class="string">'More than one nearby stimulus !!'</span>); ClosestStimulus=ClosestStimulus(1);<span class="keyword">end</span>
+0308                 FirstSacOrd(TrialIndex)=RFSet(ClosestStimulus).ord;
+0309                 <span class="keyword">if</span> FirstSacOrd(TrialIndex)==TargOrd(TrialIndex), FSAtTarg(TrialIndex)=1; <span class="keyword">else</span> FSAtTarg(TrialIndex)=0;<span class="keyword">end</span>
+0310                 <span class="keyword">if</span> FirstSacOrd(TrialIndex)==PopOrd(TrialIndex), FSAtPop(TrialIndex)=1; <span class="keyword">else</span> FSAtPop(TrialIndex)=0;<span class="keyword">end</span>
+0311                 <span class="keyword">if</span> FSAtTarg(TrialIndex)==0 &amp; FSAtPop(TrialIndex)==0, FSAtOther(TrialIndex)=1; <span class="keyword">else</span> FSAtOther(TrialIndex)=0;<span class="keyword">end</span>
+0312                 
+0313                 FSRFOrdist(TrialIndex)=min(abs(FirstSacOrd(TrialIndex)-ClosestOrd(TrialIndex)),NumStim(TrialIndex)-abs(FirstSacOrd(TrialIndex)-ClosestOrd(TrialIndex)));
+0314                 FSPopOrdist(TrialIndex)=min(abs(FirstSacOrd(TrialIndex)-PopOrd(TrialIndex)),NumStim(TrialIndex)-abs(FirstSacOrd(TrialIndex)-PopOrd(TrialIndex)));
+0315                 FSTargOrdist(TrialIndex)=min(abs(FirstSacOrd(TrialIndex)-TargOrd(TrialIndex)),NumStim(TrialIndex)-abs(FirstSacOrd(TrialIndex)-TargOrd(TrialIndex)));
+0316                 
+0317             <span class="keyword">end</span>
+0318 
+0319             <span class="keyword">if</span> NumSaccades(TrialIndex)&gt;=2
+0320                 SecondSacX(TrialIndex)=SaccadesSet(2).endx;
+0321                 SecondSacY(TrialIndex)=SaccadesSet(2).endy;
+0322                 SecondSacLat(TrialIndex)=SaccadesSet(2).latency;
+0323                 SecondSacDur(TrialIndex)=SaccadesSet(2).duration;
+0324             
+0325                 StimulusDists= ( SecondSacX(TrialIndex)-ThisTrialX).^2 + (SecondSacY(TrialIndex) - ThisTrialY).^2 ; <span class="comment">%why sqrt unnecessarily :)</span>
+0326                 ClosestStimulus = find( StimulusDists == nanmin(StimulusDists) );
+0327                 <span class="keyword">if</span> length(ClosestStimulus)&gt;1, fprintf(<span class="string">'%s\n'</span>,<span class="string">'More than one nearby stimulus !!'</span>); ClosestStimulus=ClosestStimulus(1);<span class="keyword">end</span>
+0328                 SecondSacOrd(TrialIndex)=RFSet(ClosestStimulus).ord;
+0329                 <span class="keyword">if</span> SecondSacOrd(TrialIndex)==TargOrd(TrialIndex), SSAtTarg(TrialIndex)=1; <span class="keyword">else</span> SSAtTarg(TrialIndex)=0; <span class="keyword">end</span>
+0330                 <span class="keyword">if</span> SecondSacOrd(TrialIndex)==PopOrd(TrialIndex), SSAtPop(TrialIndex)=1; <span class="keyword">else</span> SSAtPop(TrialIndex)=0; <span class="keyword">end</span>
+0331 
+0332                 SSRFOrdist(TrialIndex)=min(abs(SecondSacOrd(TrialIndex)-ClosestOrd(TrialIndex)),NumStim(TrialIndex)-abs(SecondSacOrd(TrialIndex)-ClosestOrd(TrialIndex)));
+0333 
+0334             <span class="keyword">end</span>
+0335                         
+0336         <span class="keyword">end</span>  <span class="comment">% ending the if ~isempty(is_reward) | ~isempty(is_error)</span>
+0337    
+0338     <span class="keyword">end</span> <span class="comment">%ending the if ~isempty(is_rf) loop</span>
+0339 
+0340 <span class="keyword">if</span> ~isempty(is_gap), GapTime(TrialIndex)=CurrentTimes(is_gap(1));<span class="keyword">end</span>
+0341 
+0342 <span class="keyword">if</span> ~isempty(is_rf) &amp; GoodTrial(TrialIndex)~=1 &amp; AbortTrial(TrialIndex)~=1 &amp; FixationBreak(TrialIndex)~=1
+0343     <span class="keyword">if</span> ~isempty(is_error), BadTrial(TrialIndex)=1; 
+0344     HowManyBars=find((CurrentCodes==11001|CurrentCodes==11002)&amp;CurrentTimes&gt;RFOnTime(TrialIndex));
+0345     <span class="keyword">if</span> length(HowManyBars)==1, GoodBarError(TrialIndex)=1; <span class="keyword">else</span> GoodBarError(TrialIndex)=length(HowManyBars);<span class="keyword">end</span>
+0346     <span class="keyword">else</span> BadTrial(TrialIndex)=2;<span class="keyword">end</span>
+0347 <span class="keyword">end</span>
+0348 
+0349        
+0350  <span class="keyword">end</span>  <span class="comment">% THE BIG FAT END</span>
+0351 
+0352 <span class="keyword">if</span> length(<a href="../../XeX/UtilityFunctions/assorted/un.html" class="code" title="function X1=un(X)">un</a>(GoodBarError))==1 &amp;&amp; <a href="../../XeX/UtilityFunctions/assorted/un.html" class="code" title="function X1=un(X)">un</a>(GoodBarError)==0, <span class="keyword">else</span>
+0353 BadTrial(GoodBarError~=1&amp;BadTrial==1)=-1;
+0354 <span class="keyword">end</span>
+0355 
+0356 SacAlignTime1=FirstSacLat+RFOnTime;
+0357 SacAlignTime2=SecondSacLat+RFOnTime;
+0358 
+0359 ReactionTime(GoodTrial==1)=RewardTime(GoodTrial==1)-RFOnTime(GoodTrial==1); <span class="comment">%kluge</span>
+0360 ReactionTime(BadTrial==1)=ErrorTime(BadTrial==1)-RFOnTime(BadTrial==1);
+0361 ReactionTime=ReactionTime-50; <span class="comment">%for bar waiting time, I think 50 is what saproc uses.</span>
+0362 
+0363 RFGood=(RFOffTime-RFOnTime)&lt;45 &amp; (RFOffTime-RFOnTime)&gt;20;
+0364 TrueGood=nan*GoodTrial;
+0365 
+0366  TrueGood(BadTrial==1&amp;RFGood==1&amp;PhotoBad~=1)=0;
+0367  TrueGood(GoodTrial==1&amp;RFGood==1&amp;PhotoBad~=1)=1;
+0368 
+0369  FirstSacTargDist=sqrt ( (FirstSacX-TargX).^2 + (FirstSacY-TargY).^2);
+0370  SecondSacTargDist=sqrt ( (SecondSacX-TargX).^2 + (SecondSacY-TargY).^2);
+0371  RewTargDist=sqrt( (RewX-TargX).^2 + (RewY-TargY).^2 );
+0372  OnTargDist=sqrt( (OnX-TargX).^2 + (OnY-TargY).^2 );
+0373 
+0374 RFTrialIndex=1:length(Trials);
+0375 
+0376   <span class="comment">%Now printing out details of analysis</span>
+0377  
+0378 summaryString=  sprintf(<span class="string">'%s\n'</span>,<span class="string">'******************************************************************'</span>);
+0379 summaryString=[summaryString sprintf(<span class="string">'Unique Markers %s\n'</span>,[num2str([<a href="../../XeX/UtilityFunctions/assorted/un.html" class="code" title="function X1=un(X)">un</a>(MarkerCode)])])];
+0380 summaryString=[summaryString sprintf(<span class="string">'%s\n'</span>,[num2str([<a href="../../XeX/UtilityFunctions/assorted/un.html" class="code" title="function X1=un(X)">un</a>(BGLum) <a href="../../XeX/UtilityFunctions/assorted/un.html" class="code" title="function X1=un(X)">un</a>(TargCheck) <a href="../../XeX/UtilityFunctions/assorted/un.html" class="code" title="function X1=un(X)">un</a>(NumStim)])])];
+0381 summaryString=[summaryString sprintf(<span class="string">'%s\n'</span>,[num2str([<a href="../../XeX/UtilityFunctions/assorted/un.html" class="code" title="function X1=un(X)">un</a>(TargRed) <a href="../../XeX/UtilityFunctions/assorted/un.html" class="code" title="function X1=un(X)">un</a>(TargBlue) <a href="../../XeX/UtilityFunctions/assorted/un.html" class="code" title="function X1=un(X)">un</a>(TargGreen)])])]; 
+0382 summaryString=[summaryString sprintf(<span class="string">'%s\n'</span>,[num2str([<a href="../../XeX/UtilityFunctions/assorted/un.html" class="code" title="function X1=un(X)">un</a>(PopRed) <a href="../../XeX/UtilityFunctions/assorted/un.html" class="code" title="function X1=un(X)">un</a>(PopBlue) <a href="../../XeX/UtilityFunctions/assorted/un.html" class="code" title="function X1=un(X)">un</a>(PopGreen)])])]; 
+0383 summaryString=[summaryString sprintf(<span class="string">'%s\n'</span>,[num2str(length(Trials)) <span class="string">'  trials'</span>])];
+0384 summaryString=[summaryString sprintf(<span class="string">'%s\n'</span>,[num2str(length(find(GoodTrial==1))) <span class="string">'  Good Trials'</span>])];
+0385 summaryString=[summaryString sprintf(<span class="string">'%s\n'</span>,[num2str(length(find(BadTrial==1))),<span class="string">'  Bad Trials'</span>])];
+0386  summaryString=[summaryString sprintf(<span class="string">'%s\n'</span>,[num2str(100*(length(find(GoodTrial==1)))/length(find(GoodTrial==1|BadTrial==1)),<span class="string">'%3.2f'</span>) <span class="string">'  % correct'</span>])];
+0387  summaryString=[summaryString sprintf(<span class="string">'%s\n'</span>,<span class="string">'TargX   TargY'</span>)];
+0388  summaryString=[summaryString,sprintf(<span class="string">'%3.3f\t%3.3f\n'</span>,[<a href="../../XeX/UtilityFunctions/assorted/un.html" class="code" title="function X1=un(X)">un</a>([TargX' TargY'])]')];
+0389  summaryString=[summaryString sprintf(<span class="string">'%s\n'</span>,<span class="string">'PopX   PopY'</span>)];
+0390  summaryString=[summaryString,sprintf(<span class="string">'%3.3f\t%3.3f\n'</span>,[<a href="../../XeX/UtilityFunctions/assorted/un.html" class="code" title="function X1=un(X)">un</a>([PopX' PopY'])]')];
+0391 summaryString=[summaryString,sprintf(<span class="string">'%s percent sacs to target'</span>,num2str(100*(length(find(GoodTrial==1&amp;PhotoBad~=1&amp;FSTargOrdist&lt;=1)))/length(find(GoodTrial==1&amp;PhotoBad~=1))))];
+0392 summaryString=[summaryString,sprintf(<span class="string">'%s\n'</span>,<span class="string">''</span>)];
+0393 summaryString=[summaryString,sprintf(<span class="string">'%s percent sacs to pop'</span>,num2str(100*(length(find(GoodTrial==1&amp;PhotoBad~=1&amp;FSPopOrdist&lt;=1)))/length(find(GoodTrial==1&amp;PhotoBad~=1))))];
+0394 summaryString=[summaryString,sprintf(<span class="string">'%s\n'</span>,<span class="string">''</span>)];
+0395 <span class="comment">%  summaryString=[summaryString,'\n',[num2str(un([PopX' PopY']))]];</span>
+0396   summaryString=[summaryString sprintf(<span class="string">'%s\n'</span>,<span class="string">'******************************************************************'</span>)];
+0397 <span class="comment">%  RFmat=[RFx;RFy]';</span>
+0398 <span class="comment">%  RFmat=RFmat(~isnan(RFmat(:,1)),:);</span>
+0399 <span class="comment">%  RFmat=unique(RFmat,'rows');</span>
+0400 <span class="comment">%  summaryString=[summaryString sprintf('%s\n','RFx        RFy')];</span>
+0401 <span class="comment">%</span>
+0402 <span class="comment">%  for printIndex=1:size(RFmat,1)</span>
+0403 <span class="comment">%      summaryString=[summaryString sprintf('%3.1f\t%3.1f\t',RFmat(printIndex,1),RFmat(printIndex,2))];</span>
+0404 <span class="comment">%       summaryString=[summaryString sprintf('%s\t',[num2str(100*(length(find(GoodTrial==1&amp;RFx==RFmat(printIndex,1)&amp;RFy==RFmat(printIndex,2)))) / length(find((GoodTrial==1|BadTrial==1) &amp; RFx==RFmat(printIndex,1) &amp; RFy==RFmat(printIndex,2))) ,'%3.2f')  ' % correct'])];</span>
+0405 <span class="comment">% summaryString=[summaryString sprintf('%s\t','T-trials  ')];</span>
+0406 <span class="comment">%  summaryString=[summaryString sprintf('%s\t',[num2str(100*(length(find(GoodTrial==1&amp;RFPat==29&amp;RFx==RFmat(printIndex,1)&amp;RFy==RFmat(printIndex,2)))) / length(find((GoodTrial==1|BadTrial==1) &amp; RFPat==29&amp;RFx==RFmat(printIndex,1) &amp; RFy==RFmat(printIndex,2))) ,'%3.2f')  ' % correct'])];</span>
+0407 <span class="comment">%   summaryString=[summaryString sprintf('%s\t','Inverted T trials')];</span>
+0408 <span class="comment">%  summaryString=[summaryString sprintf('%s\n ',[num2str(100*(length(find(GoodTrial==1&amp;RFPat==28&amp;RFx==RFmat(printIndex,1)&amp;RFy==RFmat(printIndex,2)))) / length(find((GoodTrial==1|BadTrial==1) &amp; RFPat==28&amp;RFx==RFmat(printIndex,1) &amp; RFy==RFmat(printIndex,2))) ,'%3.2f')  ' % correct'])];</span>
+0409 <span class="comment">%</span>
+0410 <span class="comment">%  end</span>
+0411  summaryString=[summaryString sprintf(<span class="string">'%s\n'</span>,<span class="string">'******************************************************************'</span>)];
+0412 
+0413 
+0414   <a href="../../XeX/UtilityFunctions/assorted/MarkerAnalyze.html" class="code" title="">MarkerAnalyze</a>;
+0415 fprintf(<span class="string">'%s\n'</span>,summaryString);
+0416 
+0417   <a href="../../XeX/UtilityFunctions/assorted/attachvars.html" class="code" title="">attachvars</a>;</pre></div>
+<hr><address>Generated on Wed 13-Dec-2006 00:06:54 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

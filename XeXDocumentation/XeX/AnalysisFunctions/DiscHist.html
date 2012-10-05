@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of DiscHist</title>
+  <meta name="keywords" content="DiscHist">
+  <meta name="description" content="Script to produce an histogram. Uses PlotHist to do the hard work">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html XeX --><!-- menu.html AnalysisFunctions -->
+<h1>DiscHist
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>Script to produce an histogram. Uses PlotHist to do the hard work</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">      Script to produce an histogram. Uses PlotHist to do the hard work
+      See also: <a href="DrawKDE.html" class="code" title="">DrawKDE</a>
+      <a href="MakeHist.html" class="code" title="">MakeHist</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../XeX/UtilityFunctions/assorted/clearvars.html" class="code" title="">clearvars</a>	This function clears all the variables that were recently detached</li><li><a href="../../XeX/UtilityFunctions/assorted/detachvars.html" class="code" title="">detachvars</a>	This script detaches all the variables from a structure and assigns them</li><li><a href="../../XeX/UtilityFunctions/gettingAndsettingParameters/NextMarkerSet.html" class="code" title="">NextMarkerSet</a>	This script sets NextMarker and NextMarkerEvalString</li><li><a href="../../XeX/UtilityFunctions/gettingAndsettingParameters/SetGObjectProperties.html" class="code" title="">SetGObjectProperties</a>	This script is used for setting GraphicsObjectProperties. Mainly calls MakeTempGraphix</li><li><a href="../../XeX/UtilityFunctions/plotting/PlotDiscHist.html" class="code" title="">PlotDiscHist</a>	Plots histograms</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">%      Script to produce an histogram. Uses PlotHist to do the hard work</span>
+0002 <span class="comment">%      See also: DrawKDE</span>
+0003 <span class="comment">%      MakeHist</span>
+0004 
+0005 <a href="../../XeX/UtilityFunctions/assorted/detachvars.html" class="code" title="">detachvars</a>;
+0006 <span class="comment">% SwitchAxes;</span>
+0007 eval([<span class="string">'CurrentFilterVector='</span> CurrentFilterString <span class="string">';'</span>]); <span class="comment">%this does the current logical filter vector</span>
+0008 CurrentAlignTime=nan;
+0009 
+0010 EvalString=<span class="string">'PlotDiscHist;'</span>;
+0011 
+0012 <a href="../../XeX/UtilityFunctions/gettingAndsettingParameters/NextMarkerSet.html" class="code" title="">NextMarkerSet</a>;
+0013 <span class="keyword">if</span> isempty(NextMarker), NextMarker=<span class="string">'k-'</span>;<span class="keyword">end</span>
+0014 
+0015 <span class="comment">% EvalString=[EvalString NextMarkerEvalString];  %this makes sure the</span>
+0016 <span class="comment">% marker is attached. DONT NEED THIS FOR BARPLOT</span>
+0017 
+0018 LocalMarkerString=NextMarker; 
+0019 
+0020 eval(EvalString);
+0021 CurrentPlotType=<span class="string">'DiscHistogram'</span>;
+0022 <a href="../../XeX/UtilityFunctions/gettingAndsettingParameters/SetGObjectProperties.html" class="code" title="">SetGObjectProperties</a>;
+0023 <a href="../../XeX/UtilityFunctions/assorted/clearvars.html" class="code" title="">clearvars</a>;
+0024</pre></div>
+<hr><address>Generated on Wed 13-Dec-2006 00:06:54 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

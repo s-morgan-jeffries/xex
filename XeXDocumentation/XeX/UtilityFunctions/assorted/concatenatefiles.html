@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of concatenatefiles</title>
+  <meta name="keywords" content="concatenatefiles">
+  <meta name="description" content="This scriptlet concatenates the code from an entire list of files in a directory and outputs to 'OutputFile.txt'.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html XeX --><!-- ../menu.html UtilityFunctions --><!-- menu.html assorted -->
+<h1>concatenatefiles
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>This scriptlet concatenates the code from an entire list of files in a directory and outputs to 'OutputFile.txt'.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">    This scriptlet concatenates the code from an entire list of files in a directory and outputs to 'OutputFile.txt'.
+    Which can then be printed.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 
+0002 <span class="comment">%    This scriptlet concatenates the code from an entire list of files in a directory and outputs to 'OutputFile.txt'.</span>
+0003 <span class="comment">%    Which can then be printed.</span>
+0004 
+0005 ListOfFiles=dir(pwd);
+0006 
+0007     ofid=fopen(<span class="string">'OutputFile.txt'</span>,<span class="string">'w'</span>);
+0008 
+0009     <span class="keyword">for</span> Index=1:length(ListOfFiles)
+0010     CurrentFile=ListOfFiles(Index).name;
+0011     
+0012     
+0013     <span class="keyword">if</span> ~isempty(strfind(CurrentFile,<span class="string">'.m'</span>))
+0014     
+0015         fprintf(ofid,<span class="string">'%s\n'</span>,CurrentFile);
+0016         fprintf(ofid,<span class="string">'%s\n'</span>,<span class="string">'~~~~~~~~~~~~~~~~~~~~~~'</span>);
+0017         fprintf(ofid,<span class="string">'%s\n'</span>,<span class="string">''</span>);
+0018         
+0019         fid=fopen(CurrentFile,<span class="string">'r'</span>);
+0020         Line=fgets(fid);
+0021         <span class="keyword">while</span> ~isequal(Line,-1)
+0022             fprintf(ofid,<span class="string">'%s'</span>,Line);
+0023         Line=fgets(fid);
+0024         <span class="keyword">end</span>
+0025             
+0026                 fprintf(ofid,<span class="string">'\n%s\n'</span>,<span class="string">'*********************************************************************************'</span>);
+0027     <span class="keyword">end</span>
+0028     <span class="keyword">end</span>
+0029     
+0030     fclose(fid);
+0031     fclose(ofid);
+0032</pre></div>
+<hr><address>Generated on Wed 13-Dec-2006 00:06:54 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

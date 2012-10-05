@@ -1,0 +1,198 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of LinkHandle</title>
+  <meta name="keywords" content="LinkHandle">
+  <meta name="description" content="This is the buttondownfunction for the axis. Work on it !!">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html XeX --><!-- ../menu.html UtilityFunctions --><!-- menu.html handlingGraphics -->
+<h1>LinkHandle
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>This is the buttondownfunction for the axis. Work on it !!</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function LinkHandle </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">This is the buttondownfunction for the axis. Work on it !!</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../XeX/UtilityFunctions/update/UpdateSlider.html" class="code" title="">UpdateSlider</a>	this is the major update graphic objects file. poorly called</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../XeX/XeX.html" class="code" title="function varargout = XeX(varargin)">XeX</a>	XEX M-file for XeX.fig</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function LinkHandle</a>
+0002 <span class="comment">%This is the buttondownfunction for the axis. Work on it !!</span>
+0003 
+0004 SelectionType=get(gcf,<span class="string">'SelectionType'</span>);
+0005 handles=getappdata(gcf,<span class="string">'UsedByGUIData_m'</span>);  <span class="comment">%so this is now the handles object; later on, save changes</span>
+0006 LinkAxisHandle=gca;
+0007     
+0008     AxesList=handles.HandlesList;
+0009     WhichAxis=find(LinkAxisHandle==AxesList);
+0010     
+0011     CurrentLinkAxis=WhichAxis;
+0012     
+0013     evalString=[<span class="string">'XAxisVariable=handles.AxisVariable('</span> num2str(WhichAxis) <span class="string">').XAxis;'</span><span class="keyword">...</span>
+0014         <span class="string">'YAxisVariable=handles.AxisVariable('</span> num2str(WhichAxis) <span class="string">').YAxis;'</span><span class="keyword">...</span>
+0015         ];
+0016     eval(evalString);
+0017 
+0018 RectDrawn=0;
+0019 
+0020 <span class="keyword">if</span> strcmp(SelectionType,<span class="string">'normal'</span>)
+0021     
+0022 NumClicks=getappdata(LinkAxisHandle,<span class="string">'NumClicks'</span>);
+0023 CurrentPointPlots=getappdata(LinkAxisHandle,<span class="string">'CurrentPointPlots'</span>);
+0024 OldPointPlots=CurrentPointPlots;
+0025 
+0026 OldXLim=get(LinkAxisHandle,<span class="string">'xlim'</span>);
+0027 OldYLim=get(LinkAxisHandle,<span class="string">'ylim'</span>);
+0028 
+0029 CurrentPoint=get(LinkAxisHandle,<span class="string">'CurrentPoint'</span>);
+0030 CurrentPoint=CurrentPoint(1,1:2);
+0031 
+0032 <span class="comment">% fprintf('%s\n','Registered a c lick');</span>
+0033 
+0034 <span class="keyword">if</span> NumClicks==1|NumClicks==3
+0035     setappdata(LinkAxisHandle,<span class="string">'FirstClick'</span>,CurrentPoint);
+0036     CurrentPointPlots(1)=plot(CurrentPoint(1),CurrentPoint(2),<span class="string">'ro'</span>);
+0037 <span class="keyword">elseif</span> NumClicks==2
+0038     setappdata(LinkAxisHandle,<span class="string">'SecondClick'</span>,CurrentPoint);   
+0039     FirstClick=getappdata(LinkAxisHandle,<span class="string">'FirstClick'</span>);
+0040     SecondClick=CurrentPoint;
+0041     
+0042     <span class="keyword">if</span> ( FirstClick(1)~=SecondClick(1) &amp; FirstClick(2)~=SecondClick(2))
+0043    RectDrawn=1;
+0044     <span class="keyword">else</span>
+0045         CurrentRect=plot(NaN,NaN); <span class="comment">%dummy</span>
+0046     <span class="keyword">end</span>
+0047     
+0048     CurrentPointPlots(2)=plot(CurrentPoint(1),CurrentPoint(2),<span class="string">'ro'</span>);
+0049 
+0050 <span class="keyword">end</span>
+0051 
+0052 
+0053 <span class="comment">%here is where you do the hard work; rectangle was drawn, so have to update</span>
+0054 <span class="keyword">if</span> RectDrawn==1
+0055     
+0056     <span class="comment">%first create the appendfilter</span>
+0057 
+0058     
+0059     minX=min([FirstClick(1), SecondClick(1)]);
+0060     maxX=max([FirstClick(1) SecondClick(1)]);
+0061     minY=min([FirstClick(2) SecondClick(2)]);
+0062     maxY=max([FirstClick(2) SecondClick(2)]);
+0063     
+0064     AppendFilter=<span class="string">''</span>;
+0065     
+0066     XUnd=0; YUnd=0;
+0067     
+0068      <span class="keyword">if</span> ~strcmp(XAxisVariable,<span class="string">'Undefined'</span>) &amp;&amp; ~strcmp(XAxisVariable,<span class="string">'SpikeRate'</span>)<span class="comment">%if they are not undefined, then create the append filter</span>
+0069         AppendFilter=[ AppendFilter XAxisVariable <span class="string">'&lt;'</span> num2str(maxX) <span class="string">'&amp;'</span> XAxisVariable <span class="string">'&gt;'</span> num2str(minX)]; 
+0070      <span class="keyword">else</span> XUnd=1;
+0071      <span class="keyword">end</span>
+0072      
+0073      <span class="keyword">if</span> ~strcmp(YAxisVariable,<span class="string">'Undefined'</span>)&amp;&amp; ~strcmp(YAxisVariable,<span class="string">'SpikeRate'</span>)
+0074         AppendFilter= [AppendFilter <span class="string">'&amp;'</span> YAxisVariable <span class="string">'&lt;'</span> num2str(maxY) <span class="string">'&amp;'</span> YAxisVariable <span class="string">'&gt;'</span> num2str(minY)];
+0075      <span class="keyword">else</span> YUnd=1;
+0076      <span class="keyword">end</span>
+0077      
+0078      <span class="keyword">if</span> XUnd==0&amp;&amp;YUnd==0
+0079     CurrentRect=rectangle(<span class="string">'position'</span>,[min(FirstClick(1),SecondClick(1)) min(FirstClick(2), SecondClick(2)) range([FirstClick(1) SecondClick(1)]) range([FirstClick(2) SecondClick(2)])]);
+0080      <span class="keyword">elseif</span> (XUnd==1&amp;&amp;YUnd==0)
+0081                   XLim=get(LinkAxisHandle,<span class="string">'xlim'</span>);
+0082          CurrentRect(1)=plot(XLim,[FirstClick(2) FirstClick(2)],<span class="string">'k-'</span>);
+0083          CurrentRect(2)=plot(XLim,[SecondClick(2) SecondClick(2)],<span class="string">'k-'</span>);
+0084 
+0085 
+0086 <span class="comment">%          CurrentRect=errorbar((FirstClick(1)+SecondClick(1))/2,(FirstClick(2)+SecondClick(2))/2,range([FirstClick(2) SecondClick(2)])/2);</span>
+0087 <span class="comment">% CurrentRect=plot([FirstClick(1) SecondClick(1)],[FirstClick(2) SecondClick(2)],'k-');</span>
+0088 
+0089      <span class="keyword">elseif</span> XUnd==0&amp;&amp;YUnd==1
+0090                   YLim=get(LinkAxisHandle,<span class="string">'ylim'</span>);
+0091          CurrentRect(1)=plot([FirstClick(1) FirstClick(1)],YLim,<span class="string">'k-'</span>);
+0092          CurrentRect(2)=plot([SecondClick(1) SecondClick(1)],YLim,<span class="string">'k-'</span>);
+0093 <span class="comment">%          CurrentRect=herrorbar((FirstClick(1)+SecondClick(1))/2,(FirstClick(2)+SecondClick(2))/2,range([FirstClick(1) SecondClick(1)])/2);</span>
+0094      <span class="keyword">elseif</span> XUnd==1&amp;YUnd==1, CurrentRect=plot(NaN,NaN); <span class="comment">%dummy</span>
+0095      <span class="keyword">end</span>
+0096      
+0097      <span class="keyword">if</span> size(CurrentRect,1)&gt;1, CurrentRect=CurrentRect';<span class="keyword">end</span>
+0098     
+0099     setappdata(LinkAxisHandle,<span class="string">'CurrentRect'</span>,CurrentRect);
+0100  set(CurrentRect,<span class="string">'linewidth'</span>,1);
+0101 
+0102      
+0103 <span class="comment">%          keyboard;</span>
+0104 
+0105         <span class="comment">%that is it, now we are ready to update, using this append filter</span>
+0106         
+0107         <span class="keyword">if</span> strcmp(XAxisVariable,<span class="string">'Time'</span>)
+0108             UpdateType=<span class="string">'TimeLinkAxis'</span>;
+0109             TimeWindowLinkAxis=[FirstClick(1) SecondClick(1)];
+0110         <span class="keyword">else</span>
+0111         UpdateType=<span class="string">'LinkAxis'</span>;  <span class="comment">%FirstClick and SecondClick are still available if necessary for use for timewindow vector</span>
+0112         <span class="keyword">end</span>
+0113 
+0114         <a href="../../../XeX/UtilityFunctions/update/UpdateSlider.html" class="code" title="">UpdateSlider</a>;
+0115      
+0116     <span class="keyword">end</span>
+0117         
+0118 
+0119 
+0120 setappdata(LinkAxisHandle,<span class="string">'CurrentPointPlots'</span>,CurrentPointPlots);
+0121 set(CurrentPointPlots,<span class="string">'markersize'</span>,10,<span class="string">'markerfacecolor'</span>,<span class="string">'r'</span>);
+0122 
+0123 <span class="keyword">if</span> NumClicks==3
+0124     NumClicks=1; 
+0125 CurrentRect=getappdata(LinkAxisHandle,<span class="string">'CurrentRect'</span>);
+0126     delete([OldPointPlots CurrentRect]);
+0127     setappdata(LinkAxisHandle,<span class="string">'FirstClick'</span>,CurrentPoint);
+0128 <span class="keyword">end</span>
+0129 
+0130 NumClicks=NumClicks+1;
+0131 
+0132 setappdata(LinkAxisHandle,<span class="string">'NumClicks'</span>,NumClicks);
+0133 
+0134 set(LinkAxisHandle,<span class="string">'xlim'</span>,OldXLim',<span class="string">'ylim'</span>,OldYLim);
+0135 
+0136 drawnow;
+0137 
+0138 <span class="comment">% keyboard;</span>
+0139 setappdata(gcf,<span class="string">'UsedByGUIData_m'</span>,handles); <span class="comment">%this saves all the stuff you got from handles</span>
+0140 
+0141 
+0142 <span class="keyword">end</span>
+0143 <span class="comment">% testax=axes;</span>
+0144 <span class="comment">% a=plot([0 0],[1 1]);</span>
+0145 <span class="comment">% set(a,'marker','none','color','k');</span>
+0146 <span class="comment">% set(testax,'Xgrid','on','ygrid','on','xlim',[0 1],'ylim',[0 1],'xtick',0:.2:1,'ytick',0:.2:1);</span>
+0147 <span class="comment">% hold on;</span>
+0148 
+0149         
+0150 
+0151 
+0152 
+0153 
+0154 
+0155 
+0156</pre></div>
+<hr><address>Generated on Wed 13-Dec-2006 00:06:54 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

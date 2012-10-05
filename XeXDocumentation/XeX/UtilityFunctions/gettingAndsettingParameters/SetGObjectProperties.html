@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of SetGObjectProperties</title>
+  <meta name="keywords" content="SetGObjectProperties">
+  <meta name="description" content="This script is used for setting GraphicsObjectProperties. Mainly calls MakeTempGraphix">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html XeX --><!-- ../menu.html UtilityFunctions --><!-- menu.html gettingAndsettingParameters -->
+<h1>SetGObjectProperties
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>This script is used for setting GraphicsObjectProperties. Mainly calls MakeTempGraphix</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> This script is used for setting GraphicsObjectProperties. Mainly calls MakeTempGraphix</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="MakeTempGraphix.html" class="code" title="">MakeTempGraphix</a>	This scriptlet assembles the TempGraphix structure for saving</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../XeX/AnalysisFunctions/AngularTuningCurve.html" class="code" title="">AngularTuningCurve</a>	Script to produce an angular tuning curve. Uses PlotTuningCurve to do the hard work</li><li><a href="../../../XeX/AnalysisFunctions/CircleMap.html" class="code" title="">CircleMap</a>	Script to produce an RFMap. Uses ImageRFMap and CircleRFMap to do the hard work</li><li><a href="../../../XeX/AnalysisFunctions/DiscHist.html" class="code" title="">DiscHist</a>	Script to produce an histogram. Uses PlotHist to do the hard work</li><li><a href="../../../XeX/AnalysisFunctions/DrawKDE.html" class="code" title="">DrawKDE</a>	Script to produce an kernel density estimate. Uses PlotKDE to do the hard work</li><li><a href="../../../XeX/AnalysisFunctions/DrawPSTH.html" class="code" title="">DrawPSTH</a>	Script to produce a PSTH. Uses PlotPSTH to do the hard work</li><li><a href="../../../XeX/AnalysisFunctions/DrawRasters.html" class="code" title="">DrawRasters</a>	Script to produce a rasterplot. Does the hard work by itself</li><li><a href="../../../XeX/AnalysisFunctions/DrawTuningCurve.html" class="code" title="">DrawTuningCurve</a>	Script to produce a tuning curve. Uses PlotTuningCurve to do the hard work</li><li><a href="../../../XeX/AnalysisFunctions/ISIH.html" class="code" title="">ISIH</a>	Script to produce an ISI histogram. Uses PlotISI to do the hard work</li><li><a href="../../../XeX/AnalysisFunctions/ImageMap.html" class="code" title="">ImageMap</a>	Script to produce an RFMap. Uses ImageRFMap and CircleRFMap to do the hard work</li><li><a href="../../../XeX/AnalysisFunctions/MakeHist.html" class="code" title="">MakeHist</a>	Script to produce an histogram. Uses PlotHist to do the hard work</li><li><a href="../../../XeX/AnalysisFunctions/PlotRFMap.html" class="code" title="">PlotRFMap</a>	Script to produce an RFMap. Uses ImageRFMap and CircleRFMap to do the hard work</li><li><a href="../../../XeX/AnalysisFunctions/PlotScatter.html" class="code" title="">PlotScatter</a>	Script to produce a scatter plot. Uses ScatterPlotter to do the hard work</li><li><a href="../../../XeX/AnalysisFunctions/SpikeDensity.html" class="code" title="">SpikeDensity</a>	Script to produce a spike-density. Uses PlotPSTD to do the hard work</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 
+0002 <span class="comment">% This script is used for setting GraphicsObjectProperties. Mainly calls MakeTempGraphix</span>
+0003   
+0004 NStr=num2str(CurrentAxis);
+0005 
+0006 CurrentDisplayFilterString=CurrentFilterString;
+0007 
+0008 <a href="MakeTempGraphix.html" class="code" title="">MakeTempGraphix</a>;
+0009     
+0010 LocalEvalString=[<span class="keyword">...</span>
+0011     <span class="string">'if ~isfield(handles,''A'</span> NStr <span class="string">'''), handles.A'</span> NStr <span class="string">'(1)=TempGraphix;'</span><span class="keyword">...</span>
+0012     <span class="string">'else handles.A'</span> NStr <span class="string">'(length(handles.A'</span> NStr <span class="string">')+1)=TempGraphix;end'</span><span class="keyword">...</span>
+0013     ];
+0014        
+0015     eval(LocalEvalString);
+0016</pre></div>
+<hr><address>Generated on Wed 13-Dec-2006 00:06:54 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

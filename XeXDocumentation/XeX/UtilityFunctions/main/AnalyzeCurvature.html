@@ -1,0 +1,92 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of AnalyzeCurvature</title>
+  <meta name="keywords" content="AnalyzeCurvature">
+  <meta name="description" content="function [MaxDeviation,InitialAngle]=AnalyzeCurvature(eyex,eyey,startx,endx,starty,endy)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html XeX --><!-- ../menu.html UtilityFunctions --><!-- menu.html main -->
+<h1>AnalyzeCurvature
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function [MaxDeviation,InitialAngle]=AnalyzeCurvature(eyex,eyey,startx,endx,starty,endy)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function Curvature=AnalyzeCurvature(eyex,eyey,startx,endx,starty,endy) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">function [MaxDeviation,InitialAngle]=AnalyzeCurvature(eyex,eyey,startx,endx,starty,endy)
+eyex and eyey are the trajectories of the saccade
+InitialAngle needs to be calculated over some initial say 5-10 ms
+Rotation is picked up from the 4-quadrant angle: +ve for clockwise
+rotation and negative for anticlockwise rotation</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="SacFind.html" class="code" title="function [Saccades,FiltX,FiltY]=SacFind(Trial,CorrectCode,MinISI,MinLat,PlotVar,FigNum,Threshold,Ax)">SacFind</a>	The main XeX saccade parser</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function Curvature=AnalyzeCurvature(eyex,eyey,startx,endx,starty,endy)</a>
+0002 
+0003 <span class="comment">%function [MaxDeviation,InitialAngle]=AnalyzeCurvature(eyex,eyey,startx,endx,starty,endy)</span>
+0004 <span class="comment">%eyex and eyey are the trajectories of the saccade</span>
+0005 <span class="comment">%InitialAngle needs to be calculated over some initial say 5-10 ms</span>
+0006 <span class="comment">%Rotation is picked up from the 4-quadrant angle: +ve for clockwise</span>
+0007 <span class="comment">%rotation and negative for anticlockwise rotation</span>
+0008 
+0009 <span class="comment">%find slope and intercept of saccade</span>
+0010 
+0011 <span class="keyword">if</span> endx-startx ~= 0
+0012     slopeValue=(endy-starty)/(endx-startx);
+0013     interceptValue=starty-slopeValue*startx;
+0014     AValue=-1*slopeValue;
+0015     BValue=1;
+0016     CValue=-1*interceptValue;
+0017 <span class="keyword">else</span>
+0018     BValue=0;
+0019     AValue=1;
+0020     CValue=-1*AValue*startx;
+0021 <span class="keyword">end</span>
+0022 
+0023 <span class="comment">%find perpendicular distance of each point on trajectory to line</span>
+0024 
+0025 DistanceVector= sqrt( (AValue*eyex+BValue*eyey+CValue).^2 / (AValue^2+BValue^2) );
+0026 MaxDeviation=nanmax(DistanceVector);
+0027 
+0028 <span class="comment">%find angle for each point in trajectory after starting point, relative to</span>
+0029 <span class="comment">%starting point</span>
+0030 <span class="comment">%assumes that trajector at least 2 samples long; is fine</span>
+0031 
+0032 AngleVector=atan2(eyey(2:end)-eyey(1),eyex(2:end)-eyex(1));
+0033 AngleVector(AngleVector&lt;0)=2*pi-AngleVector(AngleVector&lt;0);
+0034 
+0035 SaccadeAngle=atan2(endy-starty,endx-startx);
+0036 <span class="keyword">if</span> SaccadeAngle&lt;0, SaccadeAngle=2*pi-SaccadeAngle;<span class="keyword">end</span>
+0037 
+0038 RotationVector=SaccadeAngle-AngleVector;
+0039 
+0040 <span class="keyword">if</span> length(RotationVector)&gt;=10 
+0041     InitialAngle=nanmean(RotationVector(1:10)); 
+0042 <span class="keyword">else</span> InitialAngle=nan; <span class="keyword">end</span>
+0043 
+0044 Rotation=nanmean(RotationVector);
+0045 
+0046 Curvature=[MaxDeviation,InitialAngle,Rotation];</pre></div>
+<hr><address>Generated on Wed 13-Dec-2006 00:06:54 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

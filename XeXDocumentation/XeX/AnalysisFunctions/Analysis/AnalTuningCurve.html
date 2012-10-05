@@ -1,0 +1,89 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of AnalTuningCurve</title>
+  <meta name="keywords" content="AnalTuningCurve">
+  <meta name="description" content="Analtuningcurve does the analysis for the tuning curve">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html XeX --><!-- ../menu.html AnalysisFunctions --><!-- menu.html Analysis -->
+<h1>AnalTuningCurve
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>Analtuningcurve does the analysis for the tuning curve</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">Analtuningcurve does the analysis for the tuning curve
+See also DrawTuningCurve and PlotTuningCurve</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../XeX/UtilityFunctions/gettingAndsettingParameters/discretizeXes.html" class="code" title="">discretizeXes</a>	</li><li><a href="../../../XeX/UtilityFunctions/main/CountSpikes.html" class="code" title="function [countsmat]=CountSpikes(Trials,indices,alignTimes,xVec,unitCode,AnalogCorrect)">CountSpikes</a>	returns total spike counts for each Trial in a matrix</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../XeX/OutsideXex/doAnalysis.html" class="code" title="">doAnalysis</a>	This is a script so that it can be run in any format anywhere</li><li><a href="../../../XeX/UtilityFunctions/plotting/PlotTuningCurve.html" class="code" title="">PlotTuningCurve</a>	Script to plot tuning curves</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">%Analtuningcurve does the analysis for the tuning curve</span>
+0002 <span class="comment">%See also DrawTuningCurve and PlotTuningCurve</span>
+0003 
+0004 <a href="../../../XeX/UtilityFunctions/gettingAndsettingParameters/discretizeXes.html" class="code" title="">discretizeXes</a>;
+0005 eval([<span class="string">'CurrentXAxisVariable='</span> CurrentXAxisVariableStr <span class="string">';'</span>]);
+0006 
+0007 UniqueX=unique(CurrentXAxisVariable(~isnan(CurrentXAxisVariable)));
+0008 YMeasure=nan*ones(1,length(UniqueX));
+0009 YStd=YMeasure;
+0010 YSem=YMeasure;
+0011 PlotX=YMeasure;
+0012 
+0013     FilterHere=1;
+0014     TotalFilter=FilterHere&amp;CurrentFilterVector;
+0015     <span class="keyword">if</span> length(TotalFilter)==1, TotalFilter=logical(ones(1,length(CurrentAlignTime)));<span class="keyword">end</span>;
+0016 
+0017 <span class="keyword">for</span> Runner=1:length(UniqueX)
+0018     CurrentSet=find(CurrentXAxisVariable==UniqueX(Runner) &amp; TotalFilter);
+0019     <span class="keyword">if</span> ~isempty(CurrentSet),
+0020 <span class="keyword">switch</span>(CurrentYAxisVariableStr),
+0021     <span class="keyword">case</span> <span class="string">'SpikeRate'</span>, 
+0022             SRMat=<a href="../../../XeX/UtilityFunctions/main/CountSpikes.html" class="code" title="function [countsmat]=CountSpikes(Trials,indices,alignTimes,xVec,unitCode,AnalogCorrect)">CountSpikes</a>(Trials,RFTrialIndex(CurrentSet),CurrentAlignTime(CurrentSet),TimeWindowVector, CurrentUnitNumber, CurrentAnalogCorrect );
+0023         YMeasure(Runner)=nanmean(SRMat)*1000/(TimeWindowVector(2)-TimeWindowVector(1));
+0024         YStd(Runner)=nanstd(SRMat)*1000/(TimeWindowVector(2)-TimeWindowVector(1));
+0025         YSem(Runner)=YStd(Runner)/sqrt(length(find(~isnan(SRMat))));
+0026     <span class="keyword">otherwise</span>, 
+0027         <span class="keyword">try</span>,
+0028         eval([<span class="string">'CurrentYVariable='</span> CurrentYAxisVariableStr <span class="string">';'</span>]);
+0029         <span class="keyword">if</span> length(find(~isnan(CurrentYVariable(CurrentSet))))~=0
+0030         YMeasure(Runner)=nanmean(CurrentYVariable(CurrentSet));
+0031         YStd(Runner)=nanstd(CurrentYVariable(CurrentSet));
+0032         YSem(Runner)=YStd(Runner)/sqrt(length(find(~isnan(CurrentYVariable(CurrentSet)))));
+0033         <span class="keyword">end</span>
+0034         <span class="keyword">catch</span>,
+0035         fprintf(<span class="string">'%s\n'</span>,<span class="string">'Please Choose a Measure I can handle'</span>);
+0036         keyboard;
+0037         <span class="keyword">end</span>
+0038 <span class="keyword">end</span>
+0039 PlotX(Runner)=UniqueX(Runner);
+0040     <span class="keyword">end</span>
+0041 
+0042 <span class="keyword">end</span>
+0043 
+0044 PlotY=YMeasure;
+0045 PlotStd=YSem;
+0046</pre></div>
+<hr><address>Generated on Wed 13-Dec-2006 00:06:54 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

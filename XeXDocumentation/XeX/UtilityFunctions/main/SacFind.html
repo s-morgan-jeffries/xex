@@ -1,0 +1,217 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of SacFind</title>
+  <meta name="keywords" content="SacFind">
+  <meta name="description" content="The main XeX saccade parser">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html XeX --><!-- ../menu.html UtilityFunctions --><!-- menu.html main -->
+<h1>SacFind
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>The main XeX saccade parser</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function [Saccades,FiltX,FiltY]=SacFind(Trial,CorrectCode,MinISI,MinLat,PlotVar,FigNum,Threshold,Ax) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">    The main XeX saccade parser
+    function [Saccades,FiltX,FiltY]=SacFind(Trial,CorrectCode,MinISI,MinLat,PlotVar,FigNum,Threshold,Ax)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../XeX/UtilityFunctions/assorted/MakeSacStruct.html" class="code" title="function SacStruct=MakeSacStruct(WhichType)">MakeSacStruct</a>	function SacStruct=MakeSacStruct(WhichType)</li><li><a href="AnalyzeCurvature.html" class="code" title="function Curvature=AnalyzeCurvature(eyex,eyey,startx,endx,starty,endy)">AnalyzeCurvature</a>	function [MaxDeviation,InitialAngle]=AnalyzeCurvature(eyex,eyey,startx,endx,starty,endy)</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../XeX/PreProcFunctions/MGS.html" class="code" title="function CurrentVariables=MGS(Trials,klugestring,UseAx,SacOpts)">MGS</a>	This function analyzes files from the MGS paradigm</li><li><a href="../../../XeX/PreProcFunctions/OneJump.html" class="code" title="function CurrentVariables=OneJump(Trials,klugestring,UseAx,SacOpts)">OneJump</a>	This function analyzes trials from the Jump paradigms</li><li><a href="../../../XeX/PreProcFunctions/OneJump1215.html" class="code" title="function CurrentVariables=OneJump(Trials,klugestring,UseAx,SacOpts)">OneJump1215</a>	This function analyzes trials from the Jump paradigms</li><li><a href="../../../XeX/PreProcFunctions/PostSac.html" class="code" title="function CurrentVariables=PostSac(Trials,klugestring,UseAx,SacOpts)">PostSac</a>	This function analyzes trials from the old jumping eye-position task</li><li><a href="../../../XeX/PreProcFunctions/TAnalysis.html" class="code" title="function CurrentVariables=TAnalysis(Trials,klugestring,UseAx,SacOpts)">TAnalysis</a>	This function analyzes data from the 2-T paradigm</li><li><a href="../../../XeX/PreProcFunctions/VSearch.html" class="code" title="function CurrentVariables=VSearch(Trials,klugestring,UseAx,SacOpts)">VSearch</a>	This function analyzes data from the search paradigm</li><li><a href="../../../XeX/UtilityFunctions/assorted/PlotEye.html" class="code" title="function PlotEye(Trials,Indices,PlotAxis)">PlotEye</a>	This function plots eye position traces</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [Saccades,FiltX,FiltY]=SacFind(Trial,CorrectCode,MinISI,MinLat,PlotVar,FigNum,Threshold,Ax)</a>
+0002 
+0003 <span class="comment">%    The main XeX saccade parser</span>
+0004 <span class="comment">%    function [Saccades,FiltX,FiltY]=SacFind(Trial,CorrectCode,MinISI,MinLat,PlotVar,FigNum,Threshold,Ax)</span>
+0005 
+0006 <span class="comment">%Initializing</span>
+0007 
+0008 Saccades=<a href="../../../XeX/UtilityFunctions/assorted/MakeSacStruct.html" class="code" title="function SacStruct=MakeSacStruct(WhichType)">MakeSacStruct</a>;
+0009 <span class="comment">%struct('latency',NaN,'duration',NaN,'peakvelocity',NaN ,'amplitude',NaN,'velocitrace',NaN,'startx',NaN,'starty',NaN,'endx',NaN,'endy',NaN,'eyex',NaN,'eyey',NaN,'curvature',NaN);</span>
+0010 filtlength=5;
+0011 <span class="keyword">if</span> ~exist(<span class="string">'MinISI'</span>,<span class="string">'var'</span>) || isempty(MinISI) || isnan(MinISI), MinISI=0;<span class="keyword">end</span>
+0012 <span class="keyword">if</span> ~exist(<span class="string">'MinLat'</span>,<span class="string">'var'</span>) || isempty(MinLat) || isnan(MinLat), MinLat=0;<span class="keyword">end</span>
+0013 
+0014 <span class="comment">%Finding the eye signal</span>
+0015 
+0016 tracexx = double(Trial.Signals(1).Signal);
+0017 traceyy = double(Trial.Signals(2).Signal);
+0018 
+0019 <span class="comment">%Doing Correction for Stimulus Onset</span>
+0020 
+0021 <span class="keyword">if</span> exist(<span class="string">'CorrectCode'</span>,<span class="string">'var'</span>) &amp;&amp; ~isempty(CorrectCode) &amp;&amp; ~isnan(CorrectCode) &amp;&amp; CorrectCode~=0
+0022     CurrentEvents=Trial.Events;
+0023     <span class="keyword">if</span> ~isempty(CurrentEvents)
+0024     CurrentCodes=double([CurrentEvents.Code]); CurrentTimes=double([CurrentEvents.Time]);
+0025     CorrectCodeLocation=find(CurrentCodes==CorrectCode);
+0026         <span class="keyword">if</span> ~isempty(CorrectCodeLocation)
+0027         CorrectCodeOnTime=CurrentTimes(CorrectCodeLocation(1));
+0028         <span class="keyword">if</span> CorrectCodeOnTime&gt;=0 <span class="comment">%ALF if loop hack check this 12-1-06</span>
+0029         tracexx = tracexx(:,CorrectCodeOnTime:end);
+0030         traceyy = traceyy(:,CorrectCodeOnTime:end);
+0031         <span class="keyword">end</span>
+0032         <span class="keyword">end</span>
+0033     <span class="keyword">end</span>
+0034 <span class="keyword">end</span>
+0035 
+0036 <span class="comment">%Filtering eye signal</span>
+0037 
+0038 <span class="keyword">if</span> ~isempty(tracexx)
+0039  
+0040 FiltX=filter(ones(1,filtlength)/filtlength,1,tracexx);
+0041 FiltY=filter(ones(1,filtlength)/filtlength,1,traceyy);
+0042 dxf=diff(FiltX);
+0043 dyf=diff(FiltY);
+0044 Velocitrace=sqrt((dxf).^2+(dyf).^2);
+0045 
+0046 <span class="comment">%Thresholding !!</span>
+0047 <span class="comment">%for ziggy's physiology, .1 would be a large sac value. .03 would be a</span>
+0048 <span class="comment">%good small saccade (1-2 degs) value</span>
+0049 <span class="comment">%thresh=0.2; %for ziggy's hoffman saccades</span>
+0050 
+0051 FastMoving=0*(1:length(Velocitrace));
+0052 <span class="keyword">if</span> exist(<span class="string">'Threshold'</span>,<span class="string">'var'</span>)  <span class="comment">%allowing threshold to be passed</span>
+0053    thresh=Threshold;
+0054 <span class="keyword">else</span>
+0055  thresh=.1;  <span class="comment">%also tried .006 and .003. all for longer filter: 31ms.</span>
+0056 <span class="comment">%thresh=0.03;</span>
+0057 <span class="keyword">end</span>
+0058 
+0059 <span class="comment">%Finding onsets and offsets</span>
+0060 
+0061 FastMoving(Velocitrace&gt;=thresh)=1;
+0062 OnsetOffset=diff(FastMoving);
+0063 
+0064 <span class="comment">%Some ad-hoc, but sensible corrections for onsets and offsets</span>
+0065 
+0066 <span class="keyword">if</span> ~isempty(find(OnsetOffset==1))
+0067 SacOn=find(OnsetOffset==1);
+0068 SacOff=find(OnsetOffset==-1);
+0069 
+0070 <span class="keyword">if</span> length(SacOn) ~=length(SacOff) <span class="comment">%fprintf('Start was %d\tend was %d\n',length(SacOn),length(SacOff));</span>
+0071 <span class="keyword">if</span> length(SacOn)&gt;length(SacOff) SacOff=[SacOff length(OnsetOffset)];<span class="keyword">end</span>
+0072 <span class="keyword">if</span> length(SacOff)&gt;length(SacOn) SacOn=[1 SacOn];<span class="keyword">end</span>
+0073 <span class="keyword">end</span>
+0074 
+0075 <span class="keyword">if</span> SacOff(1)&lt;SacOn(1) SacOff=[SacOff(2:end) length(OnsetOffset)];<span class="keyword">end</span>
+0076 
+0077 <span class="comment">% Implementing the at least 5 ms rule</span>
+0078 
+0079 TestIndex=zeros(1,length(SacOn));
+0080 <span class="keyword">for</span> TempXX=1:length(SacOn)
+0081     inds=SacOn(TempXX):SacOff(TempXX);
+0082     <span class="keyword">if</span> length(inds)&gt;=5 TestIndex(TempXX)=1;<span class="keyword">end</span>
+0083 <span class="keyword">end</span>
+0084 SacOn=SacOn(logical(TestIndex));
+0085 SacOff=SacOff(logical(TestIndex));
+0086 <span class="keyword">else</span> SacOn=[];SacOff=[];
+0087 <span class="keyword">end</span>   <span class="comment">%Ending the if ~isempty(find(OnsetOffset==1))</span>
+0088 
+0089 SaccadeNumber=1;
+0090 sacstartvar=[];
+0091 sacendvar=[];
+0092 dummyvar=zeros(1,length(SacOn));
+0093 
+0094 <span class="comment">%Filling Saccade Structure</span>
+0095 
+0096 <span class="keyword">for</span> TempXX=1:length(SacOn)
+0097     
+0098     SacSamples=SacOn(TempXX):SacOff(TempXX);
+0099 
+0100             <span class="keyword">if</span> length(SacSamples)&gt;=5 &amp;&amp; ( (exist(<span class="string">'MinLat'</span>,<span class="string">'var'</span>) &amp;&amp; (SacOn(TempXX)+filtlength)&gt;=MinLat) || ~exist(<span class="string">'MinLat'</span>,<span class="string">'var'</span>))
+0101 
+0102         sacstartvar(SaccadeNumber)=SacOn(TempXX);
+0103         sacendvar(SaccadeNumber)=SacOff(TempXX);
+0104 
+0105         Saccades(SaccadeNumber).latency=SacOn(TempXX);<span class="comment">%+filtlength; %to compensate for filter !! Not compensating for filter</span>
+0106         Saccades(SaccadeNumber).duration=SacOff(TempXX)-SacOn(TempXX)+1;
+0107         Saccades(SaccadeNumber).peakvelocity=max(Velocitrace(SacSamples));
+0108         startx=FiltX(SacOn(TempXX));
+0109         endx=FiltX(SacOff(TempXX));
+0110         starty=FiltY(SacOn(TempXX));
+0111         endy=FiltY(SacOff(TempXX));
+0112         Saccades(SaccadeNumber).amplitude=sqrt((startx-endx).^2+(starty-endy).^2);
+0113        Saccades(SaccadeNumber).startx=startx;
+0114        Saccades(SaccadeNumber).endx=endx;
+0115        Saccades(SaccadeNumber).starty=starty;
+0116        Saccades(SaccadeNumber).endy=endy;
+0117        Saccades(SaccadeNumber).velocitrace=Velocitrace;
+0118        Saccades(SaccadeNumber).eyex=tracexx(SacSamples);
+0119        Saccades(SaccadeNumber).eyey=traceyy(SacSamples);
+0120        Saccades(SaccadeNumber).curvature=<a href="AnalyzeCurvature.html" class="code" title="function Curvature=AnalyzeCurvature(eyex,eyey,startx,endx,starty,endy)">AnalyzeCurvature</a>(tracexx(SacSamples),traceyy(SacSamples),startx,endx,starty,endy);
+0121         SaccadeNumber=SaccadeNumber+1; 
+0122         <span class="keyword">end</span>
+0123 <span class="keyword">end</span>
+0124 
+0125 <span class="comment">%Doing ISI correction</span>
+0126 
+0127 <span class="keyword">for</span> ind=1:length(Saccades)
+0128      latencies=[Saccades.latency];
+0129      endingtimes=[Saccades.latency]+[Saccades.duration]-1;
+0130      <span class="keyword">if</span> length(latencies)&gt;1 isis=latencies(2:end)-endingtimes(1:end-1); 
+0131             Saccades(find(isis&lt;=MinISI)+1)=[];
+0132             sacstartvar(find(isis&lt;=MinISI)+1)=[];
+0133             sacendvar(find(isis&lt;=MinISI)+1)=[];
+0134         <span class="keyword">if</span> ~isempty(find(isis&lt;=0)) fprintf(<span class="string">'%s\n'</span>,<span class="string">'Warning: you have isis &lt;=0. line 124 in SacFind.m'</span>);<span class="keyword">end</span>
+0135     <span class="keyword">else</span> isis=[];<span class="keyword">end</span>
+0136 <span class="keyword">end</span>
+0137 
+0138 <span class="comment">%Doing the Plotting</span>
+0139 
+0140 <span class="keyword">if</span> (exist(<span class="string">'PlotVar'</span>,<span class="string">'var'</span>) &amp;&amp; PlotVar==1 ) 
+0141     <span class="keyword">if</span> exist(<span class="string">'FigNum'</span>,<span class="string">'var'</span>) &amp;&amp; ~isempty(FigNum) &amp;&amp; ~isnan(FigNum), figure(FigNum);<span class="keyword">else</span> figure;<span class="keyword">end</span>
+0142     <span class="keyword">if</span> ~exist(<span class="string">'Ax'</span>,<span class="string">'var'</span>) || length(Ax)&lt;2, Ax(1)=subplot(2,1,1); Ax(2)=subplot(2,1,2);<span class="keyword">end</span>
+0143 
+0144 axes(Ax(1)); hold on;
+0145 hvar=plot(sqrt((FiltX).^2+(FiltY).^2),<span class="string">'k-'</span>);
+0146 set(hvar,<span class="string">'linewidth'</span>,2);
+0147 hold on;
+0148 h1=plot(FiltX,<span class="string">'b:'</span>);
+0149 h2=plot(FiltY,<span class="string">'r:'</span>);
+0150 set([h1 h2],<span class="string">'linewidth'</span>,2);
+0151 ylims=get(gca,<span class="string">'ylim'</span>);
+0152 <span class="keyword">for</span> TempXX=1:length(sacstartvar)
+0153 hvar=plot([sacstartvar(TempXX) sacstartvar(TempXX)],ylims,<span class="string">'b-'</span>);
+0154 hvar=plot([sacendvar(TempXX) sacendvar(TempXX)],ylims,<span class="string">'y-'</span>);
+0155 <span class="keyword">end</span>
+0156 
+0157 axes(Ax(2)); hold on;
+0158 hvar=plot(Velocitrace,<span class="string">'r'</span>);
+0159 set(hvar,<span class="string">'linewidth'</span>,2);
+0160 hold on;
+0161 ylims=get(gca,<span class="string">'ylim'</span>);
+0162 <span class="keyword">for</span> TempXX=1:length(sacstartvar)
+0163 h=plot([sacstartvar(TempXX) sacstartvar(TempXX)],ylims,<span class="string">'b-'</span>);
+0164 h=plot([sacendvar(TempXX) sacendvar(TempXX)],ylims,<span class="string">'y-'</span>);
+0165 <span class="keyword">end</span>
+0166 
+0167 zoom on;
+0168  
+0169 <span class="keyword">end</span>  <span class="comment">%the PlotVar loop ends here</span>
+0170 
+0171 <span class="keyword">end</span> <span class="comment">%the ~isempty(tracexx) loop ends here</span>
+0172 
+0173  <span class="keyword">if</span> ~exist(<span class="string">'FiltX'</span>,<span class="string">'var'</span>), FiltX=nan;FiltY=nan;<span class="keyword">end</span>
+0174</pre></div>
+<hr><address>Generated on Wed 13-Dec-2006 00:06:54 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

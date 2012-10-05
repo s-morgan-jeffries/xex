@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of SwitchAxes</title>
+  <meta name="keywords" content="SwitchAxes">
+  <meta name="description" content="This script switches axes based on axis list in GUI">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html XeX --><!-- ../menu.html UtilityFunctions --><!-- menu.html handlingGraphics -->
+<h1>SwitchAxes
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>This script switches axes based on axis list in GUI</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">    This script switches axes based on axis list in GUI</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="ClearGObjects.html" class="code" title="">ClearGObjects</a>	This script is used to remove graphix objects properties when clear axes is called</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../XeX/UtilityFunctions/gettingAndsettingParameters/FInterpreter.html" class="code" title="">FInterpreter</a>	This script does the filter interpretation; will grow</li><li><a href="../../../XeX/UtilityFunctions/gettingAndsettingParameters/GraphCommandProcessor.html" class="code" title="">GraphCommandProcessor</a>	Basically does what Plot data does, but reads in commands from a gfx</li><li><a href="../../../XeX/XeX.html" class="code" title="function varargout = XeX(varargin)">XeX</a>	XEX M-file for XeX.fig</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 
+0002 <span class="comment">%    This script switches axes based on axis list in GUI</span>
+0003 
+0004 AxesPointer=AxesPointer+1;
+0005 
+0006 <span class="keyword">if</span> AxesPointer==0 | AxesPointer&gt;length(CurrentAxesVector), AxesPointer=1;<span class="keyword">end</span>
+0007 
+0008 eval([<span class="string">'axes(handles.axes'</span> num2str(CurrentAxesVector(AxesPointer)) <span class="string">');'</span>]); 
+0009 
+0010 CurrentAxis=CurrentAxesVector(AxesPointer);
+0011 
+0012 <span class="keyword">if</span> AxesPointer&gt;=length(CurrentAxesVector) AxesPointer=0;<span class="keyword">end</span>
+0013 
+0014 <span class="keyword">if</span> CurrentHoldStatus ~=1, cla; hold off;
+0015 <a href="ClearGObjects.html" class="code" title="">ClearGObjects</a>;
+0016 <span class="keyword">else</span> hold on; <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Wed 13-Dec-2006 00:06:54 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

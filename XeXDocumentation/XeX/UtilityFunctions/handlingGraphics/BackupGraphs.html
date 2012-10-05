@@ -1,0 +1,65 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of BackupGraphs</title>
+  <meta name="keywords" content="BackupGraphs">
+  <meta name="description" content="This script handles graph backup.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html XeX --><!-- ../menu.html UtilityFunctions --><!-- menu.html handlingGraphics -->
+<h1>BackupGraphs
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>This script handles graph backup.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">    This script handles graph backup.
+    It is somewhat suspect at the moment (05/12/11)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 
+0002 <span class="comment">%    This script handles graph backup.</span>
+0003 <span class="comment">%    It is somewhat suspect at the moment (05/12/11)</span>
+0004 
+0005 TempGraphs=[];
+0006 <span class="keyword">for</span> TempVar=1:(handles.NumberOfAxes)
+0007     EvalString=[<span class="keyword">...</span>
+0008         <span class="string">'if isfield(handles,''A'</span> num2str(TempVar) <span class="string">'''),TempGraphs.A'</span> num2str(TempVar) <span class="string">'=handles.A'</span> num2str(TempVar) <span class="string">';end'</span><span class="keyword">...</span>
+0009         ];
+0010     eval(EvalString);
+0011 
+0012 <span class="comment">%         EvalString=[...</span>
+0013 <span class="comment">%         'if isfield(handles,''A' num2str(TempVar) 'Annotations''),TempGraphs.A' num2str(TempVar) 'Annotations=handles.A' num2str(TempVar) 'Annotations;end'...</span>
+0014 <span class="comment">%         ];</span>
+0015 <span class="comment">%     eval(EvalString);</span>
+0016 
+0017 
+0018 <span class="keyword">end</span>
+0019 
+0020 handles.OldGraphs=TempGraphs;
+0021 clear TempGraphs;
+0022 fprintf(<span class="string">'%s\n'</span>,<span class="string">'Backed up your graphs'</span>);</pre></div>
+<hr><address>Generated on Wed 13-Dec-2006 00:06:54 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

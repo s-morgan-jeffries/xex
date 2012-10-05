@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of myregress</title>
+  <meta name="keywords" content="myregress">
+  <meta name="description" content="regresses y=mx+c">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html XeX --><!-- ../menu.html UtilityFunctions --><!-- menu.html assorted -->
+<h1>myregress
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>regresses y=mx+c</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function Myregstruct=myregress(x,y) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">regresses y=mx+c
+x and y are row vectors</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function Myregstruct=myregress(x,y)</a>
+0002 
+0003 <span class="comment">%regresses y=mx+c</span>
+0004 <span class="comment">%x and y are row vectors</span>
+0005 
+0006 <span class="keyword">if</span> size(x,1)&lt;size(x,2) &amp; size(x,1)==1, x=x'; <span class="keyword">end</span>
+0007 <span class="keyword">if</span> size(y,1)&lt;size(y,2) &amp; size(y,1)==1, y=y'; <span class="keyword">end</span>
+0008 
+0009 [a,b,c,d,e]=regress(y,[x ones(length(x),1)]);
+0010 
+0011 Myregstruct.co=a;
+0012 Myregstruct.coci=b;
+0013 Myregstruct.res=c;
+0014 Myregstruct.resci=d;
+0015 Myregstruct.stats=e;</pre></div>
+<hr><address>Generated on Wed 13-Dec-2006 00:06:54 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

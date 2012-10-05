@@ -1,0 +1,80 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of ISIH</title>
+  <meta name="keywords" content="ISIH">
+  <meta name="description" content="Script to produce an ISI histogram. Uses PlotISI to do the hard work">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html XeX --><!-- menu.html AnalysisFunctions -->
+<h1>ISIH
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>Script to produce an ISI histogram. Uses PlotISI to do the hard work</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">      Script to produce an ISI histogram. Uses PlotISI to do the hard work
+      See also:
+      <a href="ISIH.html" class="code" title="">ISIH</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="ISIH.html" class="code" title="">ISIH</a>	Script to produce an ISI histogram. Uses PlotISI to do the hard work</li><li><a href="../../XeX/UtilityFunctions/assorted/clearvars.html" class="code" title="">clearvars</a>	This function clears all the variables that were recently detached</li><li><a href="../../XeX/UtilityFunctions/assorted/detachvars.html" class="code" title="">detachvars</a>	This script detaches all the variables from a structure and assigns them</li><li><a href="../../XeX/UtilityFunctions/gettingAndsettingParameters/NextMarkerSet.html" class="code" title="">NextMarkerSet</a>	This script sets NextMarker and NextMarkerEvalString</li><li><a href="../../XeX/UtilityFunctions/gettingAndsettingParameters/SetGObjectProperties.html" class="code" title="">SetGObjectProperties</a>	This script is used for setting GraphicsObjectProperties. Mainly calls MakeTempGraphix</li><li><a href="../../XeX/UtilityFunctions/gettingAndsettingParameters/evalAlignTime.html" class="code" title="">evalAlignTime</a>	</li><li><a href="../../XeX/UtilityFunctions/gettingAndsettingParameters/setAlignTime.html" class="code" title="">setAlignTime</a>	This script sets CurrentAlignString to the correct value, based on the AlignCode obtained from the GUI</li><li><a href="../../XeX/UtilityFunctions/plotting/PlotISI.html" class="code" title="">PlotISI</a>	Plots ISIs</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="ISIH.html" class="code" title="">ISIH</a>	Script to produce an ISI histogram. Uses PlotISI to do the hard work</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">%      Script to produce an ISI histogram. Uses PlotISI to do the hard work</span>
+0002 <span class="comment">%      See also:</span>
+0003 <span class="comment">%      ISIH</span>
+0004 
+0005 <a href="../../XeX/UtilityFunctions/assorted/detachvars.html" class="code" title="">detachvars</a>;
+0006 <span class="comment">% SwitchAxes;</span>
+0007 eval([<span class="string">'CurrentFilterVector='</span> CurrentFilterString <span class="string">';'</span>]); <span class="comment">%this does the current logical filter vector</span>
+0008 <a href="../../XeX/UtilityFunctions/gettingAndsettingParameters/setAlignTime.html" class="code" title="">setAlignTime</a>;
+0009 <a href="../../XeX/UtilityFunctions/gettingAndsettingParameters/evalAlignTime.html" class="code" title="">evalAlignTime</a>;
+0010 
+0011 EvalString=<span class="string">'ReturnMap=0;PlotISI;'</span>;
+0012 
+0013 <a href="../../XeX/UtilityFunctions/gettingAndsettingParameters/NextMarkerSet.html" class="code" title="">NextMarkerSet</a>;
+0014 <span class="keyword">if</span> isempty(NextMarker), NextMarker=<span class="string">'k-'</span>;<span class="keyword">end</span>
+0015 EvalString=[EvalString NextMarkerEvalString];  <span class="comment">%this makes sure the marker is attached</span>
+0016 LocalMarkerString=NextMarker; 
+0017 
+0018 eval(EvalString);
+0019 CurrentPlotType=<span class="string">'ISIH'</span>;
+0020 <a href="../../XeX/UtilityFunctions/gettingAndsettingParameters/SetGObjectProperties.html" class="code" title="">SetGObjectProperties</a>;
+0021 
+0022 
+0023 <span class="comment">% SwitchAxes;</span>
+0024 <span class="comment">% EvalString='ReturnMap=1;PlotISI;';</span>
+0025 <span class="comment">%</span>
+0026 <span class="comment">%</span>
+0027 <span class="comment">% NextMarkerSet;</span>
+0028 <span class="comment">% if isempty(NextMarker), NextMarker='k-';end</span>
+0029 <span class="comment">% % EvalString=[EvalString NextMarkerEvalString];  %this makes sure the marker is attached</span>
+0030 <span class="comment">% LocalMarkerString=NextMarker;</span>
+0031 <span class="comment">%</span>
+0032 <span class="comment">% eval(EvalString);</span>
+0033 <span class="comment">% CurrentPlotType='ReturnMap';</span>
+0034 <span class="comment">% SetGObjectProperties;</span>
+0035 
+0036 <a href="../../XeX/UtilityFunctions/assorted/clearvars.html" class="code" title="">clearvars</a>;</pre></div>
+<hr><address>Generated on Wed 13-Dec-2006 00:06:54 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

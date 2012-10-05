@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of LayOutEditWindow</title>
+  <meta name="keywords" content="LayOutEditWindow">
+  <meta name="description" content="takes care of edit window positioning">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html XeX --><!-- ../menu.html UtilityFunctions --><!-- menu.html LayoutStuff -->
+<h1>LayOutEditWindow
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>takes care of edit window positioning</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">takes care of edit window positioning</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="gset.html" class="code" title="">gset</a>	sets the gain graph layout</li><li><a href="nineset.html" class="code" title="">nineset</a>	</li><li><a href="twelveset.html" class="code" title="">twelveset</a>	</li><li><a href="../../../XeX/XeX.html" class="code" title="function varargout = XeX(varargin)">XeX</a>	XEX M-file for XeX.fig</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 
+0002 <span class="comment">%takes care of edit window positioning</span>
+0003 
+0004 
+0005 CurEditPos=get(handles.AxisObj1,<span class="string">'Position'</span>);
+0006 CurEditWidth=CurEditPos(3);
+0007 CurEditHeight=CurEditPos(4);
+0008 
+0009 CurLinkTextPos=get(handles.AxisLinkText1,<span class="string">'Position'</span>);
+0010 CurLinkTextWidth=CurLinkTextPos(3);
+0011 CurLinkTextHeight=CurLinkTextPos(4);
+0012 
+0013 
+0014 evalString=<span class="string">''</span>;
+0015 
+0016 <span class="keyword">for</span> TemporaryVariable=1:handles.NumberOfAxes
+0017         TemporaryVariableString=num2str(TemporaryVariable);
+0018         evalString=[evalString<span class="keyword">...</span>
+0019         <span class="string">'CurPos=get(handles.axes'</span> TemporaryVariableString <span class="string">',''Position'');'</span><span class="keyword">...</span>
+0020         <span class="string">'set(handles.AxisObj'</span> TemporaryVariableString <span class="string">',''Position'',[CurPos(1)+CurPos(3)-CurEditWidth,CurPos(2)+CurPos(4),CurEditWidth,CurEditHeight]);'</span><span class="keyword">...</span>
+0021         <span class="string">'set(handles.AxisLinkText'</span> TemporaryVariableString <span class="string">',''Position'',[CurPos(1)+CurPos(3) CurPos(2)+CurPos(4) CurLinkTextWidth CurLinkTextHeight]);'</span><span class="keyword">...</span>
+0022         ];
+0023 <span class="keyword">end</span>  
+0024 
+0025          eval(evalString);</pre></div>
+<hr><address>Generated on Wed 13-Dec-2006 00:06:54 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of GetVariableChoices</title>
+  <meta name="keywords" content="GetVariableChoices">
+  <meta name="description" content="This scriptlet parses stuff from EnterAxisVariables">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html XeX --><!-- ../menu.html UtilityFunctions --><!-- menu.html gettingAndsettingParameters -->
+<h1>GetVariableChoices
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>This scriptlet parses stuff from EnterAxisVariables</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">    This scriptlet parses stuff from EnterAxisVariables
+    Used to set variables for tuning curves, etc.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../XeX/SubGUIs/EnterAxisVariables.html" class="code" title="function varargout = EnterAxisVariables(varargin)">EnterAxisVariables</a>	ENTERAXISVARIABLES M-file for EnterAxisVariables.fig</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 
+0002 <span class="comment">%    This scriptlet parses stuff from EnterAxisVariables</span>
+0003 <span class="comment">%    Used to set variables for tuning curves, etc.</span>
+0004 
+0005 Xstring=get(handles.XAxisVariable,<span class="string">'string'</span>);
+0006 Xvalue=get(handles.XAxisVariable,<span class="string">'value'</span>);
+0007 <span class="keyword">if</span> iscell(Xstring),MyVariableChoices.XAxisVariable=Xstring{Xvalue};<span class="keyword">else</span> MyVariableChoices.XAxisVariable=Xstring;<span class="keyword">end</span>
+0008 
+0009 X1string=get(handles.X1AxisVariable,<span class="string">'string'</span>);
+0010 X1value=get(handles.X1AxisVariable,<span class="string">'value'</span>);
+0011 <span class="keyword">if</span> iscell(X1string),MyVariableChoices.X1AxisVariable=X1string{X1value}; <span class="keyword">else</span> MyVariableChoices.X1AxisVariable=X1string;<span class="keyword">end</span>
+0012 
+0013 MyVariableChoices.DiscretizeX=get(handles.DiscretizeX,<span class="string">'value'</span>);
+0014 MyVariableChoices.DiscretizeX1=get(handles.DiscretizeX1,<span class="string">'value'</span>);
+0015 
+0016 MyVariableChoices.XAxisCentersStr=get(handles.XAxisCenters,<span class="string">'string'</span>);
+0017 MyVariableChoices.X1AxisCentersStr=get(handles.X1AxisCenters,<span class="string">'string'</span>);
+0018 
+0019 Ystring=get(handles.YAxisMeasure,<span class="string">'string'</span>);
+0020 Yvalue=get(handles.YAxisMeasure,<span class="string">'value'</span>);
+0021 <span class="keyword">if</span> iscell(Ystring),MyVariableChoices.YAxisMeasureStr=Ystring{Yvalue};<span class="keyword">else</span> MyVariableChoices.YAxisMeasureStr=Ystring;<span class="keyword">end</span></pre></div>
+<hr><address>Generated on Wed 13-Dec-2006 00:06:54 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

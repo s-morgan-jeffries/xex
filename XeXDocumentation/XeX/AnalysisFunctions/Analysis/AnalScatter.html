@@ -1,0 +1,76 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of AnalScatter</title>
+  <meta name="keywords" content="AnalScatter">
+  <meta name="description" content="AnalScatter does the analysis for the scatterplot">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html XeX --><!-- ../menu.html AnalysisFunctions --><!-- menu.html Analysis -->
+<h1>AnalScatter
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>AnalScatter does the analysis for the scatterplot</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">AnalScatter does the analysis for the scatterplot
+See also: PlotScatter and ScatterPlotter</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../XeX/UtilityFunctions/main/CountSpikes.html" class="code" title="function [countsmat]=CountSpikes(Trials,indices,alignTimes,xVec,unitCode,AnalogCorrect)">CountSpikes</a>	returns total spike counts for each Trial in a matrix</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../XeX/UtilityFunctions/plotting/ScatterPlotter.html" class="code" title="">ScatterPlotter</a>	Script to plot scatterplots; analysis done by analscatter. Makes it</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">%AnalScatter does the analysis for the scatterplot</span>
+0002 <span class="comment">%See also: PlotScatter and ScatterPlotter</span>
+0003 
+0004 <span class="comment">% discretizeXes;</span>
+0005 
+0006 eval([<span class="string">'CurrentXAxisVariable='</span> CurrentXAxisVariableStr <span class="string">';'</span>]);
+0007 
+0008 FilterHere=1;
+0009 TotalFilter=FilterHere&amp;CurrentFilterVector;
+0010 <span class="keyword">if</span> length(TotalFilter)==1, TotalFilter=logical(ones(1,length(CurrentAlignTime)));<span class="keyword">end</span>;
+0011 
+0012 PlotX=CurrentXAxisVariable(TotalFilter);
+0013 <span class="comment">% YMeasure=nan*ones(1,length(Uniqu));</span>
+0014 PlotY=NaN*PlotX;
+0015 
+0016 <span class="keyword">if</span> ~isempty(PlotX)
+0017     <span class="keyword">switch</span>(CurrentYAxisVariableStr),
+0018     <span class="keyword">case</span> <span class="string">'SpikeRate'</span>, 
+0019             SRMat=<a href="../../../XeX/UtilityFunctions/main/CountSpikes.html" class="code" title="function [countsmat]=CountSpikes(Trials,indices,alignTimes,xVec,unitCode,AnalogCorrect)">CountSpikes</a>(Trials,RFTrialIndex(TotalFilter),CurrentAlignTime(TotalFilter),TimeWindowVector, CurrentUnitNumber, CurrentAnalogCorrect );
+0020             PlotY=SRMat*1000/(TimeWindowVector(2)-TimeWindowVector(1));
+0021     <span class="keyword">otherwise</span>, 
+0022         <span class="keyword">try</span>,
+0023         eval([<span class="string">'CurrentYVariable='</span> CurrentYAxisVariableStr <span class="string">';'</span>]);
+0024         PlotY=CurrentYVariable(TotalFilter);
+0025         <span class="keyword">catch</span>,
+0026         fprintf(<span class="string">'%s\n'</span>,<span class="string">'Please Choose a Measure I can handle'</span>);
+0027         keyboard;
+0028         <span class="keyword">end</span>
+0029     <span class="keyword">end</span>
+0030 <span class="keyword">end</span>
+0031 
+0032 <span class="keyword">if</span> size(PlotX,1)&gt;1, PlotX=PlotX';<span class="keyword">end</span>
+0033 <span class="keyword">if</span> size(PlotY,1)&gt;1, PlotY=PlotY';<span class="keyword">end</span></pre></div>
+<hr><address>Generated on Wed 13-Dec-2006 00:06:54 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

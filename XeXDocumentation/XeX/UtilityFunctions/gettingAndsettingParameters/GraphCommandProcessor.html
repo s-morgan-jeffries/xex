@@ -1,0 +1,182 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of GraphCommandProcessor</title>
+  <meta name="keywords" content="GraphCommandProcessor">
+  <meta name="description" content="Basically does what Plot data does, but reads in commands from a gfx">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html XeX --><!-- ../menu.html UtilityFunctions --><!-- menu.html gettingAndsettingParameters -->
+<h1>GraphCommandProcessor
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>Basically does what Plot data does, but reads in commands from a gfx</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Basically does what Plot data does, but reads in commands from a gfx
+ command file
+ GraphCommandProcessor</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../XeX/UtilityFunctions/assorted/ParamEval.html" class="code" title="function CurrentVariables=ParamEval(XexParameters,CurrentVariables)">ParamEval</a>	This function works in PlotData and in Graphcommandprocessor and serves to</li><li><a href="../../../XeX/UtilityFunctions/assorted/TellMe.html" class="code" title="function TellMe(formatvar,stringvar,speakvar)">TellMe</a>	This function uses tts to speak out the stringvar if speaktovar is set, else fprintfs it to cmd window</li><li><a href="FInterpreter.html" class="code" title="">FInterpreter</a>	This script does the filter interpretation; will grow</li><li><a href="getCurrentParameters.html" class="code" title="">getCurrentParameters</a>	This script collects parameters from the GUI.</li><li><a href="../../../XeX/UtilityFunctions/handlingGraphics/SwitchAxes.html" class="code" title="">SwitchAxes</a>	This script switches axes based on axis list in GUI</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../XeX/XeX.html" class="code" title="function varargout = XeX(varargin)">XeX</a>	XEX M-file for XeX.fig</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 
+0002 <span class="comment">% Basically does what Plot data does, but reads in commands from a gfx</span>
+0003 <span class="comment">% command file</span>
+0004 <span class="comment">% GraphCommandProcessor</span>
+0005 
+0006 
+0007 <span class="comment">%Basic parameter collection and setting</span>
+0008 
+0009 <span class="keyword">for</span> TempVarA=1:handles.NumberOfAxes
+0010     eval([ <span class="string">'Axis'</span> num2str(TempVarA) <span class="string">'MarkerPointer=0;'</span><span class="keyword">...</span><span class="comment">    </span>
+0011         ]);
+0012 <span class="keyword">end</span>
+0013 
+0014 CurrentFilterString=<span class="string">'DUMMY'</span>;
+0015 <a href="getCurrentParameters.html" class="code" title="">getCurrentParameters</a>;
+0016 
+0017 NextCommandSetBaseRate=0;
+0018 
+0019 TempG=cellstr(get(handles.GraphCommandFiles,<span class="string">'string'</span>));
+0020 CurrentGFile=TempG{get(handles.GraphCommandFiles,<span class="string">'value'</span>)};
+0021 
+0022 <span class="keyword">if</span> isempty(CurrentUnitNumber), CurrentUnitNumber=613; fprintf(<span class="string">'%s\n'</span>,<span class="string">'Using 613 as the Unit'</span>);<span class="keyword">end</span>
+0023 
+0024 <span class="keyword">if</span> ~strcmp(CurrentDataFile,<span class="string">'LoadedFiles'</span>) &amp; ~strcmp(CurrentGFile,<span class="string">'CmdFiles'</span>)
+0025     
+0026     <span class="comment">%Make sure it is all loaded in; can preprocess for this even.</span>
+0027     <span class="comment">%First thing to do is to read in or take the cell array of command</span>
+0028     <span class="comment">%lines</span>
+0029         
+0030    Old_Dir=pwd;
+0031    cd(handles.GraphCommandsDirectory);
+0032    <span class="keyword">try</span>,
+0033    fid=fopen(CurrentGFile);
+0034    c=textscan(fid,<span class="string">'%s'</span>,<span class="string">'delimiter'</span>,<span class="string">'\n'</span>);
+0035    fclose(fid);
+0036    CurrentGCommands=c{1};
+0037    <span class="keyword">catch</span>,
+0038        fprintf(<span class="string">'%s\n'</span>,<span class="string">'Could not read file'</span>);
+0039        CurrentGCommands=<span class="string">''</span>;
+0040    <span class="keyword">end</span>
+0041    
+0042    cd(Old_Dir);
+0043    
+0044 <span class="keyword">if</span> ~isempty(CurrentGCommands)
+0045     
+0046     <span class="comment">%%***********something like this to strip off comment lines</span>
+0047     
+0048     testcommands=ones(1,length(CurrentGCommands));
+0049 
+0050     <span class="keyword">for</span> TempVar=1:length(testcommands)
+0051         testme=strtok(CurrentGCommands{TempVar});
+0052         <span class="keyword">if</span> ~isempty(strfind(testme,<span class="string">'#'</span>)) || isempty(testme) || ~isempty(strfind(testme,<span class="string">'*'</span>))||~isempty(strfind(testme,<span class="string">'%'</span>))
+0053             testcommands(TempVar)=0;
+0054         <span class="keyword">end</span>
+0055     <span class="keyword">end</span>
+0056 
+0057     CurrentGCommands=CurrentGCommands(logical(testcommands));
+0058     
+0059 <span class="comment">%     keyboard;</span>
+0060     
+0061     <span class="keyword">for</span> numCommands=1:length(CurrentGCommands)  <span class="comment">% change to line list from the file !!</span>
+0062         
+0063       CurrentFilterString=CurrentGCommands{numCommands};
+0064 
+0065       <span class="comment">%need a line here so that switchaxes is called at beginning</span>
+0066       
+0067       <span class="keyword">if</span> numCommands==1, <a href="../../../XeX/UtilityFunctions/handlingGraphics/SwitchAxes.html" class="code" title="">SwitchAxes</a>; <span class="keyword">end</span>
+0068   
+0069       PlotOK=1;       <span class="comment">% Initializes to PlotOK, FInterpreter will cancel to No Plot if needed</span>
+0070       <a href="FInterpreter.html" class="code" title="">FInterpreter</a>;  <span class="comment">%This calls the filter interpreter !!!!</span>
+0071 
+0072       <span class="keyword">if</span> RunCode==1, 
+0073           
+0074                     eval([<span class="string">'Trials=handles.'</span> CurrentDataFile <span class="string">'.Trials;'</span>]);
+0075           eval([<span class="string">'if ~isfield(handles.'</span> CurrentDataFile <span class="string">',''Analysis''), fprintf(''%s\n'',''Analyze your dataset first''); GoOn=0;else GoOn=1;end'</span>]);
+0076           eval([<span class="string">'if GoOn==1, CurrentVariables=handles.'</span> CurrentDataFile <span class="string">'.Analysis;end'</span>]);
+0077           <span class="keyword">if</span> GoOn==1
+0078 CurrentVariables=<a href="../../../XeX/UtilityFunctions/assorted/ParamEval.html" class="code" title="function CurrentVariables=ParamEval(XexParameters,CurrentVariables)">ParamEval</a>(XexParameters,CurrentVariables);
+0079 eval([<span class="string">'handles.'</span> CurrentDataFile <span class="string">'.Analysis=CurrentVariables;'</span>]);
+0080           <span class="keyword">end</span>
+0081               fprintf(<span class="string">'%s\n'</span>,<span class="string">'Running:'</span>);
+0082     fprintf(<span class="string">'%s\n'</span>,XexParameters);
+0083 <span class="comment">%     clearvars;</span>
+0084 <span class="keyword">end</span>
+0085       
+0086       <span class="keyword">if</span> PlotOK==1,
+0087           
+0088           <span class="keyword">if</span> isempty(CurrentFilterString), CurrentFilterString=<span class="string">'1'</span>;<span class="keyword">end</span> 
+0089           
+0090           NoChangeAxesPointer=1;
+0091           <a href="getCurrentParameters.html" class="code" title="">getCurrentParameters</a>;
+0092          
+0093           <span class="comment">%   try</span>
+0094           
+0095           eval([<span class="string">'Trials=handles.'</span> CurrentDataFile <span class="string">'.Trials;'</span>]);
+0096           eval([<span class="string">'if ~isfield(handles.'</span> CurrentDataFile <span class="string">',''Analysis''), fprintf(''%s\n'',''Analyze your dataset first''); GoOn=0;else GoOn=1;end'</span>]);
+0097           eval([<span class="string">'if GoOn==1, CurrentVariables=handles.'</span> CurrentDataFile <span class="string">'.Analysis;end'</span>]);
+0098           <span class="comment">%  eval(['if GoOn==1, fprintf(''%s\n'',''Plotting Now'');' CurrentPlottingFile(1:(end-2)) ';end']);  %running the current plotting file</span>
+0099           eval([<span class="string">'if GoOn==1, '</span> CurrentPlottingFile(1:(end-2)) <span class="string">';end'</span>]);  <span class="comment">%running the current plotting file</span>
+0100           <span class="comment">%   catch, fprintf('%s\t','Error in PlottingFile:'); fprintf('%s\n',lasterr);</span>
+0101           <span class="comment">%end</span>
+0102       <span class="keyword">end</span>
+0103     <span class="keyword">end</span>
+0104 
+0105 <span class="keyword">end</span>  <span class="comment">% ending ~isempty(gcommands)</span>
+0106 <span class="keyword">else</span> <a href="../../../XeX/UtilityFunctions/assorted/TellMe.html" class="code" title="function TellMe(formatvar,stringvar,speakvar)">TellMe</a>(<span class="string">'%s\n'</span>,<span class="string">'FOR NOW, Make sure you have selected a data file; even if you overwrite this in the graph file'</span>,handles.SpeakToMe);
+0107 <span class="keyword">end</span>
+0108 
+0109 <span class="comment">%   This is a parser for the graphic command syntax</span>
+0110 <span class="comment">%   Outputs a string that can be fed to eval !!!</span>
+0111 <span class="comment">%   Commands:</span>
+0112 <span class="comment">%   hold on;</span>
+0113 <span class="comment">%   NEWAXIS;</span>
+0114 <span class="comment">%   Hold on</span>
+0115 <span class="comment">%   NEWGRAPH;</span>
+0116 <span class="comment">%   One of {ImageMap, CircleMap, SpikeDensity, DrawTuningCurve, MakeHist,</span>
+0117 <span class="comment">%   DrawPSTH, AngularTuningCurve, DrawRasters, ISIH, DrawKDE}</span>
+0118 <span class="comment">%   Color =</span>
+0119 <span class="comment">%   Bandwidth =</span>
+0120 <span class="comment">%   TimeWindow =</span>
+0121 <span class="comment">%   Datafile =</span>
+0122 <span class="comment">%   Analysis =</span>
+0123 <span class="comment">%   Filter =</span>
+0124 <span class="comment">%   RFx =</span>
+0125 <span class="comment">%   RFy =</span>
+0126 <span class="comment">%   Align =</span>
+0127 <span class="comment">%   Unit =</span>
+0128 <span class="comment">%   PlotCB=</span>
+0129 <span class="comment">%   PlotLatency=</span>
+0130 <span class="comment">%   LatInit =</span>
+0131 <span class="comment">%   Baselinewindow =</span>
+0132 <span class="comment">%   XAxis=</span>
+0133 <span class="comment">%   XAxisDiscrete=</span>
+0134 <span class="comment">%   XAxisCenters=</span>
+0135 <span class="comment">%   X1Axis=</span>
+0136 <span class="comment">%   X1AxisDiscrete=</span>
+0137 <span class="comment">%   X1AxisCenters=</span>
+0138 <span class="comment">%   YAxis=</span></pre></div>
+<hr><address>Generated on Wed 13-Dec-2006 00:06:54 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

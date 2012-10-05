@@ -1,0 +1,57 @@
+NEWAXIS
+HOLD ON
+HOLD OFF
+CIRCLEGRAPH ON
+CIRCLEGRAPH OFF
+ALIGN RF1
+ALIGN SAC1
+
+PLOTTYPE IMAGEMAP
+PLOTTYPE CIRCLEMAP
+PLOTTYPE SPIKEDENSITY
+PLOTTYPE TUNINGCURVE
+PLOTTYPE ANGULARTUNINGCURVE
+PLOTTYPE HIST
+PLOTTYPE DISCHIST
+PLOTTYPE PSTH
+PLOTTYPE RASTER
+PLOTTYPE ISI
+PLOTTYPE KDE
+
+GoodTrial==1
+
+GoodTrial==1&PhotoBad~=1
+
+
+GoodTrial==1&PhotoBad~=1&~isnan(RFOffTime)
+GoodTrial==1&PhotoBad~=1&isnan(RFOffTime)
+
+GoodTrial==1&PhotoBad~=1&~isnan(RF2OffTime)
+GoodTrial==1&PhotoBad~=1&isnan(RF2OffTime)
+
+GoodTrial==1&PhotoBad~=1&RF2x==0&RF2y==0
+GoodTrial==1&PhotoBad~=1&~(RF2x==0&RF2y==0)
+
+SETBASERATE
+GoodTrial==1&PhotoBad~=1&RF2x==0&RF2y==0
+
+CLEARBASERATE
+
+SETBASERATE
+GoodTrial==1&PhotoBad~=1&isnan(RFx)
+
+CLEARBASERATE
+
+GoodTrial==1&PhotoBad~=1&isnan(RFx)
+GoodTrial==1&PhotoBad~=1&~isnan(RFx)
+GoodTrial==1&PhotoBad~=1&RF2dist_toRF>20&RF2dist_toRF<30
+
+GoodTrial==1&PhotoBad~=1&isnan(RFx)
+GoodTrial==1&PhotoBad~=1
+
+GoodTrial==1&PhotoBad~=1&isnan(RFx)
+GoodTrial==1&PhotoBad~=1&RF2dist_toRF>20&RF2dist_toRF<30
+
+GoodTrial==1&PhotoBad~=1&RF2Red==255
+GoodTrial==1&PhotoBad~=1&RF2Green==255
+GoodTrial==1&PhotoBad~=1&RF2Blue==255

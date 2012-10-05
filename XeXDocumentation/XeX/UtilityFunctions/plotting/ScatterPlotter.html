@@ -1,0 +1,91 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of ScatterPlotter</title>
+  <meta name="keywords" content="ScatterPlotter">
+  <meta name="description" content="Script to plot scatterplots; analysis done by analscatter. Makes it">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html XeX --><!-- ../menu.html UtilityFunctions --><!-- menu.html plotting -->
+<h1>ScatterPlotter
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>Script to plot scatterplots; analysis done by analscatter. Makes it</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">  Script to plot scatterplots; analysis done by analscatter. Makes it
+  callable outside XeX
+  Also see: AnalScatter, PlotScatter</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../XeX/AnalysisFunctions/Analysis/AnalScatter.html" class="code" title="">AnalScatter</a>	AnalScatter does the analysis for the scatterplot</li><li><a href="ScatterPlotter.html" class="code" title="">ScatterPlotter</a>	Script to plot scatterplots; analysis done by analscatter. Makes it</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../XeX/AnalysisFunctions/PlotScatter.html" class="code" title="">PlotScatter</a>	Script to produce a scatter plot. Uses ScatterPlotter to do the hard work</li><li><a href="ScatterPlotter.html" class="code" title="">ScatterPlotter</a>	Script to plot scatterplots; analysis done by analscatter. Makes it</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 
+0002 <span class="comment">%  Script to plot scatterplots; analysis done by analscatter. Makes it</span>
+0003 <span class="comment">%  callable outside XeX</span>
+0004 <span class="comment">%  Also see: AnalScatter, PlotScatter</span>
+0005 
+0006 <a href="../../../XeX/AnalysisFunctions/Analysis/AnalScatter.html" class="code" title="">AnalScatter</a>;
+0007 
+0008 <span class="keyword">if</span> get(handles.ReverseXY,<span class="string">'value'</span>)==1
+0009     OldPlotX=PlotX;
+0010     OldPlotY=PlotY;
+0011     OldXStr=CurrentXAxisVariableStr;
+0012     OldYStr=CurrentYAxisVariableStr;
+0013     PlotX=OldPlotY;
+0014     PlotY=OldPlotX;
+0015     CurrentXAxisVariableStr=OldXStr;
+0016     CurrentYAxisVariableStr=OldYStr;
+0017     fprintf(<span class="string">'%s\n'</span>,<span class="string">'Reversed X and Y'</span>);
+0018 <span class="keyword">end</span>
+0019 
+0020 TemporaryHandle=plot(PlotX,PlotY,<span class="string">'ko'</span>);
+0021 CurrentPlotType=<span class="string">'ScatterPlot'</span>;
+0022 set(gca,<span class="string">'box'</span>,<span class="string">'off'</span>,<span class="string">'tickdir'</span>,<span class="string">'out'</span>);
+0023 set(TemporaryHandle,<span class="string">'linewidth'</span>,1,<span class="string">'markersize'</span>,4,<span class="string">'marker'</span>,<span class="string">'o'</span>,<span class="string">'linestyle'</span>,<span class="string">'none'</span>);
+0024 
+0025 fprintf(<span class="string">'%s\n'</span>,[num2str(length(find(TotalFilter))) <span class="string">' Trials'</span>]);
+0026 
+0027 <span class="keyword">if</span> length(find(TotalFilter))&gt;0
+0028 [r,p]=corrcoef([PlotX' PlotY'],<span class="string">'rows'</span>,<span class="string">'complete'</span>);
+0029 fprintf(<span class="string">'Correlation coefficient is %1.4f   and p-value is %1.4f \n'</span>,[r(1,2),p(1,2)]); 
+0030 
+0031 <span class="keyword">if</span> strcmp(CurrentXAxisVariableStr,<span class="string">'RFx'</span>)&amp;&amp;strcmp(CurrentYAxisVariableStr,<span class="string">'RFy'</span>)
+0032     set(gca,<span class="string">'xlim'</span>,[min(PlotX)-5,max(PlotX)+5],<span class="string">'ylim'</span>,[min(PlotX)-5,max(PlotX)+5]);
+0033     fprintf(<span class="string">'%s\n'</span>,<span class="string">'Line 33 of ScatterPlotter automatically sets axes if variables are RFx and RFy'</span>);
+0034 <span class="keyword">end</span>
+0035 
+0036 <span class="keyword">end</span>
+0037 
+0038 <span class="comment">%I am not sure if this should be done here or in plotscatter, but we will</span>
+0039 <span class="comment">%see</span>
+0040 
+0041 <span class="comment">%putting in the xaxis variable name tag for this axis</span>
+0042 
+0043 CurrentAxisHandle=gca;
+0044 CurrentAxisNumber=find(CurrentAxisHandle==handles.HandlesList);
+0045 handles.AxisVariable(CurrentAxisNumber).XAxis=CurrentXAxisVariableStr;
+0046 handles.AxisVariable(CurrentAxisNumber).YAxis=CurrentYAxisVariableStr;
+0047</pre></div>
+<hr><address>Generated on Wed 13-Dec-2006 00:06:54 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

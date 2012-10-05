@@ -1,0 +1,298 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of UpdateSlider</title>
+  <meta name="keywords" content="UpdateSlider">
+  <meta name="description" content="this is the major update graphic objects file. poorly called">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html XeX --><!-- ../menu.html UtilityFunctions --><!-- menu.html update -->
+<h1>UpdateSlider
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>this is the major update graphic objects file. poorly called</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">     this is the major update graphic objects file. poorly called
+     updateslider, because it is really the replacement for updateorloadgfx
+     or something like that</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../XeX/UtilityFunctions/assorted/clearvars.html" class="code" title="">clearvars</a>	This function clears all the variables that were recently detached</li><li><a href="../../../XeX/UtilityFunctions/assorted/detachvars.html" class="code" title="">detachvars</a>	This script detaches all the variables from a structure and assigns them</li><li><a href="../../../XeX/UtilityFunctions/gettingAndsettingParameters/MakeTempGraphix.html" class="code" title="">MakeTempGraphix</a>	This scriptlet assembles the TempGraphix structure for saving</li><li><a href="../../../XeX/UtilityFunctions/gettingAndsettingParameters/NextMarkerSet.html" class="code" title="">NextMarkerSet</a>	This script sets NextMarker and NextMarkerEvalString</li><li><a href="../../../XeX/UtilityFunctions/gettingAndsettingParameters/evalAlignTime.html" class="code" title="">evalAlignTime</a>	</li><li><a href="../../../XeX/UtilityFunctions/gettingAndsettingParameters/getCurrentParameters.html" class="code" title="">getCurrentParameters</a>	This script collects parameters from the GUI.</li><li><a href="../../../XeX/UtilityFunctions/handlingGraphics/FindObjectsToUpdate.html" class="code" title="">FindObjectsToUpdate</a>	FindObjectsToUpdate: this script looks at the AxisObj windows and picks up</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../XeX/UtilityFunctions/handlingGraphics/LinkHandle.html" class="code" title="function LinkHandle">LinkHandle</a>	This is the buttondownfunction for the axis. Work on it !!</li><li><a href="UpdateMarkers.html" class="code" title="">UpdateMarkers</a>	This script is what gets done for the markers callback</li><li><a href="../../../XeX/XeX.html" class="code" title="function varargout = XeX(varargin)">XeX</a>	XEX M-file for XeX.fig</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 
+0002 <span class="comment">%     this is the major update graphic objects file. poorly called</span>
+0003 <span class="comment">%     updateslider, because it is really the replacement for updateorloadgfx</span>
+0004 <span class="comment">%     or something like that</span>
+0005 
+0006 <span class="comment">%getting axes to update list</span>
+0007 
+0008 <span class="keyword">if</span> ~strcmp(UpdateType,<span class="string">'Marker'</span>)
+0009 AxesToUpdateStr=get(handles.UseTheseAxes,<span class="string">'string'</span>);
+0010 <span class="keyword">if</span> isempty(AxesToUpdateStr), AxesToUpdateStr=<span class="string">'[]'</span>;<span class="keyword">end</span>
+0011 eval([<span class="string">'CurrentAxesToUpdate='</span> AxesToUpdateStr <span class="string">';'</span>]);
+0012 <span class="keyword">else</span>
+0013     CurrentAxesToUpdate=CurrentAxisMarkerNumber;
+0014 <span class="keyword">end</span>
+0015 
+0016 <span class="comment">%**********     GETTING VALUES FOR OPTION VARIABLES ***************</span>
+0017 
+0018 <span class="keyword">if</span> strcmp(get(handles.PlotLatency,<span class="string">'checked'</span>),<span class="string">'on'</span>) CurrentPlotLatency=1; <span class="keyword">else</span> CurrentPlotLatency=0;<span class="keyword">end</span>
+0019 CurrentLatInit=handles.LatInitTime;
+0020 <span class="keyword">if</span> strcmp(get(handles.PlotCB,<span class="string">'checked'</span>),<span class="string">'on'</span>) CurrentPlotCB=1; <span class="keyword">else</span> CurrentPlotCB=0;<span class="keyword">end</span>
+0021 <span class="keyword">if</span> strcmp(get(handles.PlotSig,<span class="string">'checked'</span>),<span class="string">'on'</span>) CurrentPlotSig=1; <span class="keyword">else</span> CurrentPlotSig=0;<span class="keyword">end</span>
+0022  CurrentHoldStatus=get(handles.HoldStatus,<span class="string">'Value'</span>);
+0023  <span class="keyword">if</span> strcmp(get(handles.SpikeTruncate,<span class="string">'checked'</span>),<span class="string">'off'</span>), CurrentAnalogCorrect=0; <span class="keyword">else</span> CurrentAnalogCorrect=1;<span class="keyword">end</span>
+0024 CurrentUseProps=0;  <span class="comment">%not really used, just for completeness</span>
+0025 
+0026 <span class="comment">%*********************************************************************</span>
+0027 
+0028 <span class="keyword">for</span> UpdateIndex=1:length(CurrentAxesToUpdate)
+0029     
+0030     <span class="comment">%FIND CURRENT AXIS</span>
+0031     
+0032     CurrentAxis=CurrentAxesToUpdate(UpdateIndex);
+0033     CUStr=num2str(CurrentAxis);
+0034     eval([<span class="string">'axes(handles.axes'</span> CUStr <span class="string">');'</span>]);
+0035    
+0036     <span class="keyword">if</span> ~(strcmp(UpdateType,<span class="string">'LinkAxis'</span>)&amp;&amp;CurrentAxis==CurrentLinkAxis)  <span class="comment">%dont update the link axis, rarely makes sense.</span>
+0037     
+0038     <span class="comment">%FIND CURRENT OBJECT LIST</span>
+0039     
+0040     eval([<span class="string">'if isfield(handles,''A'</span> CUStr <span class="string">'''), CurrentObjects=handles.A'</span> CUStr <span class="string">';else CurrentObjects=[];end'</span>]);  <span class="comment">%getting the current objects</span>
+0041     
+0042     <span class="keyword">if</span> ~isempty(CurrentObjects)  <span class="comment">%trying to update empty axes</span>
+0043     
+0044     <span class="comment">%CLEAR AXIS, MAKE TITLES, ETC</span>
+0045 
+0046 <span class="comment">%     cla; hold off;</span>
+0047 <span class="comment">%     if(CurrentHoldStatus==1),  hold on; end  % i am not touchin this (july 2006), but this is really not effective. hold on is called later anyway, as it should be !!!</span>
+0048 
+0049 hold on; <span class="comment">%july 2006, commented out the two lines above, and using this now</span>
+0050 
+0051  <span class="comment">%% This is for the hold component; if you want hold on to take effect. Off</span>
+0052  <span class="comment">%%  for now.</span>
+0053  <span class="comment">% if(CurrentHoldStatus~=1), cla; hold off; else hold on; end</span>
+0054  <span class="comment">%     title(''); xlabel(''); ylabel('');</span>
+0055 
+0056 eval([<span class="string">'if isfield(handles,''A'</span> CUStr <span class="string">'Annotations''), CurrentAnnotation=handles.A'</span> CUStr <span class="string">'Annotations;else CurrentAnnotation=[];end'</span>]);  <span class="comment">%getting the current annotations;  uncommented on feb 20</span>
+0057 
+0058 <span class="comment">%GETTING THE OBJECTS TO UPDATE LIST</span>
+0059 
+0060 <a href="../../../XeX/UtilityFunctions/handlingGraphics/FindObjectsToUpdate.html" class="code" title="">FindObjectsToUpdate</a>;
+0061 <span class="keyword">if</span> isempty(CurrentObjectsToUpdate) | any(CurrentObjectsToUpdate&gt;length(CurrentObjects)) 
+0062     CurrentObjectsToUpdate=1:length(CurrentObjects);
+0063     fprintf(<span class="string">'%s\n'</span>,<span class="string">'Warning: Invalid Axis Objects to update Ignored'</span>);
+0064 <span class="keyword">end</span>
+0065 
+0066     
+0067     <span class="comment">%REDO EACH OBJECT IN THIS LOOP if it is a member of a valid</span>
+0068     <span class="comment">%currentupdate</span>
+0069     
+0070 <span class="comment">%         for ObjectIndex=1:length(CurrentObjects)</span>
+0071         <span class="keyword">for</span> ObjectIndex=CurrentObjectsToUpdate
+0072 
+0073 <span class="comment">%             if (LoadGFXVar==1&amp;&amp;CurrentObjects(ObjectIndex).newgraph==1) || (LoadGFXVar~=1)</span>
+0074 
+0075       CurrentFilterString=<span class="string">'DUMMY'</span>;  <span class="comment">%DUMMY, JUST SO getcurrentparameters will get BY</span>
+0076      <a href="../../../XeX/UtilityFunctions/gettingAndsettingParameters/getCurrentParameters.html" class="code" title="">getCurrentParameters</a>; <span class="comment">%baseline values, will be overwritten by saved values below.</span>
+0077      
+0078                 <span class="comment">%GETTING ALL RELEVANT SAVED VARIABLES</span>
+0079 <span class="comment">%             keyboard;</span>
+0080          SavedDataFile=CurrentObjects(ObjectIndex).dataset;  
+0081         SavedHandle=CurrentObjects(ObjectIndex).handle;
+0082 
+0083  
+0084 <span class="comment">%use the same data file for axes update</span>
+0085      eval([<span class="keyword">...</span>
+0086         <span class="string">'Trials=handles.'</span> SavedDataFile <span class="string">'.Trials;'</span><span class="keyword">...</span>
+0087         <span class="string">'CurrentVariables=handles.'</span> SavedDataFile <span class="string">'.Analysis;'</span><span class="keyword">...</span>
+0088         ]);
+0089        CurrentDataFile=SavedDataFile;
+0090 
+0091         CurrentRF=CurrentObjects(ObjectIndex).rf;
+0092         SavedEvalString=CurrentObjects(ObjectIndex).evalstring;
+0093         NextMarker=CurrentObjects(ObjectIndex).markerstring;
+0094         
+0095         <span class="keyword">if</span> strcmp(UpdateType,<span class="string">'Marker'</span>)
+0096             OldMarker=NextMarker;
+0097             <a href="../../../XeX/UtilityFunctions/gettingAndsettingParameters/NextMarkerSet.html" class="code" title="">NextMarkerSet</a>;
+0098             <span class="keyword">if</span> isempty(NextMarker) NextMarker=OldMarker;<span class="keyword">end</span>
+0099         <span class="keyword">end</span>
+0100         
+0101         <span class="keyword">if</span> ~strcmp(UpdateType,<span class="string">'UnitNumber'</span>)
+0102                     CurrentUnitNumber=CurrentObjects(ObjectIndex).unitnumber;
+0103         <span class="keyword">end</span>
+0104         
+0105         SavedPValue=CurrentObjects(ObjectIndex).pvalue;
+0106         CurrentPValue=SavedPValue;
+0107         
+0108         <span class="keyword">if</span> ~strcmp(UpdateType,<span class="string">'BW'</span>),
+0109         CurrentBinWidth=CurrentObjects(ObjectIndex).binwidth;
+0110         CurrentSliderValue=(CurrentBinWidth/10)-5; <span class="comment">%legacy: keeping two variables</span>
+0111         <span class="keyword">else</span>
+0112           CurrentPValue=CurrentBinWidth/250; <span class="comment">%goes from 0 to 0.4; hardcoded</span>
+0113         <span class="keyword">end</span>
+0114         
+0115 <span class="comment">%         if ~strcmp(UpdateType,'slider')</span>
+0116 <span class="comment">%         CurrentSliderValue=CurrentObjects(ObjectIndex).slidervalue;</span>
+0117 <span class="comment">%         end</span>
+0118         
+0119         <span class="keyword">if</span> ~strcmp(UpdateType,<span class="string">'TimeWindow'</span>)&amp;&amp;~strcmp(UpdateType,<span class="string">'TimeLinkAxis'</span>)  <span class="comment">%if mousing in a link axis window with xaxis of time then take it from there</span>
+0120         CurrentStimVector=CurrentObjects(ObjectIndex).timevector;
+0121         TimeWindowVector=CurrentObjects(ObjectIndex).timewindowvector;
+0122         <span class="keyword">elseif</span> strcmp(UpdateType,<span class="string">'TimeLinkAxis'</span>)
+0123             CurrentStimVector=TimeWindowLinkAxis;
+0124             TimeWindowVector=CurrentStimVector;
+0125         <span class="keyword">end</span>
+0126 
+0127          XVector=CurrentStimVector(1):CurrentBinWidth:CurrentStimVector(2);
+0128         PlotXVector=[(CurrentStimVector(1)+(CurrentBinWidth/2)):CurrentBinWidth:(CurrentStimVector(2)+(CurrentBinWidth/2))];
+0129         SavedFilterString=CurrentObjects(ObjectIndex).trialfilter;
+0130         
+0131         <span class="keyword">if</span> ~strcmp(UpdateType,<span class="string">'Align'</span>),
+0132         CurrentAlignString=CurrentObjects(ObjectIndex).alignstring;
+0133         <span class="keyword">end</span>
+0134         
+0135         SavedAlignString=CurrentAlignString;
+0136         SavedVariable=CurrentObjects(ObjectIndex).currentvariable;
+0137         CurrentSelectedVariable=SavedVariable;
+0138         SavedErrorBarType=CurrentObjects(ObjectIndex).errorbartype;
+0139         CurrentErrorBarType=SavedErrorBarType;
+0140   
+0141 
+0142         LocalMarkerString=NextMarker;
+0143 
+0144         CurrentXAxisVariableStr=CurrentObjects(ObjectIndex).xaxisvariablestr;
+0145         CurrentX1AxisVariableStr=CurrentObjects(ObjectIndex).x1axisvariablestr;
+0146         CurrentYAxisVariableStr=CurrentObjects(ObjectIndex).yaxisvariablestr;
+0147         CurrentXAxisDiscretize=CurrentObjects(ObjectIndex).discretizex;
+0148         CurrentX1AxisDiscretize=CurrentObjects(ObjectIndex).discretizex1;
+0149         CurrentXAxisCentersStr=CurrentObjects(ObjectIndex).xaxiscenters;
+0150         CurrentX1AxisCentersStr=CurrentObjects(ObjectIndex).x1axiscenters;        
+0151         
+0152         <span class="keyword">switch</span>(UpdateType)
+0153             <span class="keyword">case</span> <span class="string">'XAxisVar'</span>, TempAxisVars=cellstr(get(handles.XAxisVariable,<span class="string">'string'</span>)); 
+0154                 TempVal=get(handles.XAxisVariable,<span class="string">'value'</span>); 
+0155                 CurrentXAxisVariableStr=TempAxisVars{TempVal};
+0156             <span class="keyword">case</span> <span class="string">'X1AxisVar'</span>,TempAxisVars=cellstr(get(handles.X1AxisVariable,<span class="string">'string'</span>)); 
+0157                 TempVal=get(handles.X1AxisVariable,<span class="string">'value'</span>); 
+0158                 CurrentX1AxisVariableStr=TempAxisVars{TempVal};
+0159             <span class="keyword">case</span> <span class="string">'YAxisVar'</span>,TempAxisVars=cellstr(get(handles.YAxisVariable,<span class="string">'string'</span>)); 
+0160                 TempVal=get(handles.YAxisVariable,<span class="string">'value'</span>); 
+0161                 CurrentYAxisVariableStr=TempAxisVars{TempVal};
+0162             <span class="keyword">case</span> <span class="string">'XAxisDiscreteVals'</span>,
+0163                 <span class="keyword">if</span> get(handles.XAxisDiscretize,<span class="string">'value'</span>)==1
+0164                     CurrentXAxisCentersStr=get(handles.XAxisCenters,<span class="string">'string'</span>);
+0165                 <span class="keyword">end</span>
+0166             <span class="keyword">case</span> <span class="string">'X1AxisDiscreteVals'</span>,
+0167                 <span class="keyword">if</span> get(handles.X1AxisDiscretize,<span class="string">'value'</span>)==1
+0168                     CurrentX1AxisCentersStr=get(handles.X1AxisCenters,<span class="string">'string'</span>);
+0169                 <span class="keyword">end</span>
+0170         <span class="keyword">end</span>               
+0171         
+0172         ThingsToDo=get(handles.WhatToDo,<span class="string">'String'</span>);
+0173         WhatToDo=ThingsToDo{get(handles.WhatToDo,<span class="string">'value'</span>)};
+0174 
+0175 <span class="comment">%         if strcmp(WhatToDo,'ActiveUpdate') &amp; strcmp(UpdateType,'slider')</span>
+0176 <span class="comment">%         %INTERESTING TRICK: PROBABLY SHOULD ADAPT TO BINWIDTH TO ADJUST</span>
+0177 <span class="comment">%         CENTERS STR.. BUT NOW WE HAVE CENTERS UPDATE</span>
+0178 <span class="comment">%</span>
+0179 <span class="comment">% if isstr(CurrentXAxisCentersStr),            TemporaryVariable=str2num(CurrentXAxisCentersStr);</span>
+0180 <span class="comment">% else TemporaryVariable=CurrentXAxisCentersStr;</span>
+0181 <span class="comment">% end</span>
+0182 <span class="comment">%             InitVar=TemporaryVariable(1)-((TemporaryVariable(2)-TemporaryVariable(1))/2);</span>
+0183 <span class="comment">%             FinVar=TemporaryVariable(end)+((TemporaryVariable(2)-TemporaryVariable(1))/2);</span>
+0184 <span class="comment">%             NumBin=round(((CurrentSliderValue+5)/10)*20)+2;</span>
+0185 <span class="comment">%             TemporaryVariable=InitVar:((FinVar-InitVar)/NumBin):FinVar;</span>
+0186 <span class="comment">%             TemporaryVariable=round(mean([TemporaryVariable(1:(end-1));TemporaryVariable(2:end)]));</span>
+0187 <span class="comment">%             CurrentXAxisCentersStr=(TemporaryVariable);</span>
+0188 <span class="comment">%</span>
+0189 <span class="comment">%         end</span>
+0190         
+0191         CurrentPlotType=CurrentObjects(ObjectIndex).plottype;
+0192         
+0193         <span class="keyword">if</span> ~strcmp(UpdateType,<span class="string">'Filter'</span>) CurrentFilterString=SavedFilterString;
+0194 
+0195                     <span class="keyword">if</span> strcmp(UpdateType,<span class="string">'LinkAxis'</span>) ,CurrentFilterString=[CurrentFilterString <span class="string">'&amp;'</span> AppendFilter];<span class="keyword">end</span> <span class="comment">%that does the append filter</span>
+0196 
+0197         <span class="keyword">else</span>
+0198             
+0199             FilterStringList=cellstr(get(handles.TrialFilterVector,<span class="string">'string'</span>));
+0200       CurrentFilterString=FilterStringList{1};
+0201             
+0202         <span class="keyword">end</span>
+0203             
+0204 
+0205         <span class="comment">%getting data from cell</span>
+0206         
+0207        <a href="../../../XeX/UtilityFunctions/assorted/detachvars.html" class="code" title="">detachvars</a>;    
+0208 
+0209 <span class="comment">%        setAlignTime;</span>
+0210        <a href="../../../XeX/UtilityFunctions/gettingAndsettingParameters/evalAlignTime.html" class="code" title="">evalAlignTime</a>;
+0211        
+0212        
+0213 eval([<span class="string">'CurrentFilterVector='</span> CurrentFilterString <span class="string">';'</span>]); <span class="comment">%this does the current filter vector</span>
+0214 
+0215 <span class="keyword">if</span> ~isempty(find(CurrentFilterVector))
+0216             delete(SavedHandle);  <span class="comment">%july 2006, will this work ?</span>
+0217 eval(SavedEvalString); hold on;
+0218 EvalString=SavedEvalString; 
+0219 
+0220             CurrentDisplayFilterString=CurrentFilterString;
+0221 
+0222             <span class="keyword">if</span> strcmp(UpdateType,<span class="string">'LinkAxis'</span>) <span class="comment">%| strcmp(UpdateType,'Filter')  %not reversing for type 'Filter'</span>
+0223             CurrentFilterString=CurrentObjects(ObjectIndex).trialfilter;  <span class="comment">%reversing the filter change</span>
+0224 <span class="keyword">end</span>
+0225 
+0226 
+0227 <a href="../../../XeX/UtilityFunctions/gettingAndsettingParameters/MakeTempGraphix.html" class="code" title="">MakeTempGraphix</a>;
+0228 
+0229 NStr=num2str(CurrentAxis);
+0230 
+0231 <span class="comment">% if LoadGFXVar~=1 &amp;&amp; CurrentHoldStatus==1  %now here, evaluate the eval string and set the handles.a1 structure to include the new object</span>
+0232 <span class="comment">% eval(['handles.A' NStr '(length(handles.A' NStr ')+1)=TempGraphix;']);</span>
+0233 <span class="comment">%         else                                   %here, evaluate the eval string, and replace the handles.a1(xx) structure with the new graphics object</span>
+0234 eval([<span class="string">'handles.A'</span> NStr <span class="string">'(ObjectIndex)=TempGraphix;'</span>]);
+0235 <span class="comment">%         end</span>
+0236 
+0237 <span class="keyword">else</span> fprintf(<span class="string">'%s\n'</span>,<span class="string">'Refusing to update empty filtervectors'</span>);
+0238 <span class="keyword">end</span>   <span class="comment">%ending ~isempty(find(currentfiltervector))</span>
+0239 
+0240         <a href="../../../XeX/UtilityFunctions/assorted/clearvars.html" class="code" title="">clearvars</a>;        
+0241         
+0242         <span class="keyword">end</span>  <span class="comment">%ending for objects = loop</span>
+0243 
+0244      <span class="keyword">if</span> ~isempty(CurrentAnnotation), title(CurrentAnnotation{1}); 
+0245          <span class="keyword">if</span> length(CurrentAnnotation)&gt;1,xlabel(CurrentAnnotation{2});<span class="keyword">end</span>
+0246          <span class="keyword">if</span> length(CurrentAnnotation)&gt;2,ylabel(CurrentAnnotation{3});<span class="keyword">end</span> <span class="comment">%change on feb 20</span>
+0247      <span class="keyword">end</span>
+0248     
+0249     <span class="keyword">else</span>
+0250         fprintf(<span class="string">'%s\n'</span>,<span class="string">'Warning: That axis is EMPTY'</span>);
+0251     <span class="keyword">end</span> <span class="comment">%ending if ~isempty(currentobjects) loop</span>
+0252     <span class="keyword">else</span> fprintf(<span class="string">'%s\n'</span>,<span class="string">'Warning: Not updating the link axis'</span>);
+0253     <span class="keyword">end</span>
+0254 <span class="keyword">end</span><span class="comment">%ending the current axis loop</span></pre></div>
+<hr><address>Generated on Wed 13-Dec-2006 00:06:54 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

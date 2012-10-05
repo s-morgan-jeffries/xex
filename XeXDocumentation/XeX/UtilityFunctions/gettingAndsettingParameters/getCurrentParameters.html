@@ -1,0 +1,148 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of getCurrentParameters</title>
+  <meta name="keywords" content="getCurrentParameters">
+  <meta name="description" content="This script collects parameters from the GUI.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html XeX --><!-- ../menu.html UtilityFunctions --><!-- menu.html gettingAndsettingParameters -->
+<h1>getCurrentParameters
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>This script collects parameters from the GUI.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">This script collects parameters from the GUI. 
+getCurrentParameters.m</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="setAlignTime.html" class="code" title="">setAlignTime</a>	This script sets CurrentAlignString to the correct value, based on the AlignCode obtained from the GUI</li><li><a href="../../../XeX/UtilityFunctions/handlingGraphics/ParseStimString.html" class="code" title="">ParseStimString</a>	This script is used by getcurrentparameters.m among other scripts, to</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="GraphCommandProcessor.html" class="code" title="">GraphCommandProcessor</a>	Basically does what Plot data does, but reads in commands from a gfx</li><li><a href="../../../XeX/UtilityFunctions/update/UpdateGObjects.html" class="code" title="">UpdateGObjects</a>	this script does the hard work for updateaxis</li><li><a href="../../../XeX/UtilityFunctions/update/UpdateSlider.html" class="code" title="">UpdateSlider</a>	this is the major update graphic objects file. poorly called</li><li><a href="../../../XeX/XeX.html" class="code" title="function varargout = XeX(varargin)">XeX</a>	XEX M-file for XeX.fig</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 
+0002 <span class="comment">%This script collects parameters from the GUI.</span>
+0003 <span class="comment">%getCurrentParameters.m</span>
+0004 
+0005 <span class="comment">%getting the axes vector for plotting and for update, and resetting axes pointer</span>
+0006 
+0007 AxesList=get(handles.UseTheseAxes,<span class="string">'string'</span>);
+0008 eval([<span class="string">'CurrentAxesVector='</span> AxesList <span class="string">';'</span>]);
+0009 <span class="keyword">if</span> ~exist(<span class="string">'NoChangeAxesPointer'</span>,<span class="string">'var'</span>)||NoChangeAxesPointer~=1
+0010 AxesPointer=0; <span class="comment">% to be used to update which axes to plot into</span>
+0011 <span class="keyword">end</span>
+0012 
+0013 AxesToUpdateStr=AxesList;
+0014 <span class="keyword">if</span> isempty(AxesToUpdateStr), AxesToUpdateStr=<span class="string">'[]'</span>;<span class="keyword">end</span>
+0015 eval([<span class="string">'CurrentAxesToUpdate='</span> AxesToUpdateStr <span class="string">';'</span>]);
+0016 
+0017  <span class="comment">%AXIS MARKER LIST !!</span>
+0018  
+0019  <span class="keyword">for</span> TempVarA=1:handles.NumberOfAxes
+0020  eval([<span class="string">'Axis'</span> num2str(TempVarA) <span class="string">'Markers=get(handles.Axis'</span> num2str(TempVarA) <span class="string">'Markers,''string'');'</span><span class="keyword">...</span>
+0021 <span class="comment">%  'Axis' num2str(TempVarA) 'MarkerPointer=0;'...</span>
+0022  ]);
+0023  <span class="keyword">end</span>
+0024  clear TempVarA;
+0025  
+0026 CurrentA7XLim=get(handles.axes7,<span class="string">'xlim'</span>);
+0027 CurrentA8XLim=get(handles.axes8,<span class="string">'xlim'</span>);
+0028 CurrentA9XLim=get(handles.axes9,<span class="string">'xlim'</span>);
+0029 
+0030 CurrentPValue=handles.SignificanceCutoff;
+0031 
+0032 <span class="comment">%DATA FILE !!</span>
+0033 
+0034  LoadedFileList=get(handles.LoadedFiles,<span class="string">'string'</span>);
+0035  <span class="keyword">if</span> ~iscell(LoadedFileList), TempVar{1}=LoadedFileList; LoadedFileList=TempVar;<span class="keyword">end</span>
+0036  CurrentValue=get(handles.LoadedFiles,<span class="string">'value'</span>); CurrentValue=CurrentValue(1);
+0037  CurrentDataFile=LoadedFileList{CurrentValue};
+0038  
+0039 <span class="comment">%PLOTTING FILE !!</span>
+0040 
+0041  PlottingFileList=get(handles.PlottingFileList,<span class="string">'string'</span>);
+0042  <span class="keyword">if</span> ~iscell(PlottingFileList) TempArray{1}=PlottingFileList; PlottingFileList=TempArray;clear TempArray;<span class="keyword">end</span>
+0043  CurrentValue=get(handles.PlottingFileList,<span class="string">'value'</span>); CurrentValue=CurrentValue(1);
+0044  CurrentPlottingFile=PlottingFileList{CurrentValue};
+0045  
+0046  <span class="comment">%OPTION VARIABLES</span>
+0047  
+0048 <span class="keyword">if</span> strcmp(get(handles.PlotLatency,<span class="string">'checked'</span>),<span class="string">'on'</span>) CurrentPlotLatency=1; <span class="keyword">else</span> CurrentPlotLatency=0;<span class="keyword">end</span>
+0049 CurrentLatInit=handles.LatInitTime;
+0050 <span class="keyword">if</span> strcmp(get(handles.PlotCB,<span class="string">'checked'</span>),<span class="string">'on'</span>) CurrentPlotCB=1; <span class="keyword">else</span> CurrentPlotCB=0;<span class="keyword">end</span>
+0051 <span class="keyword">if</span> strcmp(get(handles.PlotSig,<span class="string">'checked'</span>),<span class="string">'on'</span>) CurrentPlotSig=1; <span class="keyword">else</span> CurrentPlotSig=0;<span class="keyword">end</span>
+0052  CurrentHoldStatus=get(handles.HoldStatus,<span class="string">'Value'</span>);
+0053  CurrentUseProps=get(handles.UseProps,<span class="string">'Value'</span>);
+0054  <span class="keyword">if</span> strcmp(get(handles.SpikeTruncate,<span class="string">'checked'</span>),<span class="string">'off'</span>), CurrentAnalogCorrect=0; <span class="keyword">else</span> CurrentAnalogCorrect=1;<span class="keyword">end</span>
+0055  
+0056  <span class="comment">%CELL VARIABLES</span>
+0057  
+0058   CurrentUnitNumber=(handles.UnitNumber);
+0059   CurrentRF=handles.RFLocation;
+0060 
+0061 
+0062 <span class="comment">% IMPORTANT GUI VARIABLES</span>
+0063 
+0064 <a href="setAlignTime.html" class="code" title="">setAlignTime</a>;
+0065 CurrentBinWidth=get(handles.BinWidth,<span class="string">'value'</span>);
+0066 CurrentSliderValue=(CurrentBinWidth/10)-5;
+0067 <span class="comment">% CurrentSliderValue=get(handles.UpdateSlider,'value');  %trying the eliminate the slider</span>
+0068 
+0069 <span class="comment">%Actual filter extraction outside getcurrent parameters, because of graphic</span>
+0070 <span class="comment">%command processing</span>
+0071 
+0072 <span class="keyword">if</span> strcmp(CurrentFilterString,<span class="string">'TrialFilterVector'</span>) | isempty(CurrentFilterString), CurrentFilterString=<span class="string">'1'</span>;<span class="keyword">end</span>
+0073 
+0074 OurVariables=cellstr(get(handles.XAxisVariable,<span class="string">'string'</span>));
+0075 CurrentSelectedVariable=OurVariables{get(handles.XAxisVariable,<span class="string">'value'</span>)};
+0076 
+0077 CurrentErrorBarType=get(handles.ErrorBarType,<span class="string">'label'</span>);
+0078   
+0079   <span class="comment">%AXIS VARIABLES</span>
+0080   
+0081   XAxisVariables=cellstr(get(handles.XAxisVariable,<span class="string">'string'</span>));
+0082   CurrentXAxisVariableStr=XAxisVariables{get(handles.XAxisVariable,<span class="string">'value'</span>)};
+0083   X1AxisVariables=cellstr(get(handles.X1AxisVariable,<span class="string">'string'</span>));
+0084   CurrentX1AxisVariableStr=X1AxisVariables{get(handles.X1AxisVariable,<span class="string">'value'</span>)};
+0085   YAxisVariables=cellstr(get(handles.YAxisVariable,<span class="string">'string'</span>));
+0086   CurrentYAxisVariableStr=YAxisVariables{get(handles.YAxisVariable,<span class="string">'value'</span>)};
+0087   
+0088   CurrentXAxisDiscretize=get(handles.XAxisDiscretize,<span class="string">'value'</span>);
+0089   CurrentX1AxisDiscretize=get(handles.X1AxisDiscretize,<span class="string">'value'</span>);
+0090   
+0091 CurrentXAxisCentersStr=get(handles.XAxisCenters,<span class="string">'string'</span>);
+0092 CurrentXAxisCenters=str2num(CurrentXAxisCentersStr);
+0093 CurrentX1AxisCentersStr=get(handles.X1AxisCenters,<span class="string">'string'</span>);
+0094 CurrentX1AxisCenters=str2num(CurrentX1AxisCentersStr);
+0095 
+0096 <span class="comment">% CurrentYAxisMeasureStr=handles.MyVariableChoices.YAxisMeasureStr;</span>
+0097 
+0098 <span class="comment">% TIME WINDOW PROCESSING</span>
+0099 
+0100 CurrentStimString=get(handles.StimulusAlignedTimeVector,<span class="string">'string'</span>);
+0101 
+0102 <span class="comment">%Processing string in window for different plotting files and different</span>
+0103 <span class="comment">%colon or no-colon formats (POOR MAN's REGEXP :)</span>
+0104 
+0105 <a href="../../../XeX/UtilityFunctions/handlingGraphics/ParseStimString.html" class="code" title="">ParseStimString</a>;</pre></div>
+<hr><address>Generated on Wed 13-Dec-2006 00:06:54 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

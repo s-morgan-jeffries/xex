@@ -1,0 +1,94 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of MarkerAnalyze</title>
+  <meta name="keywords" content="MarkerAnalyze">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html XeX --><!-- ../menu.html UtilityFunctions --><!-- menu.html assorted -->
+<h1>MarkerAnalyze
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="un.html" class="code" title="function X1=un(X)">un</a>	This function takes in a vector (or a matrix) , and returns unique values (or rows). NaNs (and rows with NaNs) are removed.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../XeX/PreProcFunctions/VSearch.html" class="code" title="function CurrentVariables=VSearch(Trials,klugestring,UseAx,SacOpts)">VSearch</a>	This function analyzes data from the search paradigm</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 
+0002     
+0003     UniqueMarkers=<a href="un.html" class="code" title="function X1=un(X)">un</a>(MarkerCode);
+0004 
+0005 
+0006     <span class="keyword">for</span> UniqueMarkind=1:length(UniqueMarkers)
+0007 
+0008         CurMark=UniqueMarkers(UniqueMarkind);
+0009 
+0010         NowTrials=MarkerCode==CurMark;
+0011         MarkerTrialNumber(NowTrials)=1:length(find(NowTrials));
+0012 
+0013 <span class="keyword">if</span> length(<a href="un.html" class="code" title="function X1=un(X)">un</a>(MarkerCode))&gt;1
+0014 
+0015     summaryString=  [summaryString sprintf(<span class="string">'%s\n'</span>,<span class="string">'******************Marker Analyze************************************************'</span>)];
+0016 
+0017 summaryString=[summaryString sprintf(<span class="string">'Unique Marker %s\n'</span>,[num2str([UniqueMarkers(UniqueMarkind)])])];
+0018 summaryString=[summaryString sprintf(<span class="string">'%s\n'</span>,[num2str([<a href="un.html" class="code" title="function X1=un(X)">un</a>(BGLum(MarkerCode==CurMark)) <a href="un.html" class="code" title="function X1=un(X)">un</a>(TargCheck(MarkerCode==CurMark)) <a href="un.html" class="code" title="function X1=un(X)">un</a>(NumStim(MarkerCode==CurMark))])])];
+0019 summaryString=[summaryString sprintf(<span class="string">'%s\n'</span>,[num2str([<a href="un.html" class="code" title="function X1=un(X)">un</a>(TargRed(MarkerCode==CurMark)) <a href="un.html" class="code" title="function X1=un(X)">un</a>(TargBlue(MarkerCode==CurMark)) <a href="un.html" class="code" title="function X1=un(X)">un</a>(TargGreen(MarkerCode==CurMark))])])]; 
+0020 summaryString=[summaryString sprintf(<span class="string">'%s\n'</span>,[num2str([<a href="un.html" class="code" title="function X1=un(X)">un</a>(PopRed(MarkerCode==CurMark)) <a href="un.html" class="code" title="function X1=un(X)">un</a>(PopBlue(MarkerCode==CurMark)) <a href="un.html" class="code" title="function X1=un(X)">un</a>(PopGreen(MarkerCode==CurMark))])])]; 
+0021 summaryString=[summaryString sprintf(<span class="string">'%s\n'</span>,[num2str(length(find(MarkerCode==CurMark))) <span class="string">'  trials'</span>])];
+0022 summaryString=[summaryString sprintf(<span class="string">'%s\n'</span>,[num2str(length(find(GoodTrial==1&amp;MarkerCode==CurMark))) <span class="string">'  Good Trials'</span>])];
+0023 summaryString=[summaryString sprintf(<span class="string">'%s\n'</span>,[num2str(length(find(BadTrial==1&amp;MarkerCode==CurMark))),<span class="string">'  Bad Trials'</span>])];
+0024  summaryString=[summaryString sprintf(<span class="string">'%s\n'</span>,<span class="string">'TargX   TargY'</span>)];
+0025  summaryString=[summaryString,sprintf(<span class="string">'%3.3f\t%3.3f\n'</span>,[<a href="un.html" class="code" title="function X1=un(X)">un</a>([TargX(MarkerCode==CurMark)' TargY(MarkerCode==CurMark)'])]')];
+0026  summaryString=[summaryString sprintf(<span class="string">'%s\n'</span>,<span class="string">'PopX   PopY'</span>)];
+0027  summaryString=[summaryString,sprintf(<span class="string">'%3.3f\t%3.3f\n'</span>,[<a href="un.html" class="code" title="function X1=un(X)">un</a>([PopX(MarkerCode==CurMark)' PopY(MarkerCode==CurMark)'])]')];
+0028 <span class="comment">%  summaryString=[summaryString,'\n',[num2str(un([PopX' PopY']))]];</span>
+0029 
+0030 summaryString=[summaryString,sprintf(<span class="string">'%s percent sacs to target'</span>,num2str(100*(length(find(GoodTrial==1&amp;PhotoBad~=1&amp;FSTargOrdist&lt;=1&amp;NowTrials)))/length(find(GoodTrial==1&amp;PhotoBad~=1&amp;NowTrials))))];
+0031 summaryString=[summaryString,sprintf(<span class="string">'%s\n'</span>,<span class="string">''</span>)];
+0032 summaryString=[summaryString,sprintf(<span class="string">'%s percent sacs to pop'</span>,num2str(100*(length(find(GoodTrial==1&amp;PhotoBad~=1&amp;FSPopOrdist&lt;=1&amp;NowTrials)))/length(find(GoodTrial==1&amp;PhotoBad~=1&amp;NowTrials))))];
+0033 summaryString=[summaryString,sprintf(<span class="string">'%s\n'</span>,<span class="string">''</span>)];
+0034 
+0035   summaryString=[summaryString sprintf(<span class="string">'%s\n'</span>,<span class="string">'******************************************************************'</span>)];
+0036 <span class="comment">%  RFmat=[RFx;RFy]';</span>
+0037 <span class="comment">%  RFmat=RFmat(~isnan(RFmat(:,1)),:);</span>
+0038 <span class="comment">%  RFmat=unique(RFmat,'rows');</span>
+0039 <span class="comment">%  summaryString=[summaryString sprintf('%s\n','RFx        RFy')];</span>
+0040 <span class="comment">%</span>
+0041 <span class="comment">%  for printIndex=1:size(RFmat,1)</span>
+0042 <span class="comment">%      summaryString=[summaryString sprintf('%3.1f\t%3.1f\t',RFmat(printIndex,1),RFmat(printIndex,2))];</span>
+0043 <span class="comment">%       summaryString=[summaryString sprintf('%s\t',[num2str(100*(length(find(GoodTrial==1&amp;RFx==RFmat(printIndex,1)&amp;RFy==RFmat(printIndex,2)))) / length(find((GoodTrial==1|BadTrial==1) &amp; RFx==RFmat(printIndex,1) &amp; RFy==RFmat(printIndex,2))) ,'%3.2f')  ' % correct'])];</span>
+0044 <span class="comment">% summaryString=[summaryString sprintf('%s\t','T-trials  ')];</span>
+0045 <span class="comment">%  summaryString=[summaryString sprintf('%s\t',[num2str(100*(length(find(GoodTrial==1&amp;RFPat==29&amp;RFx==RFmat(printIndex,1)&amp;RFy==RFmat(printIndex,2)))) / length(find((GoodTrial==1|BadTrial==1) &amp; RFPat==29&amp;RFx==RFmat(printIndex,1) &amp; RFy==RFmat(printIndex,2))) ,'%3.2f')  ' % correct'])];</span>
+0046 <span class="comment">%   summaryString=[summaryString sprintf('%s\t','Inverted T trials')];</span>
+0047 <span class="comment">%  summaryString=[summaryString sprintf('%s\n ',[num2str(100*(length(find(GoodTrial==1&amp;RFPat==28&amp;RFx==RFmat(printIndex,1)&amp;RFy==RFmat(printIndex,2)))) / length(find((GoodTrial==1|BadTrial==1) &amp; RFPat==28&amp;RFx==RFmat(printIndex,1) &amp; RFy==RFmat(printIndex,2))) ,'%3.2f')  ' % correct'])];</span>
+0048 <span class="comment">%</span>
+0049 <span class="comment">%  end</span>
+0050 
+0051     <span class="keyword">end</span>
+0052 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Wed 13-Dec-2006 00:06:54 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

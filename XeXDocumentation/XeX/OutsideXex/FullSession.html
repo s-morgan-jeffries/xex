@@ -1,0 +1,131 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of FullSession</title>
+  <meta name="keywords" content="FullSession">
+  <meta name="description" content="suggested analysis script">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html XeX --><!-- menu.html OutsideXex -->
+<h1>FullSession
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>suggested analysis script</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">suggested analysis script</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="MakeAnalysisStruct.html" class="code" title="">MakeAnalysisStruct</a>	This makes AnalysisStruct</li><li><a href="RemoveAnalVariables.html" class="code" title="">RemoveAnalVariables</a>	</li><li><a href="doAnalysis.html" class="code" title="">doAnalysis</a>	This is a script so that it can be run in any format anywhere</li><li><a href="../../XeX/UtilityFunctions/assorted/detachvars.html" class="code" title="">detachvars</a>	This script detaches all the variables from a structure and assigns them</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 
+0002 <span class="comment">%suggested analysis script</span>
+0003 
+0004 <span class="comment">% Trials=doMrdd('z051125c11lm1',0);</span>
+0005 <span class="comment">% CurrentVariables=Preproc(Trials,'LineMotion');</span>
+0006 <span class="comment">% detachvars</span>
+0007 <span class="comment">% MakeAnalysisStruct</span>
+0008 <span class="comment">% AnalysisStruct.XVector=[50 150];</span>
+0009 <span class="comment">% AnalysisStruct.XAxisVariable='ISI';</span>
+0010 <span class="comment">% AnalysisStruct.XAxisCenters=-400:100:0;</span>
+0011 
+0012 <span class="comment">%AnalysisStruct.WhichAnalysis='TuningCurve';</span>
+0013 <span class="comment">%AnalysisStruct.WhichAnalysis='PSTH';</span>
+0014 <span class="comment">%AnalysisStruct.WhichAnalysis='SpikeDensity';</span>
+0015 
+0016 
+0017 <span class="comment">% doAnalysis</span>
+0018 <span class="comment">% figure</span>
+0019 <span class="comment">% plot(PlotX,PlotY,'b-');</span>
+0020 <span class="comment">% hold on;</span>
+0021 <span class="comment">% errorbar(PlotX,PlotY,2*PlotStd);</span>
+0022 <span class="comment">% who</span>
+0023 <span class="comment">% RemoveAnalVariables</span>
+0024 
+0025 <span class="comment">%Other option is to go through the preprocessign once, and save each</span>
+0026 <span class="comment">%preprocessor output in a mat file for future use</span>
+0027 <span class="comment">%go to the directory of itnerest (cd)</span>
+0028 <span class="comment">%Trials=doMrdd('z051125c11lm1',0);</span>
+0029 <span class="comment">%CurrentVariables=Preproc(Trials,'LineMotion');</span>
+0030 <span class="comment">%cd MyLmAnalyses</span>
+0031 <span class="comment">%save z051124c11lm1Results CurrentVariables Trials</span>
+0032 <span class="comment">%repeat for all your files in a loop, or by hand. probably by hand.</span>
+0033 <span class="comment">%Now you are done with all the preprocessing</span>
+0034 
+0035 <span class="comment">%need some way of cycling through all files</span>
+0036 <span class="comment">%i suggest systematically making a struct, with two fields:</span>
+0037 <span class="comment">%filename: that is a string with entire pathname/filename</span>
+0038 <span class="comment">%commandset: a bunch of commands to evaluate for that file</span>
+0039 cd C:\MATLAB\work\physiology\InhibPop\BlockMGS
+0040 InhibFilesBlockMGS=struct(<span class="string">'Filename'</span>,nan,<span class="string">'Command'</span>,nan);
+0041 InhibFilesBlockMGS(1).Filename=<span class="string">'z060815c3ti2ResultsTDBlock'</span>;
+0042 InhibFilesBlockMGS(1).Command=<span class="string">'mg=1;block=0;'</span>
+0043 save InhibFilesBlockMGS InhibFilesBlockMGS
+0044 <span class="comment">%when analyzing!!!!</span>
+0045 cd C:\MATLAB\work\physiology\InhibPop\BlockMGS
+0046 load InhibFilesBlockMGS
+0047 
+0048 <span class="comment">% set up the analysis parameters</span>
+0049 
+0050 <a href="MakeAnalysisStruct.html" class="code" title="">MakeAnalysisStruct</a>
+0051 AnalysisStruct.XVector=[-400 400];
+0052 AnalysisStruct.XAxisVariable=<span class="string">'RFOnTime'</span>;
+0053 <span class="comment">%AnalysisStruct.XAxisVariable='RF2dist_toRF';</span>
+0054 <span class="comment">%AnalysisStruct.XAxisCenters=0:5:50;</span>
+0055 <span class="comment">%AnalysisStruct.WhichAnalysis='TuningCurve';</span>
+0056 <span class="comment">% AnalysisStruct.XAxisCenters=-400:100:0;</span>
+0057 AnalysisStruct.WhichAnalysis=<span class="string">'PSTH'</span>;
+0058 AnalysisStruct.BinWidth=15;
+0059 
+0060 NumberOfBins=length(AnalysisStruct.XVector(1):AnalysisStruct.BinWidth(1):AnalysisStruct.XVector(end));
+0061 Inhib_PSTH=repmat(nan,length(InhibFilesBlockMGS),NumberOfBins);
+0062 
+0063 <span class="keyword">for</span> InhibIndex=[1:length(InhibFilesBlockMGS)]
+0064     currentfile=InhibFilesBlockMGS(InhibIndex);
+0065     load(currentfile.Filename);
+0066 
+0067     <a href="../../XeX/UtilityFunctions/assorted/detachvars.html" class="code" title="">detachvars</a>;
+0068     Trials=Trials(2:end);
+0069     
+0070     numTrials(InhibIndex)=length(find(GoodTrial==1&amp;PhotoBad~=1));
+0071     
+0072     eval([currentfile.Command]);
+0073     AnalysisStruct.FilterString=<span class="string">'GoodTrial==1&amp;PhotoBad~=1'</span>;
+0074     <a href="doAnalysis.html" class="code" title="">doAnalysis</a>
+0075     Inhib_PSTH(InhibIndex,:)=PlotY;
+0076     <span class="comment">%REPEAT as needed with new parameters</span>
+0077 
+0078     <a href="RemoveAnalVariables.html" class="code" title="">RemoveAnalVariables</a>;
+0079     clear Trials
+0080 
+0081 <span class="keyword">end</span>
+0082 
+0083 <span class="comment">%Now make plots etc</span>
+0084 <span class="comment">%EquateAxis is a useful function !!!</span>
+0085 
+0086 f1=figure;
+0087 p1_minbox=plot(XVector,nanmean(Inhib_PSTH_block),<span class="string">'k-'</span>);
+0088 hold on;
+0089 p1_minbox=plot(XVector,nanmean(Inhib_PSTH_mgs),<span class="string">'g-'</span>);</pre></div>
+<hr><address>Generated on Wed 13-Dec-2006 00:06:54 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

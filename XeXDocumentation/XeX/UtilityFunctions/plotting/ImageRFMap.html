@@ -1,0 +1,143 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of ImageRFMap</title>
+  <meta name="keywords" content="ImageRFMap">
+  <meta name="description" content="This script does the ImageRFMap">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html XeX --><!-- ../menu.html UtilityFunctions --><!-- menu.html plotting -->
+<h1>ImageRFMap
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>This script does the ImageRFMap</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">    This script does the ImageRFMap</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../XeX/UtilityFunctions/gettingAndsettingParameters/discretizeXes.html" class="code" title="">discretizeXes</a>	</li><li><a href="../../../XeX/UtilityFunctions/main/BaseCorrect.html" class="code" title="">BaseCorrect</a>	This script does baseline correction for RFMap,  for instance.</li><li><a href="../../../XeX/UtilityFunctions/main/CountSpikes.html" class="code" title="function [countsmat]=CountSpikes(Trials,indices,alignTimes,xVec,unitCode,AnalogCorrect)">CountSpikes</a>	returns total spike counts for each Trial in a matrix</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../XeX/AnalysisFunctions/ImageMap.html" class="code" title="">ImageMap</a>	Script to produce an RFMap. Uses ImageRFMap and CircleRFMap to do the hard work</li><li><a href="../../../XeX/AnalysisFunctions/PlotRFMap.html" class="code" title="">PlotRFMap</a>	Script to produce an RFMap. Uses ImageRFMap and CircleRFMap to do the hard work</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 
+0002 <span class="comment">%    This script does the ImageRFMap</span>
+0003 
+0004 FilterHere=1;
+0005 TotalFilter=1&amp;CurrentFilterVector;
+0006 
+0007 <a href="../../../XeX/UtilityFunctions/gettingAndsettingParameters/discretizeXes.html" class="code" title="">discretizeXes</a>;
+0008 eval([<span class="string">'UniqueX=unique('</span> CurrentXAxisVariableStr <span class="string">'(~isnan('</span> CurrentXAxisVariableStr <span class="string">')));'</span>]);
+0009 eval([<span class="string">'UniqueY=unique('</span> CurrentX1AxisVariableStr <span class="string">'(~isnan('</span> CurrentX1AxisVariableStr <span class="string">')));'</span>]);
+0010 SpikeCount=nan*ones(length(UniqueY),length(UniqueX));
+0011 OverNumTrials=SpikeCount;
+0012 SigMat=SpikeCount;
+0013 SpikeRate=SpikeCount;
+0014 SpikeRateAve=SpikeCount;
+0015 
+0016 <span class="keyword">for</span> ind=1:length(UniqueX)
+0017     <span class="keyword">for</span> ind1=1:length(UniqueY)
+0018         eval([<span class="string">'FindResult=find('</span> CurrentXAxisVariableStr <span class="string">'==UniqueX(ind) &amp; '</span> CurrentX1AxisVariableStr <span class="string">'== UniqueY(ind1) &amp;TotalFilter);'</span>]);
+0019         eval([<span class="string">'SpikeMat=CountSpikes(Trials,RFTrialIndex(FindResult),'</span> CurrentAlignString <span class="string">'(FindResult),TimeWindowVector,CurrentUnitNumber, CurrentAnalogCorrect);'</span>]); <span class="comment">%keyboard;</span>
+0020        SpikeRate(ind1,ind)=nanmean(SpikeMat)*1000/(TimeWindowVector(2)-TimeWindowVector(1));
+0021         SpikeCount(ind1,ind)=nansum(SpikeMat); <span class="comment">%total number of spikes in window across trials</span>
+0022         TempCount=nan*SpikeMat;
+0023         TempCount(~isnan(SpikeMat))=1;
+0024         OverNumTrials(ind1,ind)=nansum(TempCount); <span class="comment">%trick to find number of ~isnans</span>
+0025         <span class="keyword">if</span> OverNumTrials(ind1,ind)==0, SpikeRate(ind1,ind)=NaN; SpikeCount(ind1,ind)=NaN;<span class="keyword">end</span>
+0026 <span class="keyword">end</span>
+0027 <span class="keyword">end</span>
+0028 
+0029 <span class="comment">% AnalImageMap;</span>
+0030 <a href="../../../XeX/UtilityFunctions/main/BaseCorrect.html" class="code" title="">BaseCorrect</a>;
+0031 
+0032 <span class="comment">% keyboard;</span>
+0033 
+0034 <span class="comment">% if handles.BaselineCorrectVar==1,    SpikeCount=(SpikeCount-BaseRate)/BaseRate;end</span>
+0035 <span class="comment">% figure;</span>
+0036 TemporaryHandle=image(UniqueX,UniqueY,SpikeRate);
+0037 colormap(gray);
+0038 set(TemporaryHandle,<span class="string">'CDataMapping'</span>,<span class="string">'scaled'</span>);
+0039 set(gca,<span class="string">'ydir'</span>,<span class="string">'normal'</span>);
+0040 <span class="comment">%  set(gca,'box','off','tickdir','out','xlim',[-30 30],'ylim',[-30 30]);</span>
+0041 <span class="comment">% colorbar;</span>
+0042 <span class="keyword">if</span> CurrentPlotSig==1,    
+0043     
+0044    fprintf(<span class="string">'P = %2.6f\n'</span>,CurrentPValue);
+0045 
+0046     ExpNumSpikes= BaseRate * OverNumTrials * ( TimeWindowVector(2) - TimeWindowVector(1) ) / 1000;
+0047     CDFValue = poisscdf(SpikeCount,ExpNumSpikes);
+0048     LowSig = CDFValue &lt; CurrentPValue;
+0049     HighSig= CDFValue &gt; (1-CurrentPValue);
+0050     SigMat(LowSig==1&amp;~isnan(SpikeCount))=1;
+0051     SigMat(HighSig==1&amp;~isnan(SpikeCount))=2;
+0052     SigMat(isnan(SpikeCount))=-1; <span class="comment">%catching the 0 trials runs</span>
+0053     
+0054 <span class="comment">%     NumCols=length(UniqueX);</span>
+0055 <span class="comment">% keyboard;</span>
+0056     YMat=repmat(UniqueY',1,length(UniqueX));
+0057     XMat=repmat(UniqueX,length(UniqueY),1);
+0058     
+0059     
+0060     hold on;
+0061 
+0062     <span class="keyword">if</span> any(any(SigMat==1))
+0063      TemporaryHandle(2)=plot( XMat(SigMat==1), YMat(SigMat==1),<span class="string">'yo'</span>);
+0064     set(TemporaryHandle(2),<span class="string">'markersize'</span>,2,<span class="string">'markerfacecolor'</span>,<span class="string">'m'</span>);
+0065     <span class="keyword">else</span>
+0066         TemporaryHandle(2)=plot(nan,nan);
+0067     <span class="keyword">end</span>
+0068     
+0069     <span class="keyword">if</span> any(any(SigMat==2))
+0070     TemporaryHandle(3)=plot( XMat(SigMat==2),YMat(SigMat==2),<span class="string">'co'</span>);
+0071     set(TemporaryHandle(3),<span class="string">'markersize'</span>,2,<span class="string">'markerfacecolor'</span>,<span class="string">'c'</span>);
+0072     <span class="keyword">else</span>
+0073         TemporaryHandle(3)=plot(nan,nan);
+0074     <span class="keyword">end</span>
+0075     
+0076     <span class="keyword">if</span> any(any(SigMat==-1))
+0077         TemporaryHandle(4)=plot(XMat(SigMat==-1),YMat(SigMat==-1),<span class="string">'rx'</span>);
+0078         set(TemporaryHandle(4),<span class="string">'markersize'</span>,6);
+0079     <span class="keyword">else</span>
+0080         TemporaryHandle(4)=plot(nan,nan);
+0081     <span class="keyword">end</span>
+0082     
+0083 <span class="keyword">end</span>
+0084 
+0085 <span class="comment">%  keyboard;</span>
+0086 <span class="comment">% colorbar;</span>
+0087 <span class="comment">%  SpikeCounty=SpikeCount;</span>
+0088 clear SpikeCount;
+0089 CurrentPlotType=<span class="string">'ImageRF'</span>;
+0090 
+0091 <span class="comment">% %putting in the xaxis variable name tag for this axis</span>
+0092 <span class="comment">%</span>
+0093 <span class="comment">% CurrentAxisHandle=gca;</span>
+0094 <span class="comment">% CurrentAxisNumber=find(CurrentAxisHandle==handles.HandlesList);</span>
+0095 <span class="comment">%</span>
+0096 <span class="comment">% if ~isempty(strfind(CurrentXAxisVariableStr,'Discretized')), XAxisVar=CurrentXAxisVariableStr(12:end);else XAxisVar=CurrentXAxisVariableStr;end</span>
+0097 <span class="comment">% if ~isempty(strfind(CurrentX1AxisVariableStr,'Discretized')), X1AxisVar=CurrentX1AxisVariableStr(12:end);else X1AxisVar=CurrentX1AxisVariableStr;end</span>
+0098 <span class="comment">%</span>
+0099 <span class="comment">% handles.AxisVariable(CurrentAxisNumber).XAxis=XAxisVar;</span>
+0100 <span class="comment">% handles.AxisVariable(CurrentAxisNumber).YAxis=X1AxisVar;</span>
+0101</pre></div>
+<hr><address>Generated on Wed 13-Dec-2006 00:06:54 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

@@ -1,0 +1,384 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of RFMap</title>
+  <meta name="keywords" content="RFMap">
+  <meta name="description" content="This function analyzes trials from the RF map paradigm">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html XeX --><!-- menu.html PreProcFunctions -->
+<h1>RFMap
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This function analyzes trials from the RF map paradigm</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function CurrentVariables=RFMap(Trials,klugestring,UseAx,SacOpts) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">    This function analyzes trials from the RF map paradigm
+    Main Difference is that rf data are now in a very long vector, up to 10
+    times length of Trials (actual number depends upon ISI).
+    CurrentVariables=RFMap(Trials,klugestring,UseAx,SacOpts)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../XeX/UtilityFunctions/assorted/attachvars.html" class="code" title="">attachvars</a>	This script evaluates what variables are present in the calling</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function CurrentVariables=RFMap(Trials,klugestring,UseAx,SacOpts)</a>
+0002 
+0003 <span class="comment">%    This function analyzes trials from the RF map paradigm</span>
+0004 <span class="comment">%    Main Difference is that rf data are now in a very long vector, up to 10</span>
+0005 <span class="comment">%    times length of Trials (actual number depends upon ISI).</span>
+0006 <span class="comment">%    CurrentVariables=RFMap(Trials,klugestring,UseAx,SacOpts)</span>
+0007 
+0008 <span class="comment">%Initializing Variables</span>
+0009 
+0010 ArrayNumber=nan*ones(1,length(Trials));
+0011 RFGoodTrial=ArrayNumber;
+0012 BadTrial=ArrayNumber;
+0013 RFPhotoBad=ArrayNumber;
+0014 TrialNumber=1:length(Trials);
+0015 
+0016 AbortTrial=ArrayNumber;
+0017 FixationBreak=ArrayNumber;
+0018 
+0019 RewardTime=ArrayNumber;
+0020 ErrorTime=ArrayNumber;
+0021 FPTime=ArrayNumber;
+0022 NumRFs=ArrayNumber;
+0023 
+0024 <span class="comment">%ArrayBak=[]; %bcos we dont care about ArrayNumber</span>
+0025 
+0026 <span class="comment">%for RFMap only</span>
+0027 
+0028 RFOnTime=repmat(ArrayNumber,1,10); 
+0029 RFWhichRF=RFOnTime;
+0030 RFOffTime=RFOnTime;
+0031 RFx=RFOnTime;
+0032 RFy=RFOnTime;
+0033 RFPat=RFOnTime;
+0034 RFTrialIndex=RFOnTime;
+0035 RFIndex=1;
+0036 PhotoBad=RFOnTime; <span class="comment">%counter-intuitive, but convenient</span>
+0037 GoodTrial=RFOnTime;
+0038 RFBadTrial=RFOnTime;
+0039 
+0040 RFCheckSize=RFOnTime;
+0041 RFRed=RFOnTime;
+0042 RFGreen=RFOnTime;
+0043 RFBlue=RFOnTime;
+0044 RFOrientation=RFOnTime;
+0045 RFLength=RFOnTime;
+0046 RFWidth=RFOnTime;
+0047 RFMode=RFOnTime;
+0048 
+0049 RFMinCheckSize=RFOnTime;
+0050 RFHoleControl=RFOnTime;
+0051 RFColor=RFOnTime;
+0052 RFColorControl=RFOnTime;
+0053 RFNumber=RFOnTime;
+0054 RFx1=RFOnTime;
+0055 RFx2=RFOnTime;
+0056 RFx3=RFOnTime;
+0057 RFx4=RFOnTime;
+0058 RFy1=RFOnTime;
+0059 RFy2=RFOnTime;
+0060 RFy3=RFOnTime;
+0061 RFy4=RFOnTime;
+0062 
+0063 FPOnTime=RFOnTime;
+0064 FPx=RFx;
+0065 FPy=RFy;
+0066 
+0067 RFOnTime1=ArrayNumber;
+0068 RFOnTime2=ArrayNumber;
+0069 RFOnTime3=ArrayNumber;
+0070 RFOnTime4=ArrayNumber;
+0071 RFOnTime5=ArrayNumber;
+0072 
+0073 MyVariableList={<span class="string">'ArrayNumber'</span>,<span class="string">'GoodTrial'</span>,<span class="string">'BadTrial'</span>,<span class="string">'PhotoBad'</span>,<span class="string">'TrialNumber'</span>,<span class="string">'AbortTrial'</span>,<span class="string">'FixationBreak'</span>,<span class="string">'RewardTime'</span>,<span class="string">'ErrorTime'</span>,<span class="string">'FPTime'</span>,<span class="string">'NumRFs'</span>,<span class="string">'RFOnTime'</span>,<span class="string">'RFWhichRF'</span>,<span class="string">'RFOffTime'</span>,<span class="string">'RFx'</span>,<span class="string">'RFy'</span>,<span class="string">'RFPat'</span>,<span class="string">'RFTrialIndex'</span>,<span class="string">'RFPhotoBad'</span>,<span class="keyword">...</span>
+0074     <span class="string">'RFGoodTrial'</span>,<span class="string">'RFBadTrial'</span>,<span class="string">'FPOnTime'</span>,<span class="string">'RFOnTime1'</span>,<span class="string">'RFOnTime2'</span>,<span class="string">'RFOnTime3'</span>,<span class="string">'RFOnTime4'</span>,<span class="string">'RFOnTime5'</span>,<span class="string">'RFGood'</span>,<span class="string">'RFMinCheckSize'</span>,<span class="string">'RFHoleControl'</span>,<span class="string">'RFCheckSize'</span>,<span class="string">'RFRed'</span>,<span class="string">'RFGreen'</span>,<span class="string">'RFBlue'</span>,<span class="string">'RFOrientation'</span>,<span class="string">'RFLength'</span>,<span class="string">'RFWidth'</span>,<span class="string">'RFMode'</span>};
+0075 MyResponseVariableList={<span class="string">'GoodTrial'</span>};
+0076 
+0077 
+0078 <span class="keyword">for</span> TrialIndex=1:length(Trials)
+0079     
+0080     CurrentEvents=Trials(TrialIndex).Events;
+0081     CurrentCodes=double([CurrentEvents.Code]);
+0082     CurrentTimes=double([CurrentEvents.Time]);
+0083     
+0084     is_reward=find(CurrentCodes==1012);
+0085     is_error=find(CurrentCodes==1013);
+0086     is_fp=find(CurrentCodes==1003);
+0087     is_photobad=find(CurrentCodes==1092);
+0088     is_abort=find(CurrentCodes==1090);
+0089     is_fixationbreak=find(CurrentCodes==1091);
+0090     
+0091     <span class="keyword">if</span> ~isempty(is_reward), RFGoodTrial(TrialIndex)=1;
+0092     RewardTime(TrialIndex)=CurrentTimes(is_reward(1));
+0093     <span class="keyword">elseif</span> ~isempty(is_error),
+0094     ErrorTime(TrialIndex)=CurrentTimes(is_error(1));
+0095     <span class="keyword">end</span>
+0096 
+0097     <span class="keyword">if</span> ~isempty(is_fp), FPTime(TrialIndex)=CurrentTimes(is_fp(1));<span class="keyword">end</span>
+0098    
+0099     <span class="keyword">if</span> ~isempty(is_photobad), RFPhotoBad(TrialIndex)=1;<span class="keyword">end</span>
+0100     <span class="keyword">if</span> ~isempty(is_abort) AbortTrial(TrialIndex)=1;<span class="keyword">end</span>
+0101     <span class="keyword">if</span> ~isempty(is_fixationbreak) FixationBreak(TrialIndex)=1;<span class="keyword">end</span>
+0102     
+0103                 
+0104     <span class="keyword">if</span> ~isempty(is_fp)
+0105         EarlyDrops=find(CurrentCodes&gt;=10700);
+0106         <span class="keyword">if</span> length(EarlyDrops)&gt;=4
+0107         FPx(TrialIndex)=(CurrentCodes(EarlyDrops(3))-11000)/10;
+0108         FPy(TrialIndex)=(CurrentCodes(EarlyDrops(4))-11000)/10;
+0109         <span class="keyword">end</span>
+0110     <span class="keyword">end</span>
+0111        
+0112     is_rf=find(CurrentCodes==1007);
+0113     is_rfoff=find(CurrentCodes==1010);
+0114 
+0115             NumRFs(TrialIndex)=length(is_rf);
+0116 
+0117             <span class="keyword">if</span> ~isempty(is_rf) &amp; RFGoodTrial(TrialIndex)~=1 &amp; AbortTrial(TrialIndex)~=1 &amp; FixationBreak(TrialIndex)~=1
+0118     <span class="keyword">if</span> ~isempty(is_error), BadTrial(TrialIndex)=1; <span class="keyword">else</span> BadTrial(TrialIndex)=2;<span class="keyword">end</span>
+0119 <span class="keyword">end</span>
+0120 
+0121     <span class="keyword">if</span> ~isempty(is_rf), 
+0122         
+0123         
+0124          <span class="keyword">for</span> TempVar=1:length(is_rf)   <span class="comment">%Only 1 RF per presentation, so this works.</span>
+0125             
+0126           RFWhichRF(RFIndex)=TempVar;
+0127           RFOnTime(RFIndex)=CurrentTimes(is_rf(TempVar));
+0128           eval([<span class="string">'RFOnTime'</span> num2str(TempVar) <span class="string">'(TrialIndex)=RFOnTime(RFIndex);'</span>]);
+0129           <span class="comment">%assuming max of 100 ms duration &amp; min of 100 ms ISI</span>
+0130           FindResult=find(CurrentCodes==1010 &amp; (CurrentTimes-RFOnTime(RFIndex))&gt;=0 &amp; (CurrentTimes-RFOnTime(RFIndex))&lt;100 );  
+0131           <span class="keyword">if</span> length(FindResult)~=1, RFOffTime(RFIndex)=0; <span class="keyword">else</span> RFOffTime(RFIndex)=CurrentTimes(FindResult);<span class="keyword">end</span>
+0132           FindResult=find(CurrentCodes==1092 &amp; (CurrentTimes-RFOnTime(RFIndex))&gt;=0 &amp; (CurrentTimes-RFOnTime(RFIndex))&lt;100 );
+0133           <span class="keyword">if</span> length(FindResult)~=0, PhotoBad(RFIndex)=1; <span class="keyword">end</span>
+0134 
+0135           FindResult=find(abs(CurrentTimes-RFOnTime(RFIndex))&lt;5 &amp; CurrentCodes&lt;=6850&amp;CurrentCodes&gt;=5650);
+0136 
+0137 <span class="comment">%           FindResult=find(CurrentCodes&gt;6250 &amp; CurrentCodes&lt;6750 &amp; (CurrentTimes-RFOnTime(RFIndex))==0);</span>
+0138           <span class="keyword">if</span> length(FindResult)&gt;=2, RFy(RFIndex)=(CurrentCodes(FindResult(2))-6500)/10;
+0139 <span class="comment">%           end</span>
+0140 <span class="comment">%           FindResult=find(CurrentCodes&lt;6250 &amp; CurrentCodes&gt;5750 &amp; (CurrentTimes-RFOnTime(RFIndex))==0 );</span>
+0141 <span class="comment">%           if length(FindResult)~=0,</span>
+0142               RFx(RFIndex)=(CurrentCodes(FindResult(1))-6000)/10;<span class="keyword">end</span>
+0143           
+0144          
+0145           <span class="comment">%first create rf1x..... rf4y.. at the top, i niitlize, later on</span>
+0146           <span class="comment">%take care of elan up as well like rfontime</span>
+0147           <span class="comment">%</span>
+0148           <span class="comment">% indresult=..... find the 70000s with the same ontime as</span>
+0149           <span class="comment">% rfontime, and code&gt;=7000</span>
+0150           <span class="comment">%for listloop=1:length(findresult)</span>
+0151           <span class="comment">%eval(['RF' num2str(listloop) 'X(RFIndex)=CurrentCodes(FindResult(ListLoop))-6000;']);</span>
+0152           <span class="comment">%eval(['RF' num2str(listloop) 'Y(RFIndex)=CurrentCodes(FindResult(ListLoop))-6500;']);</span>
+0153           <span class="comment">%end</span>
+0154           
+0155           FindResult=find(CurrentCodes&gt;=7000 &amp; CurrentCodes&lt;10000 &amp; (CurrentTimes-RFOnTime(RFIndex))==0 );
+0156           <span class="keyword">if</span> length(FindResult)&gt;=1 <span class="comment">%&amp; length(FindResult)&lt;=4</span>
+0157           <span class="keyword">for</span> listloop=1:length(FindResult)
+0158           eval([<span class="string">'RFx'</span> num2str(listloop) <span class="string">'(RFIndex)=CurrentCodes((FindResult(listloop))+1)-6000;'</span>]);
+0159           eval([<span class="string">'RFy'</span> num2str(listloop) <span class="string">'(RFIndex)=CurrentCodes((FindResult(listloop))+2)-6500;'</span>]);
+0160           <span class="keyword">end</span>
+0161           <span class="keyword">end</span>
+0162           
+0163           FindResult=find(CurrentCodes&gt;=10000 &amp; abs(CurrentTimes-RFOnTime(RFIndex))&lt;60 );
+0164           <span class="keyword">if</span> length(FindResult)&gt;=1
+0165               RFMinCheckSize(RFIndex)=nanmin(CurrentCodes(FindResult)-10000);
+0166           <span class="keyword">end</span>                    
+0167          
+0168 <span class="comment">%           if RFWhichRF(RFIndex)~=4 &amp; RFMinCheckSize(RFIndex)~=6, keyboard;end</span>
+0169           
+0170           <span class="keyword">if</span>(RFIndex&gt;=4 &amp;&amp; all(RFMinCheckSize((RFIndex-3):(RFIndex))==0)) RFHoleControl(RFIndex)=1; <span class="keyword">else</span> RFHoleControl(RFIndex)=0;<span class="keyword">end</span>
+0171           
+0172           <span class="comment">%Basic RF parameters</span>
+0173                     
+0174                     FindResult=find(CurrentCodes&gt;=10000 &amp; CurrentCodes&lt;=10100 <span class="keyword">...</span>
+0175                                     &amp; abs(CurrentTimes-RFOnTime(RFIndex))&lt;60 );
+0176 <span class="keyword">if</span> length(FindResult)&gt;0
+0177                     RFCheckSize(RFIndex)=CurrentCodes(FindResult(1))-10000;
+0178 <span class="keyword">end</span>
+0179         
+0180                     FindResult=find(CurrentCodes&gt;=10100 &amp; CurrentCodes&lt;=10200 <span class="keyword">...</span>
+0181                                     &amp; abs(CurrentTimes-RFOnTime(RFIndex))&lt;60 );
+0182 <span class="keyword">if</span> length(FindResult)&gt;0
+0183                     RFMode(RFIndex)=CurrentCodes(FindResult(1))-10000;
+0184 <span class="keyword">end</span>
+0185 
+0186 FindResult=find(CurrentCodes&gt;=10200 &amp; CurrentCodes&lt;=10700 <span class="keyword">...</span>
+0187                                     &amp; abs(CurrentTimes-RFOnTime(RFIndex))&lt;60 );
+0188 <span class="keyword">if</span> length(FindResult)&gt;0  
+0189                     RFOrientation(RFIndex)=CurrentCodes(FindResult(1))-10200;
+0190 <span class="keyword">end</span>
+0191 
+0192                     FindResult=find(CurrentCodes&gt;=10700 &amp; CurrentCodes&lt;=10800 <span class="keyword">...</span>
+0193                                     &amp; abs(CurrentTimes-RFOnTime(RFIndex))&lt;60 );
+0194 <span class="keyword">if</span> length(FindResult)&gt;0
+0195                     RFLength(RFIndex)=CurrentCodes(FindResult(1))-10000;
+0196 <span class="keyword">end</span>
+0197 
+0198                     FindResult=find(CurrentCodes&gt;=10800 &amp; CurrentCodes&lt;=10900 <span class="keyword">...</span>
+0199                                     &amp; abs(CurrentTimes-RFOnTime(RFIndex))&lt;60 );
+0200 <span class="keyword">if</span> length(FindResult)&gt;0
+0201                     RFWidth(RFIndex)=CurrentCodes(FindResult(1))-10000;
+0202 <span class="keyword">end</span>
+0203 
+0204           FindResult=find((CurrentCodes&gt;=5000 &amp; CurrentCodes&lt;=5255) &amp; (CurrentTimes-RFOnTime(RFIndex))==0 );
+0205 <span class="keyword">if</span> length(FindResult)&gt;0  
+0206           RFRed(RFIndex)=CurrentCodes(FindResult(1))-5000;
+0207 <span class="keyword">end</span>
+0208 FindResult=find((CurrentCodes&gt;=5300 &amp; CurrentCodes&lt;=5555) &amp; (CurrentTimes-RFOnTime(RFIndex))==0 );
+0209 <span class="keyword">if</span> length(FindResult)&gt;0  
+0210 RFGreen(RFIndex)=CurrentCodes(FindResult(1))-5000;         
+0211 <span class="keyword">end</span>
+0212 FindResult=find((CurrentCodes&gt;=5600 &amp; CurrentCodes&lt;=5855) &amp; (CurrentTimes-RFOnTime(RFIndex))==0 );
+0213 
+0214 <span class="keyword">if</span> length(FindResult)&gt;0  RFBlue(RFIndex)=CurrentCodes(FindResult(1))-5000;
+0215 <span class="keyword">end</span>
+0216 
+0217 <span class="comment">% sets RFColor flag for whichever color is changed</span>
+0218 
+0219           FindRed=find((CurrentCodes&gt;5000 &amp; CurrentCodes&lt;5255) &amp; (CurrentTimes-RFOnTime(RFIndex))==0 );
+0220           <span class="keyword">if</span> length(FindRed)&gt;=1
+0221               RFColor(RFIndex)=1;
+0222           <span class="keyword">end</span>                    
+0223           FindGreen=find((CurrentCodes&gt;5255 &amp; CurrentCodes&lt;5555) &amp; (CurrentTimes-RFOnTime(RFIndex))==0 );
+0224           <span class="keyword">if</span> length(FindGreen)&gt;=1
+0225               RFColor(RFIndex)=1;
+0226           <span class="keyword">end</span>           
+0227           FindBlue=find((CurrentCodes&gt;5555 &amp; CurrentCodes&lt;5855) &amp; (CurrentTimes-RFOnTime(RFIndex))==0 );
+0228           <span class="keyword">if</span> length(FindBlue)&gt;=1
+0229               RFColor(RFIndex)=1;
+0230           <span class="keyword">end</span>
+0231           <span class="keyword">if</span>(RFIndex&gt;=4 &amp;&amp; all(RFColor((RFIndex-3):(RFIndex))==1)) RFColorControl(RFIndex)=1; <span class="keyword">else</span> RFColorControl(RFIndex)=0;<span class="keyword">end</span>
+0232 
+0233     <span class="comment">%evals number of RF's presented when checksize not used to change hole</span>
+0234           FindResult=find(CurrentCodes==7111 &amp; (CurrentTimes-RFOnTime(RFIndex))==0 );
+0235           <span class="keyword">if</span> length(FindResult)&gt;=1
+0236               RFNumber(RFIndex)=length(FindResult);
+0237           <span class="keyword">end</span>     
+0238           
+0239           
+0240           <span class="keyword">if</span>(RFIndex&gt;=4 &amp;&amp; all(RFMinCheckSize((RFIndex-3):(RFIndex))==0)) RFHoleControl(RFIndex)=1; <span class="keyword">else</span> RFHoleControl(RFIndex)=0;<span class="keyword">end</span>
+0241           
+0242           RFTrialIndex(RFIndex)=TrialIndex;
+0243           
+0244           FindResult=find(CurrentCodes&gt;=7000 &amp; (CurrentTimes-RFOnTime(RFIndex))==0 );
+0245           <span class="keyword">if</span> length(FindResult)~=0, RFPat(RFIndex)=CurrentCodes(FindResult(1))-7000;<span class="keyword">end</span>
+0246           
+0247           FPOnTime(RFIndex)=FPTime(TrialIndex);
+0248           
+0249           <span class="keyword">if</span> TempVar==1, FirstRFx(TrialIndex)=RFx(RFIndex);
+0250               FirstRFy(TrialIndex)=RFy(RFIndex);
+0251           <span class="keyword">end</span>
+0252 
+0253           GoodTrial(RFIndex)=RFGoodTrial(TrialIndex);
+0254           RFBadTrial(RFIndex)= BadTrial(TrialIndex);
+0255           
+0256           RFIndex=RFIndex+1;
+0257 
+0258           <span class="keyword">end</span>
+0259         
+0260            <span class="keyword">end</span> <span class="comment">%ending the if ~isempty(is_rf) loop</span>
+0261            
+0262     <span class="comment">%ArrayFiddleCodeBit;</span>
+0263     
+0264 <span class="keyword">end</span>  <span class="comment">%ending the main loop</span>
+0265 
+0266 RFIndex=RFIndex-1;
+0267 RFx=RFx(1:RFIndex);
+0268 RFy=RFy(1:RFIndex);
+0269 RFOnTime=RFOnTime(1:RFIndex);
+0270 RFOffTime=RFOffTime(1:RFIndex);
+0271 RFPat=RFPat(1:RFIndex);
+0272 PhotoBad=PhotoBad(1:RFIndex);
+0273 RFTrialIndex=RFTrialIndex(1:RFIndex);
+0274 FPOnTime=FPOnTime(1:RFIndex);
+0275 GoodTrial=GoodTrial(1:RFIndex);
+0276 RFBadTrial=RFBadTrial(1:RFIndex);
+0277 RFMinCheckSize=RFMinCheckSize(1:RFIndex);
+0278 RFHoleControl=RFHoleControl(1:RFIndex);
+0279 RFColor=RFColor(1:RFIndex);
+0280 RFColorControl=RFColorControl(1:RFIndex);
+0281 RFNumber=RFNumber(1:RFIndex);
+0282 RFx1=RFx1(1:RFIndex);
+0283 RFx2=RFx2(1:RFIndex);
+0284 RFx3=RFx3(1:RFIndex);
+0285 RFx4=RFx4(1:RFIndex);
+0286 RFy1=RFy1(1:RFIndex);
+0287 RFy2=RFy2(1:RFIndex);
+0288 RFy3=RFy3(1:RFIndex);
+0289 RFy4=RFy4(1:RFIndex);
+0290 RFWhichRF=RFWhichRF(1:RFIndex);
+0291 
+0292 RFRed=RFRed(1:RFIndex);
+0293 RFGreen=RFGreen(1:RFIndex);
+0294 RFBlue=RFBlue(1:RFIndex);
+0295 RFCheckSize=RFCheckSize(1:RFIndex);
+0296 RFOrientation=RFOrientation(1:RFIndex);
+0297 
+0298 <span class="comment">% if ~isempty(find(~isnan(RFMinCheckSize)))</span>
+0299 <span class="comment">% if ( length(find(RFMinCheckSize==0&amp;~isnan(RFMinCheckSize))) / length(find(~isnan(RFMinCheckSize))) &gt; .7) RFHoleControl=ones(1,length(RFMinCheckSize)); else RFHoleControl=zeros(1,length(RFMinCheckSize));end</span>
+0300 <span class="comment">% end</span>
+0301 
+0302 RFGood=(RFOffTime-RFOnTime)&gt;30 &amp; (RFOffTime-RFOnTime)&lt;70;
+0303 
+0304 
+0305  
+0306  <span class="keyword">if</span> exist(<span class="string">'UseAx'</span>,<span class="string">'var'</span>)&amp;&amp;UseAx~=0, axes(UseAx); 
+0307     plot(RFx,RFy,<span class="string">'bo'</span>);
+0308  <span class="keyword">end</span>
+0309 
+0310  
+0311  summaryString=sprintf(<span class="string">'%s\n'</span>,<span class="string">'***********Analysis****************'</span>);
+0312 summaryString=[summaryString sprintf(<span class="string">'%s\t%d\n'</span>,<span class="string">'Number of Trials='</span>,length(Trials))];
+0313 summaryString=[summaryString sprintf(<span class="string">'%s\t%d\n'</span>,<span class="string">'Number of Good Trials='</span>,length(find(RFGoodTrial==1)))];
+0314 summaryString=[summaryString sprintf(<span class="string">'%s\t%d\n'</span>,<span class="string">'Number of Photobads='</span>,length(find(RFPhotoBad==1)))];
+0315 
+0316 FPmat=[FPx;FPy]';
+0317 FPmat=FPmat(~isnan(FPx),:);
+0318 FPmat=unique(FPmat,<span class="string">'rows'</span>);
+0319 <span class="keyword">if</span> length(FPmat)&lt;10
+0320   summaryString=[summaryString sprintf(<span class="string">'%s\n'</span>,<span class="string">'FPx     FPy'</span>)];
+0321     <span class="keyword">for</span> ii=1:size(FPmat,1)
+0322        summaryString=[summaryString sprintf(<span class="string">'%s\n'</span>,num2str([FPmat(ii,1) FPmat(ii,2)],<span class="string">'%6.2f'</span>))];
+0323     <span class="keyword">end</span>
+0324   summaryString=[summaryString  sprintf(<span class="string">'%s\n'</span>,<span class="string">'********'</span>)];
+0325 <span class="keyword">end</span>
+0326 
+0327 
+0328 RFmat=[RFx;RFy]';
+0329 RFmat=unique(RFmat,<span class="string">'rows'</span>);
+0330 <span class="keyword">if</span> length(RFmat)&lt;10
+0331     summaryString=[summaryString sprintf(<span class="string">'%s\n'</span>,<span class="string">'RFx     RFy'</span>)];
+0332     <span class="keyword">for</span> ii=1:size(RFmat,1)
+0333        summaryString=[summaryString sprintf(<span class="string">'%s\n'</span>,num2str([RFmat(ii,1) RFmat(ii,2)],<span class="string">'%6.2f'</span>))];
+0334     <span class="keyword">end</span>
+0335 <span class="keyword">end</span>
+0336 
+0337 fprintf(<span class="string">'%s'</span>,summaryString);
+0338 
+0339  <a href="../../XeX/UtilityFunctions/assorted/attachvars.html" class="code" title="">attachvars</a>;</pre></div>
+<hr><address>Generated on Wed 13-Dec-2006 00:06:54 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

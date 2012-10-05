@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of PlotKDE</title>
+  <meta name="keywords" content="PlotKDE">
+  <meta name="description" content="Script that plots kernel density estimates">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html XeX --><!-- ../menu.html UtilityFunctions --><!-- menu.html plotting -->
+<h1>PlotKDE
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>Script that plots kernel density estimates</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">    Script that plots kernel density estimates
+    Requires connection to R etc.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../XeX/UtilityFunctions/Rmath/Rkde.html" class="code" title="function [xvals,xsmooth,upC,lowC]=Rkde(x,xvals,alpha,type)">Rkde</a>	function to carry out kde analysis in R</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../XeX/AnalysisFunctions/DrawKDE.html" class="code" title="">DrawKDE</a>	Script to produce an kernel density estimate. Uses PlotKDE to do the hard work</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 
+0002 <span class="comment">%    Script that plots kernel density estimates</span>
+0003 <span class="comment">%    Requires connection to R etc.</span>
+0004 
+0005     FilterHere=1;
+0006     TotalFilter=FilterHere&amp;CurrentFilterVector;
+0007     
+0008     eval([<span class="string">'CurrentSelectedVals='</span> CurrentSelectedVariable <span class="string">';'</span>]);
+0009     <span class="keyword">if</span> length(TotalFilter)==1, TotalFilter=logical(ones(1,length(CurrentSelectedVals)));<span class="keyword">end</span>;
+0010    
+0011     CurrentAlpha=((CurrentSliderValue+5)*10-rem( (CurrentSliderValue+5)*10,5))/100;
+0012 <span class="comment">%     fprintf('Smoothing alpha is %2.2f\n',CurrentAlpha);</span>
+0013     set(handles.SliderValue,<span class="string">'string'</span>,[<span class="string">'alpha='</span> num2str(CurrentAlpha,<span class="string">'%2.2f\n'</span>)]);
+0014     PlotY=CurrentSelectedVals(TotalFilter);
+0015 <span class="comment">%     keyboard;</span>
+0016     [PlotXVector,xsmooth,upC,lowC]=<a href="../../../XeX/UtilityFunctions/Rmath/Rkde.html" class="code" title="function [xvals,xsmooth,upC,lowC]=Rkde(x,xvals,alpha,type)">Rkde</a>(PlotY,PlotXVector,CurrentAlpha,<span class="string">'locfit'</span>);
+0017     TemporaryHandle=plot(PlotXVector,xsmooth,<span class="string">'k-'</span>);
+0018     
+0019     <span class="keyword">if</span> CurrentPlotCB==1,
+0020         hold on;
+0021     TemporaryHandle(2)=plot(PlotXVector,upC,<span class="string">'k-'</span>);
+0022         TemporaryHandle(3)=plot(PlotXVector,lowC,<span class="string">'k-'</span>);
+0023 <span class="keyword">end</span>    
+0024 
+0025     
+0026     <span class="comment">%also need to use default slider intelligently, and not mess with stim</span>
+0027     <span class="comment">%vector if it is kde. Bas.</span>
+0028     
+0029     fprintf(<span class="string">'%s\n'</span>,[num2str(length(find(TotalFilter))) <span class="string">' Trials'</span>]);
+0030      
+0031     set(gca,<span class="string">'box'</span>,<span class="string">'off'</span>,<span class="string">'tickdir'</span>,<span class="string">'out'</span>,<span class="string">'xlim'</span>,[min(XVector) max(PlotXVector)]);
+0032     set(TemporaryHandle(1),<span class="string">'linewidth'</span>,2);</pre></div>
+<hr><address>Generated on Wed 13-Dec-2006 00:06:54 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

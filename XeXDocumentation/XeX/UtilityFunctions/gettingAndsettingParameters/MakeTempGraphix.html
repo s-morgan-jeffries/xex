@@ -1,0 +1,50 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of MakeTempGraphix</title>
+  <meta name="keywords" content="MakeTempGraphix">
+  <meta name="description" content="This scriptlet assembles the TempGraphix structure for saving">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html XeX --><!-- ../menu.html UtilityFunctions --><!-- menu.html gettingAndsettingParameters -->
+<h1>MakeTempGraphix
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>This scriptlet assembles the TempGraphix structure for saving</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">    This scriptlet assembles the TempGraphix structure for saving</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="SetGObjectProperties.html" class="code" title="">SetGObjectProperties</a>	This script is used for setting GraphicsObjectProperties. Mainly calls MakeTempGraphix</li><li><a href="../../../XeX/UtilityFunctions/update/UpdateCellOrLoadGFX.html" class="code" title="">UpdateCellOrLoadGFX</a>	this script does all the hard work for updating a cell or loading</li><li><a href="../../../XeX/UtilityFunctions/update/UpdateGObjects.html" class="code" title="">UpdateGObjects</a>	this script does the hard work for updateaxis</li><li><a href="../../../XeX/UtilityFunctions/update/UpdateSlider.html" class="code" title="">UpdateSlider</a>	this is the major update graphic objects file. poorly called</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 
+0002 <span class="comment">%    This scriptlet assembles the TempGraphix structure for saving</span>
+0003 
+0004 TempGraphix=struct(<span class="string">'handle'</span>,TemporaryHandle,<span class="string">'dataset'</span>,CurrentDataFile,<span class="string">'evalstring'</span>,EvalString,<span class="string">'markerstring'</span>,LocalMarkerString,<span class="string">'binwidth'</span>,CurrentBinWidth,<span class="string">'timevector'</span>,<span class="keyword">...</span>
+0005     CurrentStimVector,<span class="string">'trialfilter'</span>,CurrentFilterString,<span class="string">'rf'</span>,CurrentRF,<span class="string">'alignstring'</span>,CurrentAlignString,<span class="string">'currentvariable'</span>,CurrentSelectedVariable,<span class="string">'timewindowvector'</span>,<span class="keyword">...</span>
+0006     TimeWindowVector,<span class="string">'xaxisvariablestr'</span>,CurrentXAxisVariableStr,<span class="string">'x1axisvariablestr'</span>,CurrentX1AxisVariableStr,<span class="string">'yaxisvariablestr'</span>,CurrentYAxisVariableStr,<span class="keyword">...</span>
+0007 <span class="string">'discretizex'</span>,CurrentXAxisDiscretize,<span class="string">'discretizex1'</span>,CurrentX1AxisDiscretize,<span class="string">'xaxiscenters'</span>,CurrentXAxisCentersStr,<span class="string">'x1axiscenters'</span>,CurrentX1AxisCentersStr,<span class="string">'unitnumber'</span>,CurrentUnitNumber,<span class="string">'slidervalue'</span>,CurrentSliderValue,<span class="string">'plottype'</span>,CurrentPlotType,<span class="string">'errorbartype'</span>,CurrentErrorBarType,<span class="string">'pvalue'</span>,CurrentPValue,<span class="string">'displayfilter'</span>,CurrentDisplayFilterString);  <span class="comment">%last field added april 23 2006</span>
+0008</pre></div>
+<hr><address>Generated on Wed 13-Dec-2006 00:06:54 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

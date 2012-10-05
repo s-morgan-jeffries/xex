@@ -1,0 +1,73 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of Preproc</title>
+  <meta name="keywords" content="Preproc">
+  <meta name="description" content="function CurrentVariables=Preproc(Trials,SaccadeOptions,ProcType)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html XeX --><!-- menu.html OutsideXex -->
+<h1>Preproc
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function CurrentVariables=Preproc(Trials,SaccadeOptions,ProcType)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function CurrentVariables=Preproc(Trials,CurrentAnalysisFile,SacCorrectCode) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> function CurrentVariables=Preproc(Trials,SaccadeOptions,ProcType)
+ CurrentAnalysisFile gives the type of preprocessor
+ SaccadeOptions is a structure with fields Threshold, MinLat, ISICut, and
+ CorrectCode. If not supplied, it will be set automatically. 
+ SacCorrectCode (default 1003) will be used to check for saccades; 1007 is
+ the only other likely value</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="Preproc.html" class="code" title="function CurrentVariables=Preproc(Trials,CurrentAnalysisFile,SacCorrectCode)">Preproc</a>	function CurrentVariables=Preproc(Trials,SaccadeOptions,ProcType)</li><li><a href="../../XeX/PreProcFunctions/LineMotion.html" class="code" title="function CurrentVariables=LineMotion(Trials,klugestring,UseAx,SacOpts)">LineMotion</a>	This function analyzes files from the line motion paradigm</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="Preproc.html" class="code" title="function CurrentVariables=Preproc(Trials,CurrentAnalysisFile,SacCorrectCode)">Preproc</a>	function CurrentVariables=Preproc(Trials,SaccadeOptions,ProcType)</li><li><a href="SampleSession.html" class="code" title="">SampleSession</a>	</li><li><a href="saveResults.html" class="code" title="function saveResults(FileList, FindDir, SaveDir, PreProcType, FileTag)">saveResults</a>	go to the directory of itnerest (cd)</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function CurrentVariables=Preproc(Trials,CurrentAnalysisFile,SacCorrectCode)</a>
+0002 
+0003 <span class="comment">% function CurrentVariables=Preproc(Trials,SaccadeOptions,ProcType)</span>
+0004 <span class="comment">% CurrentAnalysisFile gives the type of preprocessor</span>
+0005 <span class="comment">% SaccadeOptions is a structure with fields Threshold, MinLat, ISICut, and</span>
+0006 <span class="comment">% CorrectCode. If not supplied, it will be set automatically.</span>
+0007 <span class="comment">% SacCorrectCode (default 1003) will be used to check for saccades; 1007 is</span>
+0008 <span class="comment">% the only other likely value</span>
+0009 
+0010 <span class="keyword">if</span> ~exist(<span class="string">'SacCorrectCode'</span>,<span class="string">'var'</span>)
+0011     SacCorrectCode=1003;
+0012 <span class="keyword">end</span>
+0013 
+0014 <span class="keyword">if</span> ~exist(<span class="string">'CurrentAnalysisFile'</span>,<span class="string">'var'</span>)
+0015     CurrentAnalysisFile=<span class="string">'LineMotion'</span>;
+0016     fprintf(<span class="string">'%s\n'</span>,<span class="string">'Preproc defaulted to line motion'</span>);
+0017 <span class="keyword">end</span>
+0018 
+0019 SaccadeOptions.Threshold=0.1;
+0020 SaccadeOptions.MinLat=0;
+0021 SaccadeOptions.ISICut=0;
+0022 SaccadeOptions.CorrectCode=SacCorrectCode;
+0023 
+0024 eval([<span class="string">'CurrentVariables='</span> CurrentAnalysisFile <span class="string">'(Trials,''DummyVar'',0,SaccadeOptions);'</span>]);
+0025 
+0026</pre></div>
+<hr><address>Generated on Wed 13-Dec-2006 00:06:54 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

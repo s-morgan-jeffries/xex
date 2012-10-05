@@ -1,0 +1,173 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of LoadFileCallbackStuff</title>
+  <meta name="keywords" content="LoadFileCallbackStuff">
+  <meta name="description" content="This file handles file loading, from GUI.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html XeX --><!-- ../menu.html UtilityFunctions --><!-- menu.html loadinFiles -->
+<h1>LoadFileCallbackStuff
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>This file handles file loading, from GUI.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">    This file handles file loading, from GUI.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../XeX/Matlab_based_mrdd/mrdr.html" class="code" title="">mrdr</a>	mrdr: MATLAB REX data reader.</li><li><a href="../../../XeX/PreProcFunctions/KlugeTheTrials.html" class="code" title="">KlugeTheTrials</a>	Script where kluge fixes for analysis can be implemented.</li><li><a href="../../../XeX/UtilityFunctions/gettingAndsettingParameters/AnalLoadedFileScript.html" class="code" title="">AnalLoadedFileScript</a>	</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../XeX/XeX.html" class="code" title="function varargout = XeX(varargin)">XeX</a>	XEX M-file for XeX.fig</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 
+0002 <span class="comment">%    This file handles file loading, from GUI.</span>
+0003 
+0004 Old_Dir=pwd;
+0005 <span class="keyword">if</span> ~exist(<span class="string">'DataDirectory'</span>,<span class="string">'var'</span>), DataDirectory=<span class="string">'c:\matlab\work\physiology'</span>;<span class="keyword">end</span>
+0006 <span class="comment">% cd(DataDirectory);</span>
+0007 cd(handles.LastSelectedDirectory);
+0008 
+0009 <span class="comment">% CurrentUseAx=get(handles.UseStimAxes,'Value');</span>
+0010 <span class="comment">% if CurrentUseAx==1, CurrentUseAx=handles.axes7;else CurrentUseAx=[];end</span>
+0011     
+0012    [input_filename, input_pathname] = uigetfile( <span class="keyword">...</span>
+0013        {<span class="string">'*.mat;*A'</span>,<span class="string">'Data-files (*.mat *A)'</span>; <span class="keyword">...</span>
+0014        <span class="string">'*A;*E'</span>,<span class="string">'A/E files'</span>;<span class="keyword">...</span>
+0015         <span class="string">'*.*'</span>,  <span class="string">'All Files (*.*)'</span>}, <span class="keyword">...</span>
+0016         <span class="string">'Pick a Trials file'</span>, <span class="keyword">...</span>
+0017         <span class="string">'MultiSelect'</span>, <span class="string">'on'</span>);
+0018     
+0019      <span class="comment">%%loading the files</span>
+0020         
+0021      <span class="keyword">if</span> ~isnumeric(input_filename)
+0022          
+0023      <span class="keyword">if</span> ~iscell(input_filename) TemporaryStuff{1}=input_filename;
+0024      input_filename=TemporaryStuff; 
+0025      <span class="keyword">end</span>
+0026      
+0027      NumLoads=0;
+0028      AnalysisFiles=get(handles.AnalysisFile,<span class="string">'string'</span>);
+0029     AnalysisFileValue=get(handles.AnalysisFile,<span class="string">'value'</span>);
+0030     <span class="keyword">if</span> iscell(AnalysisFiles)
+0031     CurrentAnalysisFile=AnalysisFiles{AnalysisFileValue};
+0032     <span class="keyword">else</span>
+0033         CurrentAnalysisFile=AnalysisFiles;
+0034     <span class="keyword">end</span>
+0035     CurrentAnalysisFile=CurrentAnalysisFile(1:(end-2));
+0036     
+0037      cd(input_pathname);
+0038      handles.LastSelectedDirectory=input_pathname;
+0039 
+0040      <span class="keyword">for</span> load_index=1:length(input_filename)
+0041          CurrentFile=input_filename{load_index};
+0042          <span class="keyword">if</span> ~isempty(strfind(CurrentFile,<span class="string">'.mat'</span>))
+0043              <span class="comment">%CurrentFile=input_filename{load_index};</span>
+0044              CurrentFile=CurrentFile(1:(end-4));
+0045              eval([CurrentFile <span class="string">'= load('''</span> CurrentFile <span class="string">'.mat'');'</span>]);
+0046              eval([CurrentFile <span class="string">'.Trials='</span> CurrentFile <span class="string">'.Trials(2:(end-1));'</span>]);
+0047              eval([<span class="string">'if isfield('</span>,CurrentFile,<span class="string">',''Trials''),'</span>,<span class="string">'handles.'</span> CurrentFile <span class="string">'.Trials='</span> CurrentFile <span class="string">'.Trials; handles.'</span> CurrentFile <span class="string">'.FileName='''</span> [input_pathname input_filename{load_index}] <span class="string">''';end'</span>]); 
+0048              <span class="keyword">if</span> isfield(handles,CurrentFile)
+0049              NumLoads=NumLoads+1;
+0050              loadedNames{NumLoads}=CurrentFile;
+0051              <a href="../../../XeX/PreProcFunctions/KlugeTheTrials.html" class="code" title="">KlugeTheTrials</a>;          
+0052              <span class="comment">%now doing the current analysis and printing out the results</span>
+0053 
+0054 <span class="comment">%              if isempty(CurrentUseAx)</span>
+0055      eval([<span class="string">'ResultVariables='</span> CurrentAnalysisFile <span class="string">'(handles.'</span> CurrentFile <span class="string">'.Trials,'''</span> CurrentFile <span class="string">''',0,handles.SaccadeOptions);'</span>]);
+0056 <span class="comment">%              else      eval(['ResultVariables=' CurrentAnalysisFile '(handles.' CurrentFile '.Trials,''' CurrentFile ''', CurrentUseAx,handles.SaccadeOptions);']);</span>
+0057 <span class="comment">%              end</span>
+0058              
+0059                  eval([<span class="string">'handles.'</span> CurrentFile <span class="string">'.Analysis=ResultVariables;'</span>]);
+0060     fprintf(<span class="string">'%s\n'</span>,[<span class="string">'Completed one   '</span> CurrentAnalysisFile ]);
+0061              
+0062              <span class="keyword">else</span> fprintf(<span class="string">'%s\n'</span>,<span class="string">'******************No Trials structure here*****************'</span>);
+0063              <span class="keyword">end</span>
+0064          <span class="keyword">elseif</span> (CurrentFile(end)==<span class="string">'A'</span>|CurrentFile(end)==<span class="string">'E'</span>)
+0065 <span class="comment">%               try,</span>
+0066              CurrentFile=CurrentFile(1:(end-1));
+0067              eval([<span class="string">'TemporaryStruct = mrdr(''-s 1001'',''800'',''-d'','''</span>,CurrentFile,<span class="string">''');'</span>]);
+0068              TemporaryStruct=TemporaryStruct(2:(end-1));
+0069              <span class="keyword">if</span> length(TemporaryStruct)&gt;0
+0070              eval([CurrentFile <span class="string">'.Trials=TemporaryStruct; clear TemporaryStruct;'</span>]); 
+0071 <span class="comment">%              eval([CurrentFile ' = mrdr(''-s 1001'',''800'',''-d'',' CurrentFile(1:(end-1)),');']);</span>
+0072 <span class="comment">%              eval(['if isfield(',CurrentFile,',''Trials''),','handles.' CurrentFile '.Trials=' CurrentFile '.Trials;end']);</span>
+0073              eval([<span class="string">'if isfield('</span>,CurrentFile,<span class="string">',''Trials''),'</span>,<span class="string">'handles.'</span> CurrentFile <span class="string">'.Trials='</span> CurrentFile <span class="string">'.Trials; handles.'</span> CurrentFile <span class="string">'.FileName='''</span> [input_pathname input_filename{load_index}] <span class="string">''';end'</span>]); 
+0074 
+0075              <span class="keyword">if</span> isfield(handles,CurrentFile)
+0076              NumLoads=NumLoads+1;
+0077              loadedNames{NumLoads}=CurrentFile;
+0078 <span class="comment">%               keyboard;</span>
+0079               <a href="../../../XeX/PreProcFunctions/KlugeTheTrials.html" class="code" title="">KlugeTheTrials</a>;        
+0080 <span class="comment">%               if isempty(CurrentUseAx)</span>
+0081      eval([<span class="string">'ResultVariables='</span> CurrentAnalysisFile <span class="string">'(handles.'</span> CurrentFile <span class="string">'.Trials,'''</span> CurrentFile <span class="string">''',0,handles.SaccadeOptions);'</span>]);
+0082 <span class="comment">%               else      eval(['ResultVariables=' CurrentAnalysisFile '(handles.' CurrentFile '.Trials,''' CurrentFile ''', CurrentUseAx,handles.SaccadeOptions);']);</span>
+0083 <span class="comment">%</span>
+0084 <span class="comment">%               end</span>
+0085                  eval([<span class="string">'handles.'</span> CurrentFile <span class="string">'.Analysis=ResultVariables;'</span>]);
+0086     fprintf(<span class="string">'%s\n'</span>,[<span class="string">'Completed one   '</span> CurrentAnalysisFile ]);
+0087  
+0088 
+0089              <span class="keyword">else</span> fprintf(<span class="string">'%s\n'</span>,<span class="string">'Nothing here'</span>);
+0090              <span class="keyword">end</span>
+0091     
+0092              <span class="keyword">else</span> fprintf(<span class="string">'%s\n'</span>,<span class="string">'******************No Trials structure here*****************'</span>);
+0093              <span class="keyword">end</span>
+0094 <span class="comment">%</span>
+0095 <span class="comment">%               catch,</span>
+0096 <span class="comment">%                   fprintf('%s\n','******** MRDR failed *********');</span>
+0097 <span class="comment">%              end</span>
+0098          <span class="keyword">end</span>
+0099      <span class="keyword">end</span>
+0100     
+0101      fprintf(<span class="string">'%s\n'</span>,[<span class="string">'loaded '</span> num2str(NumLoads) <span class="string">' trials structures'</span>]);
+0102      fprintf(<span class="string">'%s\n'</span>,<span class="string">'****************************************************'</span>);
+0103      
+0104     LoadedFileNames=get(handles.LoadedFiles,<span class="string">'string'</span>);
+0105     <span class="keyword">if</span> ~iscell(LoadedFileNames) &amp; ~strcmp(LoadedFileNames,<span class="string">'LoadedFiles'</span>)
+0106         TemporaryStuff{1}=LoadedFileNames;
+0107         LoadedFileNames=TemporaryStuff;
+0108     <span class="keyword">end</span>
+0109     
+0110     <span class="keyword">if</span> exist(<span class="string">'loadedNames'</span>,<span class="string">'var'</span>)
+0111     <span class="keyword">if</span> ~iscell(LoadedFileNames)
+0112         set(handles.LoadedFiles,<span class="string">'string'</span>,sort(loadedNames));
+0113     <span class="keyword">else</span>
+0114         NewNames=setdiff(loadedNames,LoadedFileNames);
+0115         set(handles.LoadedFiles,<span class="string">'string'</span>,sort([NewNames LoadedFileNames']'));
+0116     <span class="keyword">end</span>
+0117     
+0118         WhereIsFile=strcmp(loadedNames{1},get(handles.LoadedFiles,<span class="string">'string'</span>));
+0119   <span class="keyword">if</span> ~isempty(find(WhereIsFile)),  set(handles.LoadedFiles,<span class="string">'value'</span>,find(WhereIsFile)); <span class="keyword">end</span>
+0120 
+0121     <span class="keyword">end</span>    
+0122     
+0123     <span class="comment">% setappdata(0,'handles',handles);</span>
+0124     clear loadedNames;
+0125     
+0126     <a href="../../../XeX/UtilityFunctions/gettingAndsettingParameters/AnalLoadedFileScript.html" class="code" title="">AnalLoadedFileScript</a>;
+0127 
+0128     
+0129      guidata(hObject,handles);
+0130      <span class="keyword">end</span> <span class="comment">%ending the ~isnumeric loop</span>
+0131      cd(Old_Dir);</pre></div>
+<hr><address>Generated on Wed 13-Dec-2006 00:06:54 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

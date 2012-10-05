@@ -1,0 +1,353 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of EnterAxisVariables</title>
+  <meta name="keywords" content="EnterAxisVariables">
+  <meta name="description" content="ENTERAXISVARIABLES M-file for EnterAxisVariables.fig">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html XeX --><!-- menu.html SubGUIs -->
+<h1>EnterAxisVariables
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>ENTERAXISVARIABLES M-file for EnterAxisVariables.fig</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function varargout = EnterAxisVariables(varargin) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> ENTERAXISVARIABLES M-file for EnterAxisVariables.fig
+     Meant solely to be called from XeX
+     To enter axis variables for plotting tuning curves.
+      ENTERAXISVARIABLES, by itself, creates a new ENTERAXISVARIABLES or raises the existing
+      singleton*.
+
+      H = ENTERAXISVARIABLES returns the handle to a new ENTERAXISVARIABLES or the handle to
+      the existing singleton*.
+
+      ENTERAXISVARIABLES('CALLBACK',hObject,eventData,handles,...) calls the local
+      function named CALLBACK in ENTERAXISVARIABLES.M with the given input arguments.
+
+      ENTERAXISVARIABLES('Property','Value',...) creates a new ENTERAXISVARIABLES or raises the
+      existing singleton*.  Starting from the left, property value pairs are
+      applied to the GUI before EnterAxisVariables_OpeningFunction gets called.  An
+      unrecognized property name or invalid value makes property application
+      stop.  All inputs are passed to EnterAxisVariables_OpeningFcn via varargin.
+
+      *See GUI Options on GUIDE's Tools menu.  Choose &quot;GUI allows only one
+      instance to run (singleton)&quot;.
+
+ See also: GUIDE, GUIDATA, GUIHANDLES</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../XeX/UtilityFunctions/gettingAndsettingParameters/GetVariableChoices.html" class="code" title="">GetVariableChoices</a>	This scriptlet parses stuff from EnterAxisVariables</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function EnterAxisVariables_OpeningFcn(hObject, eventdata, handles, varargin)</a></li><li><a href="#_sub2" class="code">function varargout = EnterAxisVariables_OutputFcn(hObject, eventdata, handles)</a></li><li><a href="#_sub3" class="code">function XAxisVariable_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub4" class="code">function XAxisVariable_CreateFcn(hObject, eventdata, handles)</a></li><li><a href="#_sub5" class="code">function X1AxisVariable_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub6" class="code">function X1AxisVariable_CreateFcn(hObject, eventdata, handles)</a></li><li><a href="#_sub7" class="code">function DiscretizeX_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub8" class="code">function DiscretizeX1_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub9" class="code">function XAxisCenters_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub10" class="code">function XAxisCenters_CreateFcn(hObject, eventdata, handles)</a></li><li><a href="#_sub11" class="code">function X1AxisCenters_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub12" class="code">function X1AxisCenters_CreateFcn(hObject, eventdata, handles)</a></li><li><a href="#_sub13" class="code">function YAxisMeasure_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub14" class="code">function YAxisMeasure_CreateFcn(hObject, eventdata, handles)</a></li><li><a href="#_sub15" class="code">function OKButton_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub16" class="code">function CancelButton_Callback(hObject, eventdata, handles)</a></li></ul>
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function varargout = EnterAxisVariables(varargin)</a>
+0002 <span class="comment">% ENTERAXISVARIABLES M-file for EnterAxisVariables.fig</span>
+0003 <span class="comment">%     Meant solely to be called from XeX</span>
+0004 <span class="comment">%     To enter axis variables for plotting tuning curves.</span>
+0005 <span class="comment">%      ENTERAXISVARIABLES, by itself, creates a new ENTERAXISVARIABLES or raises the existing</span>
+0006 <span class="comment">%      singleton*.</span>
+0007 <span class="comment">%</span>
+0008 <span class="comment">%      H = ENTERAXISVARIABLES returns the handle to a new ENTERAXISVARIABLES or the handle to</span>
+0009 <span class="comment">%      the existing singleton*.</span>
+0010 <span class="comment">%</span>
+0011 <span class="comment">%      ENTERAXISVARIABLES('CALLBACK',hObject,eventData,handles,...) calls the local</span>
+0012 <span class="comment">%      function named CALLBACK in ENTERAXISVARIABLES.M with the given input arguments.</span>
+0013 <span class="comment">%</span>
+0014 <span class="comment">%      ENTERAXISVARIABLES('Property','Value',...) creates a new ENTERAXISVARIABLES or raises the</span>
+0015 <span class="comment">%      existing singleton*.  Starting from the left, property value pairs are</span>
+0016 <span class="comment">%      applied to the GUI before EnterAxisVariables_OpeningFunction gets called.  An</span>
+0017 <span class="comment">%      unrecognized property name or invalid value makes property application</span>
+0018 <span class="comment">%      stop.  All inputs are passed to EnterAxisVariables_OpeningFcn via varargin.</span>
+0019 <span class="comment">%</span>
+0020 <span class="comment">%      *See GUI Options on GUIDE's Tools menu.  Choose &quot;GUI allows only one</span>
+0021 <span class="comment">%      instance to run (singleton)&quot;.</span>
+0022 <span class="comment">%</span>
+0023 <span class="comment">% See also: GUIDE, GUIDATA, GUIHANDLES</span>
+0024 
+0025 <span class="comment">% Copyright 2002-2003 The MathWorks, Inc.</span>
+0026 
+0027 <span class="comment">% Edit the above text to modify the response to help EnterAxisVariables</span>
+0028 
+0029 <span class="comment">% Last Modified by GUIDE v2.5 22-Oct-2005 13:43:42</span>
+0030 
+0031 <span class="comment">% Begin initialization code - DO NOT EDIT</span>
+0032 gui_Singleton = 1;
+0033 gui_State = struct(<span class="string">'gui_Name'</span>,       mfilename, <span class="keyword">...</span>
+0034                    <span class="string">'gui_Singleton'</span>,  gui_Singleton, <span class="keyword">...</span>
+0035                    <span class="string">'gui_OpeningFcn'</span>, @<a href="#_sub1" class="code" title="subfunction EnterAxisVariables_OpeningFcn(hObject, eventdata, handles, varargin)">EnterAxisVariables_OpeningFcn</a>, <span class="keyword">...</span>
+0036                    <span class="string">'gui_OutputFcn'</span>,  @<a href="#_sub2" class="code" title="subfunction varargout = EnterAxisVariables_OutputFcn(hObject, eventdata, handles)">EnterAxisVariables_OutputFcn</a>, <span class="keyword">...</span>
+0037                    <span class="string">'gui_LayoutFcn'</span>,  [] , <span class="keyword">...</span>
+0038                    <span class="string">'gui_Callback'</span>,   []);
+0039 <span class="keyword">if</span> nargin &amp;&amp; ischar(varargin{1})
+0040     gui_State.gui_Callback = str2func(varargin{1});
+0041 <span class="keyword">end</span>
+0042 
+0043 <span class="keyword">if</span> nargout
+0044     [varargout{1:nargout}] = gui_mainfcn(gui_State, varargin{:});
+0045 <span class="keyword">else</span>
+0046     gui_mainfcn(gui_State, varargin{:});
+0047 <span class="keyword">end</span>
+0048 <span class="comment">% End initialization code - DO NOT EDIT</span>
+0049 
+0050 
+0051 <span class="comment">% --- Executes just before EnterAxisVariables is made visible.</span>
+0052 <a name="_sub1" href="#_subfunctions" class="code">function EnterAxisVariables_OpeningFcn(hObject, eventdata, handles, varargin)</a>
+0053 <span class="comment">% This function has no output args, see OutputFcn.</span>
+0054 <span class="comment">% hObject    handle to figure</span>
+0055 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0056 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0057 <span class="comment">% varargin   command line arguments to EnterAxisVariables (see VARARGIN)</span>
+0058 
+0059 <span class="comment">% Choose default command line output for EnterAxisVariables</span>
+0060 handles.output = hObject;
+0061 
+0062 <span class="keyword">if</span> length(varargin)&gt;=1, handles.MyVariableList=varargin{1}; handles.ResponseVariableList=varargin{2}; PresetVariables=varargin{3};
+0063     
+0064     TemporaryVariable=varargin{2}; TemporaryVariable{end+1}=<span class="string">'SpikeRate'</span>; handles.ResponseVariableList=TemporaryVariable;
+0065     
+0066     set(handles.XAxisVariable,<span class="string">'string'</span>,handles.MyVariableList);
+0067     set(handles.X1AxisVariable,<span class="string">'string'</span>,handles.MyVariableList);
+0068     set(handles.YAxisMeasure,<span class="string">'string'</span>,handles.ResponseVariableList);
+0069 
+0070     findx=find(strcmp(handles.MyVariableList,PresetVariables.XAxisVariable));
+0071     <span class="keyword">if</span> ~isempty(findx), set(handles.XAxisVariable,<span class="string">'value'</span>,findx(1));
+0072     <span class="keyword">else</span> findrfx=find(strcmp(handles.MyVariableList,<span class="string">'RFx'</span>));
+0073         <span class="keyword">if</span> ~isempty(findrfx), set(handles.XAxisVariable,<span class="string">'value'</span>,findrfx(1));
+0074         <span class="keyword">else</span> set(handles.XAxisVariable,<span class="string">'value'</span>,1);
+0075         <span class="keyword">end</span>
+0076     <span class="keyword">end</span>
+0077     
+0078     findx1=find(strcmp(handles.MyVariableList,PresetVariables.X1AxisVariable));
+0079     <span class="keyword">if</span> ~isempty(findx1), set(handles.X1AxisVariable,<span class="string">'value'</span>,findx1(1));
+0080     <span class="keyword">else</span> findrfy=find(strcmp(handles.MyVariableList,<span class="string">'RFy'</span>));
+0081         <span class="keyword">if</span> ~isempty(findrfy), set(handles.X1AxisVariable,<span class="string">'value'</span>,findrfy(1));
+0082         <span class="keyword">else</span> set(handles.X1AxisVariable,<span class="string">'value'</span>,1);
+0083         <span class="keyword">end</span>
+0084     <span class="keyword">end</span>
+0085 
+0086     findy=find(strcmp(handles.ResponseVariableList,PresetVariables.YAxisVariableStr));
+0087     <span class="keyword">if</span> ~isempty(findy), set(handles.YAxisMeasure,<span class="string">'value'</span>,findy(1));
+0088     <span class="keyword">else</span> findy=find(strcmp(handles.MyVariableList,<span class="string">'SpikeRate'</span>));
+0089         <span class="keyword">if</span> ~isempty(findy), set(handles.YAxisMeasure,<span class="string">'value'</span>,findy(1));
+0090         <span class="keyword">else</span> set(handles.YAxisMeasure,<span class="string">'value'</span>,1);
+0091         <span class="keyword">end</span>
+0092     <span class="keyword">end</span>
+0093     
+0094    
+0095     set(handles.DiscretizeX,<span class="string">'value'</span>,PresetVariables.DiscretizeX);
+0096     set(handles.DiscretizeX1,<span class="string">'value'</span>,PresetVariables.DiscretizeX1);
+0097     set(handles.XAxisCenters,<span class="string">'string'</span>,PresetVariables.XAxisCentersStr);
+0098     set(handles.X1AxisCenters,<span class="string">'string'</span>,PresetVariables.X1AxisCentersStr);
+0099    
+0100 <span class="comment">% MyVariableChoices.XAxisCentersStr=get(handles.XAxisCenters,'string');</span>
+0101 <span class="comment">% MyVariableChoices.X1AxisCentersStr=get(handles.X1AxisCenters,'string');</span>
+0102     
+0103     
+0104 <span class="keyword">end</span>
+0105 
+0106 set(gcf,<span class="string">'CloseRequestFcn'</span>,<span class="string">'disp(''Hit OK or Cancel. You cannot close this GUI like that.'')'</span>);
+0107 set(hObject,<span class="string">'WindowStyle'</span>,<span class="string">'modal'</span>)
+0108 
+0109 <span class="comment">% Update handles structure</span>
+0110 guidata(hObject, handles);
+0111 uiwait;
+0112 
+0113 <span class="comment">% UIWAIT makes EnterAxisVariables wait for user response (see UIRESUME)</span>
+0114 <span class="comment">% uiwait(handles.figure1);</span>
+0115 
+0116 
+0117 <span class="comment">% --- Outputs from this function are returned to the command line.</span>
+0118 <a name="_sub2" href="#_subfunctions" class="code">function varargout = EnterAxisVariables_OutputFcn(hObject, eventdata, handles) </a>
+0119 <span class="comment">% varargout  cell array for returning output args (see VARARGOUT);</span>
+0120 <span class="comment">% hObject    handle to figure</span>
+0121 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0122 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0123 
+0124 <span class="comment">% Get default command line output from handles structure</span>
+0125 varargout{1} = handles.output;
+0126 delete(handles.figure1);
+0127 
+0128 
+0129 <span class="comment">% --- Executes on selection change in XAxisVariable.</span>
+0130 <a name="_sub3" href="#_subfunctions" class="code">function XAxisVariable_Callback(hObject, eventdata, handles)</a>
+0131 <span class="comment">% hObject    handle to XAxisVariable (see GCBO)</span>
+0132 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0133 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0134 
+0135 <span class="comment">% Hints: contents = get(hObject,'String') returns XAxisVariable contents as cell array</span>
+0136 <span class="comment">%        contents{get(hObject,'Value')} returns selected item from XAxisVariable</span>
+0137 
+0138 
+0139 <span class="comment">% --- Executes during object creation, after setting all properties.</span>
+0140 <a name="_sub4" href="#_subfunctions" class="code">function XAxisVariable_CreateFcn(hObject, eventdata, handles)</a>
+0141 <span class="comment">% hObject    handle to XAxisVariable (see GCBO)</span>
+0142 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0143 <span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+0144 
+0145 <span class="comment">% Hint: popupmenu controls usually have a white background on Windows.</span>
+0146 <span class="comment">%       See ISPC and COMPUTER.</span>
+0147 <span class="keyword">if</span> ispc &amp;&amp; isequal(get(hObject,<span class="string">'BackgroundColor'</span>), get(0,<span class="string">'defaultUicontrolBackgroundColor'</span>))
+0148     set(hObject,<span class="string">'BackgroundColor'</span>,<span class="string">'white'</span>);
+0149 <span class="keyword">end</span>
+0150 
+0151 
+0152 <span class="comment">% --- Executes on selection change in X1AxisVariable.</span>
+0153 <a name="_sub5" href="#_subfunctions" class="code">function X1AxisVariable_Callback(hObject, eventdata, handles)</a>
+0154 <span class="comment">% hObject    handle to X1AxisVariable (see GCBO)</span>
+0155 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0156 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0157 
+0158 <span class="comment">% Hints: contents = get(hObject,'String') returns X1AxisVariable contents as cell array</span>
+0159 <span class="comment">%        contents{get(hObject,'Value')} returns selected item from X1AxisVariable</span>
+0160 
+0161 
+0162 <span class="comment">% --- Executes during object creation, after setting all properties.</span>
+0163 <a name="_sub6" href="#_subfunctions" class="code">function X1AxisVariable_CreateFcn(hObject, eventdata, handles)</a>
+0164 <span class="comment">% hObject    handle to X1AxisVariable (see GCBO)</span>
+0165 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0166 <span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+0167 
+0168 <span class="comment">% Hint: popupmenu controls usually have a white background on Windows.</span>
+0169 <span class="comment">%       See ISPC and COMPUTER.</span>
+0170 <span class="keyword">if</span> ispc &amp;&amp; isequal(get(hObject,<span class="string">'BackgroundColor'</span>), get(0,<span class="string">'defaultUicontrolBackgroundColor'</span>))
+0171     set(hObject,<span class="string">'BackgroundColor'</span>,<span class="string">'white'</span>);
+0172 <span class="keyword">end</span>
+0173 
+0174 
+0175 <span class="comment">% --- Executes on button press in DiscretizeX.</span>
+0176 <a name="_sub7" href="#_subfunctions" class="code">function DiscretizeX_Callback(hObject, eventdata, handles)</a>
+0177 <span class="comment">% hObject    handle to DiscretizeX (see GCBO)</span>
+0178 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0179 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0180 
+0181 <span class="comment">% Hint: get(hObject,'Value') returns toggle state of DiscretizeX</span>
+0182 
+0183 
+0184 <span class="comment">% --- Executes on button press in DiscretizeX1.</span>
+0185 <a name="_sub8" href="#_subfunctions" class="code">function DiscretizeX1_Callback(hObject, eventdata, handles)</a>
+0186 <span class="comment">% hObject    handle to DiscretizeX1 (see GCBO)</span>
+0187 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0188 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0189 
+0190 <span class="comment">% Hint: get(hObject,'Value') returns toggle state of DiscretizeX1</span>
+0191 
+0192 
+0193 
+0194 <a name="_sub9" href="#_subfunctions" class="code">function XAxisCenters_Callback(hObject, eventdata, handles)</a>
+0195 <span class="comment">% hObject    handle to XAxisCenters (see GCBO)</span>
+0196 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0197 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0198 
+0199 <span class="comment">% Hints: get(hObject,'String') returns contents of XAxisCenters as text</span>
+0200 <span class="comment">%        str2double(get(hObject,'String')) returns contents of XAxisCenters as a double</span>
+0201 
+0202 
+0203 <span class="comment">% --- Executes during object creation, after setting all properties.</span>
+0204 <a name="_sub10" href="#_subfunctions" class="code">function XAxisCenters_CreateFcn(hObject, eventdata, handles)</a>
+0205 <span class="comment">% hObject    handle to XAxisCenters (see GCBO)</span>
+0206 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0207 <span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+0208 
+0209 <span class="comment">% Hint: edit controls usually have a white background on Windows.</span>
+0210 <span class="comment">%       See ISPC and COMPUTER.</span>
+0211 <span class="keyword">if</span> ispc &amp;&amp; isequal(get(hObject,<span class="string">'BackgroundColor'</span>), get(0,<span class="string">'defaultUicontrolBackgroundColor'</span>))
+0212     set(hObject,<span class="string">'BackgroundColor'</span>,<span class="string">'white'</span>);
+0213 <span class="keyword">end</span>
+0214 
+0215 
+0216 
+0217 <a name="_sub11" href="#_subfunctions" class="code">function X1AxisCenters_Callback(hObject, eventdata, handles)</a>
+0218 <span class="comment">% hObject    handle to X1AxisCenters (see GCBO)</span>
+0219 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0220 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0221 
+0222 <span class="comment">% Hints: get(hObject,'String') returns contents of X1AxisCenters as text</span>
+0223 <span class="comment">%        str2double(get(hObject,'String')) returns contents of X1AxisCenters as a double</span>
+0224 
+0225 
+0226 <span class="comment">% --- Executes during object creation, after setting all properties.</span>
+0227 <a name="_sub12" href="#_subfunctions" class="code">function X1AxisCenters_CreateFcn(hObject, eventdata, handles)</a>
+0228 <span class="comment">% hObject    handle to X1AxisCenters (see GCBO)</span>
+0229 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0230 <span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+0231 
+0232 <span class="comment">% Hint: edit controls usually have a white background on Windows.</span>
+0233 <span class="comment">%       See ISPC and COMPUTER.</span>
+0234 <span class="keyword">if</span> ispc &amp;&amp; isequal(get(hObject,<span class="string">'BackgroundColor'</span>), get(0,<span class="string">'defaultUicontrolBackgroundColor'</span>))
+0235     set(hObject,<span class="string">'BackgroundColor'</span>,<span class="string">'white'</span>);
+0236 <span class="keyword">end</span>
+0237 
+0238 
+0239 <span class="comment">% --- Executes on selection change in YAxisMeasure.</span>
+0240 <a name="_sub13" href="#_subfunctions" class="code">function YAxisMeasure_Callback(hObject, eventdata, handles)</a>
+0241 <span class="comment">% hObject    handle to YAxisMeasure (see GCBO)</span>
+0242 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0243 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0244 
+0245 <span class="comment">% Hints: contents = get(hObject,'String') returns YAxisMeasure contents as cell array</span>
+0246 <span class="comment">%        contents{get(hObject,'Value')} returns selected item from YAxisMeasure</span>
+0247 
+0248 
+0249 <span class="comment">% --- Executes during object creation, after setting all properties.</span>
+0250 <a name="_sub14" href="#_subfunctions" class="code">function YAxisMeasure_CreateFcn(hObject, eventdata, handles)</a>
+0251 <span class="comment">% hObject    handle to YAxisMeasure (see GCBO)</span>
+0252 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0253 <span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+0254 
+0255 <span class="comment">% Hint: popupmenu controls usually have a white background on Windows.</span>
+0256 <span class="comment">%       See ISPC and COMPUTER.</span>
+0257 <span class="keyword">if</span> ispc &amp;&amp; isequal(get(hObject,<span class="string">'BackgroundColor'</span>), get(0,<span class="string">'defaultUicontrolBackgroundColor'</span>))
+0258     set(hObject,<span class="string">'BackgroundColor'</span>,<span class="string">'white'</span>);
+0259 <span class="keyword">end</span>
+0260 
+0261 
+0262 
+0263 
+0264 <span class="comment">% --- Executes on button press in OKButton.</span>
+0265 <a name="_sub15" href="#_subfunctions" class="code">function OKButton_Callback(hObject, eventdata, handles)</a>
+0266 <span class="comment">% hObject    handle to OKButton (see GCBO)</span>
+0267 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0268 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0269 
+0270 <a href="../../XeX/UtilityFunctions/gettingAndsettingParameters/GetVariableChoices.html" class="code" title="">GetVariableChoices</a>;
+0271 MyVariableChoices.OK=1;
+0272 
+0273 handles.output=MyVariableChoices;
+0274 guidata(hObject,handles);
+0275 uiresume;
+0276 
+0277 <span class="comment">% --- Executes on button press in CancelButton.</span>
+0278 <a name="_sub16" href="#_subfunctions" class="code">function CancelButton_Callback(hObject, eventdata, handles)</a>
+0279 <span class="comment">% hObject    handle to CancelButton (see GCBO)</span>
+0280 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0281 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0282 
+0283 <a href="../../XeX/UtilityFunctions/gettingAndsettingParameters/GetVariableChoices.html" class="code" title="">GetVariableChoices</a>;
+0284 MyVariableChoices.OK=0;
+0285 handles.output=MyVariableChoices;
+0286 guidata(hObject,handles);
+0287 uiresume;
+0288</pre></div>
+<hr><address>Generated on Wed 13-Dec-2006 00:06:54 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

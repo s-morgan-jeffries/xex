@@ -1,0 +1,87 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of PlotTuningCurve</title>
+  <meta name="keywords" content="PlotTuningCurve">
+  <meta name="description" content="Script to plot tuning curves">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html XeX --><!-- ../menu.html UtilityFunctions --><!-- menu.html plotting -->
+<h1>PlotTuningCurve
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>Script to plot tuning curves</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">    Script to plot tuning curves
+    a single variable (IsAngular) decides if angular or normal tuning curves are plotted</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../XeX/AnalysisFunctions/Analysis/AnalTuningCurve.html" class="code" title="">AnalTuningCurve</a>	Analtuningcurve does the analysis for the tuning curve</li><li><a href="../../../XeX/AnalysisFunctions/AngularTuningCurve.html" class="code" title="">AngularTuningCurve</a>	Script to produce an angular tuning curve. Uses PlotTuningCurve to do the hard work</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../XeX/AnalysisFunctions/AngularTuningCurve.html" class="code" title="">AngularTuningCurve</a>	Script to produce an angular tuning curve. Uses PlotTuningCurve to do the hard work</li><li><a href="../../../XeX/AnalysisFunctions/DrawTuningCurve.html" class="code" title="">DrawTuningCurve</a>	Script to produce a tuning curve. Uses PlotTuningCurve to do the hard work</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 
+0002 <span class="comment">%    Script to plot tuning curves</span>
+0003 <span class="comment">%    a single variable (IsAngular) decides if angular or normal tuning curves are plotted</span>
+0004 
+0005 <a href="../../../XeX/AnalysisFunctions/Analysis/AnalTuningCurve.html" class="code" title="">AnalTuningCurve</a>;
+0006 
+0007 <span class="keyword">if</span> IsAngular==0
+0008     <span class="keyword">if</span> any(~isnan(PlotStd)) &amp;&amp; CurrentPlotCB==1
+0009         TemporaryHandle=errorbar(PlotX,PlotY,2*PlotStd);
+0010         set(TemporaryHandle,<span class="string">'color'</span>,<span class="string">'k'</span>,<span class="string">'linestyle'</span>,<span class="string">'-'</span>);
+0011     <span class="keyword">else</span>
+0012 TemporaryHandle=plot(PlotX,PlotY,<span class="string">'ko-'</span>);
+0013     <span class="keyword">end</span>
+0014  CurrentPlotType=<span class="string">'TuningCurve'</span>;
+0015 <span class="keyword">elseif</span> IsAngular==1
+0016     <span class="keyword">if</span> CurrentHoldStatus~=1,hold off;<span class="keyword">else</span> hold on; <span class="keyword">end</span>
+0017 TemporaryHandle=polar(PlotX,PlotY,<span class="string">'k-'</span>); hold on;
+0018 MaxVal=max(abs([get(gca,<span class="string">'xlim'</span>) get(gca,<span class="string">'ylim'</span>)]));
+0019 set(gca,<span class="string">'xlim'</span>,[-1*MaxVal MaxVal],<span class="string">'ylim'</span>,[-1*MaxVal MaxVal]);
+0020 AngularX=linspace(0,2*pi,100);
+0021 plot(MaxVal*cos(AngularX),MaxVal*sin(AngularX),<span class="string">'k-'</span>);
+0022 plot(MaxVal*cos(AngularX)/2,MaxVal*sin(AngularX)/2,<span class="string">'k-'</span>);
+0023 plot([0 0],[-1*MaxVal MaxVal],<span class="string">'k--'</span>);
+0024 plot([-1*MaxVal MaxVal],[0 0],<span class="string">'k--'</span>);
+0025 
+0026  CurrentPlotType=<span class="string">'AngularTuningCurve'</span>;
+0027 
+0028 <span class="keyword">end</span>
+0029 set(gca,<span class="string">'box'</span>,<span class="string">'off'</span>,<span class="string">'tickdir'</span>,<span class="string">'out'</span>);
+0030  set(TemporaryHandle,<span class="string">'linewidth'</span>,2);
+0031      fprintf(<span class="string">'%s\n'</span>,[num2str(length(find(TotalFilter))) <span class="string">' Trials'</span>]);
+0032 
+0033 <span class="comment">%putting in the xaxis variable name tag for this axis</span>
+0034 
+0035 CurrentAxisHandle=gca;
+0036 CurrentAxisNumber=find(CurrentAxisHandle==handles.HandlesList);
+0037 
+0038 <span class="keyword">if</span> ~isempty(strfind(CurrentXAxisVariableStr,<span class="string">'Discretized'</span>)), XAxisVar=CurrentXAxisVariableStr(12:end);<span class="keyword">else</span> XAxisVar=CurrentXAxisVariableStr;<span class="keyword">end</span>
+0039 handles.AxisVariable(CurrentAxisNumber).XAxis=XAxisVar;
+0040 handles.AxisVariable(CurrentAxisNumber).YAxis=<span class="string">'Undefined'</span>;
+0041 
+0042 <span class="comment">% if ~isempty(strfind(CurrentX1AxisVariableStr,'Discretized')), X1AxisVar=CurrentX1AxisVariableStr(12:end);else X1AxisVar=CurrentX1AxisVariableStr;end</span>
+0043 <span class="comment">% handles.AxisVariable(CurrentAxisNumber).YAxis=X1AxisVar;</span>
+0044</pre></div>
+<hr><address>Generated on Wed 13-Dec-2006 00:06:54 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

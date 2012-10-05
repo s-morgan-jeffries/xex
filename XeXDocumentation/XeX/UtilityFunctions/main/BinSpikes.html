@@ -1,0 +1,86 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of BinSpikes</title>
+  <meta name="keywords" content="BinSpikes">
+  <meta name="description" content="returns binned spike counts for each Trial in a matrix.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html XeX --><!-- ../menu.html UtilityFunctions --><!-- menu.html main -->
+<h1>BinSpikes
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>returns binned spike counts for each Trial in a matrix.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function [countsmat,timesmat]=BinSpikes(Trials,indices,alignTimes,xVec,unitCode,AnalogCorrect) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">    returns binned spike counts for each Trial in a matrix.
+    [countsmat,timesmat]=BinSpikes(Trials,indices,alignTimes,xVec,unitCode,AnalogCorrect)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../XeX/UtilityFunctions/assorted/un.html" class="code" title="function X1=un(X)">un</a>	This function takes in a vector (or a matrix) , and returns unique values (or rows). NaNs (and rows with NaNs) are removed.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../XeX/AnalysisFunctions/Analysis/AnalPSTD.html" class="code" title="">AnalPSTD</a>	Script to do analysis for PlotPSTD; callable outside Xex</li><li><a href="../../../XeX/AnalysisFunctions/Analysis/AnalPSTH.html" class="code" title="">AnalPSTH</a>	Script to do analysis for PlotPSTH; callable outside Xex</li><li><a href="../../../XeX/AnalysisFunctions/DrawRasters.html" class="code" title="">DrawRasters</a>	Script to produce a rasterplot. Does the hard work by itself</li><li><a href="../../../XeX/UtilityFunctions/plotting/PlotPSTD.html" class="code" title="">PlotPSTD</a>	Script that plots spike-densities</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [countsmat,timesmat]=BinSpikes(Trials,indices,alignTimes,xVec,unitCode,AnalogCorrect)</a>
+0002 
+0003 <span class="comment">%    returns binned spike counts for each Trial in a matrix.</span>
+0004 <span class="comment">%    [countsmat,timesmat]=BinSpikes(Trials,indices,alignTimes,xVec,unitCode,AnalogCorrect)</span>
+0005 
+0006 <span class="keyword">if</span> ~exist(<span class="string">'AnalogCorrect'</span>,<span class="string">'var'</span>) AnalogCorrect=1;<span class="keyword">end</span>
+0007 
+0008 countsmat=nan*ones(length(indices),length(xVec));
+0009 timesmat=nan*ones(length(indices),5000); <span class="comment">%5000 as a reasonable upper cutoff for the number of spikes</span>
+0010 
+0011 xx=1;
+0012 <span class="keyword">for</span> ind=indices
+0013     
+0014     cur=Trials(ind);
+0015     
+0016     ee=[cur.Events];
+0017     <span class="keyword">if</span> ~isempty(ee)
+0018     cc=double([ee.Code]);
+0019     tt=double([ee.Time]);
+0020     <span class="keyword">end</span>
+0021     
+0022     spikeTimes=[];
+0023     <a href="../../../XeX/UtilityFunctions/assorted/un.html" class="code" title="function X1=un(X)">un</a>=[cur.Units];
+0024     <span class="keyword">if</span> ~isempty(<a href="../../../XeX/UtilityFunctions/assorted/un.html" class="code" title="function X1=un(X)">un</a>)
+0025     temp=find([un.Code]==unitCode);
+0026     <span class="keyword">if</span> ~isempty(temp)
+0027     spikeTimes=double([<a href="../../../XeX/UtilityFunctions/assorted/un.html" class="code" title="function X1=un(X)">un</a>(temp).Times]);
+0028     <span class="keyword">end</span>
+0029     <span class="keyword">end</span>
+0030         
+0031     AnalogStartTime=cur.aStartTime;
+0032     AnalogEndTime=cur.aEndTime;
+0033     <span class="keyword">if</span> AnalogCorrect==1, spikeTimes=spikeTimes(spikeTimes&lt;=AnalogEndTime &amp; spikeTimes&gt;=AnalogStartTime);<span class="keyword">end</span>
+0034     
+0035     <span class="keyword">if</span> ~isempty(spikeTimes) &amp;&amp; ~isnan(alignTimes(xx))  <span class="comment">%just changed these from ind to xx</span>
+0036     countsmat(xx,:)=histc(spikeTimes-alignTimes(xx),xVec);
+0037     invalid_xVec= (xVec+alignTimes(xx))&lt;AnalogStartTime | (xVec+alignTimes(xx))&gt;AnalogEndTime;
+0038     countsmat(xx,invalid_xVec)=nan;
+0039 <span class="comment">%     if any(find(invalid_xVec)), keyboard;end</span>
+0040     <span class="keyword">end</span>
+0041 <span class="comment">%     keyboard;</span>
+0042     xx=xx+1; 
+0043 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Wed 13-Dec-2006 00:06:54 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

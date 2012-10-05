@@ -1,0 +1,13 @@
+NEWFIGURE
+HOLD ON
+HOLD OFF
+CIRCLEGRAPH ON
+CIRCLEGRAPH OFF
+ALIGN RF1
+ALIGN SAC1
+
+GoodTrial==1
+GoodTrial==1&PhotoBad~=1
+RFGoodTrial==1&RFPhotoBad~=1
+
+GoodTrial==1&PhotoBad~=1&RFLat==100&JWhichSac==1

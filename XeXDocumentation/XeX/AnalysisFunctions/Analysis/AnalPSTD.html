@@ -1,0 +1,78 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of AnalPSTD</title>
+  <meta name="keywords" content="AnalPSTD">
+  <meta name="description" content="Script to do analysis for PlotPSTD; callable outside Xex">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html XeX --><!-- ../menu.html AnalysisFunctions --><!-- menu.html Analysis -->
+<h1>AnalPSTD
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>Script to do analysis for PlotPSTD; callable outside Xex</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">Script to do analysis for PlotPSTD; callable outside Xex</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../XeX/UtilityFunctions/main/BinSpikes.html" class="code" title="function [countsmat,timesmat]=BinSpikes(Trials,indices,alignTimes,xVec,unitCode,AnalogCorrect)">BinSpikes</a>	returns binned spike counts for each Trial in a matrix.</li><li><a href="../../../XeX/UtilityFunctions/plotting/SpikeDensityFunction.html" class="code" title="function [spikesOut,spikeSD,gaus]=SpikeDensityFunction(spikesIn,sigma,binwidth,errtype)">SpikeDensityFunction</a>	SpikeDensityFunction.m convolves a gaussian with spikes, outputs Spike Density Functions</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../XeX/OutsideXex/doAnalysis.html" class="code" title="">doAnalysis</a>	This is a script so that it can be run in any format anywhere</li><li><a href="../../../XeX/UtilityFunctions/plotting/PlotPSTD.html" class="code" title="">PlotPSTD</a>	Script that plots spike-densities</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 
+0002 <span class="comment">%Script to do analysis for PlotPSTD; callable outside Xex</span>
+0003 
+0004 FilterHere=1;
+0005     TotalFilter=FilterHere&amp;CurrentFilterVector;
+0006 <span class="comment">%         TemPlotX=(XVector(1)-2*CurrentBinWidth):1:(XVector(end)+2*CurrentBinWidth);</span>
+0007         TemPlotX=XVector(1):1:XVector(end);
+0008 
+0009     <span class="keyword">if</span> length(TotalFilter)==1, TotalFilter=logical(ones(1,length(CurrentAlignTime)));<span class="keyword">end</span>;
+0010     SRMat=<a href="../../../XeX/UtilityFunctions/main/BinSpikes.html" class="code" title="function [countsmat,timesmat]=BinSpikes(Trials,indices,alignTimes,xVec,unitCode,AnalogCorrect)">BinSpikes</a>(Trials,RFTrialIndex(TotalFilter),CurrentAlignTime(TotalFilter),TemPlotX, CurrentUnitNumber, CurrentAnalogCorrect );  <span class="comment">%1ms binning</span>
+0011     
+0012     <span class="keyword">if</span> strcmp(CurrentErrorBarType,<span class="string">'ChangeErrorToBootstrap'</span>), errtype=1;  <span class="comment">%fprintf('%s\n','Poisson error'); %poisson error</span>
+0013     <span class="keyword">else</span> errtype=2;<span class="comment">% fprintf('%s\n','Bootstrap error');</span>
+0014     <span class="keyword">end</span>
+0015     
+0016     <span class="keyword">if</span> size(SRMat,1)&gt;0
+0017     [spikesOut,spikeSD,gaus]=<a href="../../../XeX/UtilityFunctions/plotting/SpikeDensityFunction.html" class="code" title="function [spikesOut,spikeSD,gaus]=SpikeDensityFunction(spikesIn,sigma,binwidth,errtype)">SpikeDensityFunction</a>(SRMat,CurrentBinWidth,1,errtype)  ; <span class="comment">%CurrentBinWidth is doing double duty as gaussian sigma</span>
+0018     
+0019     <span class="comment">%now need to restrict to valid region; by only taking region from</span>
+0020     <span class="comment">%length(gaus) to length(spikesOut), and then shifting PlotX by half the</span>
+0021     <span class="comment">%length of gaus backwards</span>
+0022 
+0023     PlotY=spikesOut(length(gaus): (length(spikesOut) - length(gaus) + 1) );
+0024     spikeSD=spikeSD(length(gaus):(length(spikeSD) - length(gaus) + 1));
+0025     TempLenVar=ceil(length(gaus)/2+0.25);
+0026     TemPlotX=TemPlotX( TempLenVar : ( TempLenVar + length(PlotY) -1 ) ); 
+0027     
+0028       PlotX=TemPlotX;
+0029       PlotN=length(find(TotalFilter));
+0030       PlotStd=spikeSD;
+0031     <span class="keyword">else</span>
+0032         PlotX=nan;
+0033         PlotN=nan;
+0034         PlotY=nan;
+0035         PlotStd=nan;
+0036     <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Wed 13-Dec-2006 00:06:54 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

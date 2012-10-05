@@ -1,0 +1,22 @@
+
+#For RFMap
+
+RFGoodTrial==1 & RFPhotoBad~=1
+RFGoodTrial==1 & RFPhotoBad~=1 & RFx<0
+
+#For Jump
+
+GoodTrial==1
+GoodTrial==1 & isnan(RFx)
+GoodTrial==1 & PhotoBad~=1 & SacRelRFOff<0 & RFx==0
+GoodTrial==1 & PhotoBad~=1 & SacRelRFOff<0
+
+
+
+GoodTrial==1 & PhotoBad~=1 & SacRelRFOff<0 & RFx==100
+
+
+GoodTrial==1 & PhotoBad~=1 & dISI==0
+GoodTrial==1 & PhotoBad~=1 & dISI~=0
+
+NEWFIGURE

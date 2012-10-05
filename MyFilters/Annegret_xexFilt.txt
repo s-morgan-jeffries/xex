@@ -1,0 +1,56 @@
+#For MAP
+RFGoodTrial==1&RFPhotoBad~=1
+
+#For line MOTION
+GoodTrial==1 & PhotoBad~=1 & dISI==0 & RFx==-7.4 
+GoodTrial==1 & PhotoBad~=1 & dISI~=0 & RFx==-7.4 & RF2x==-24.7
+GoodTrial==1 & PhotoBad~=1 & dISI~=0 & RFx==-7.4 & RF2x==-14.8
+
+#
+GoodTrial==1 & PhotoBad~=1 & dISI==0 & RFx== 
+GoodTrial==1 & PhotoBad~=1 & dISI~=0 & RF2x==5
+GoodTrial==1 & PhotoBad~=1 & dISI~=0 & RF2x==12.5
+GoodTrial==1 & PhotoBad~=1 & dISI~=0 & RF2x==20
+
+
+#
+GoodTrial==1 & PhotoBad~=1 & dISI==0 & RFx==7.5 
+GoodTrial==1 & PhotoBad~=1 & RFx==7.5 & RF2x==25
+GoodTrial==1 & PhotoBad~=1 & RFx==7.5 & RF2x==15
+
+#
+GoodTrial==1 & PhotoBad~=1 & dISI==0 & RFx==-2.4 
+GoodTrial==1 & PhotoBad~=1 & RFx==-2.4 & RF2x==-24.7
+GoodTrial==1 & PhotoBad~=1 & RFx==-2.4 & RF2x==-14.7
+GoodTrial==1 & PhotoBad~=1 & RFx==-2.4 & RF2x==-4.8
+
+#
+GoodTrial==1 & PhotoBad~=1 & dISI==0 & RFx==2.5
+GoodTrial==1 & PhotoBad~=1 &RFx==2.5 & RF2x==25
+GoodTrial==1 & PhotoBad~=1 & RFx==2.5 & RF2x==15
+GoodTrial==1 & PhotoBad~=1 & RFx==2.5 & RF2x==5
+
+#
+GoodTrial==1 & PhotoBad~=1 & dISI==0 & RFx==2.5
+GoodTrial==1 & PhotoBad~=1 &RFx==2.5 & RF2x==25
+GoodTrial==1 & PhotoBad~=1 & RFx==2.5 & RF2x==15
+GoodTrial==1 & PhotoBad~=1 & RFx==2.5 & RF2x==5
+
+#
+GoodTrial==1 & PhotoBad~=1 & dISI==0 & RFx==-7.4 
+GoodTrial==1 & PhotoBad~=1 & dISI~=0 & RFx==-7.4 
+GoodTrial==1 & PhotoBad~=1 & dISI==0 & RFx==-2.4 
+GoodTrial==1 & PhotoBad~=1 & dISI~=0 & RFx==-2.4 
+GoodTrial==1 & PhotoBad~=1 & dISI==0 & RFx==2.5 
+GoodTrial==1 & PhotoBad~=1 & dISI~=0 & RFx==2.5 
+GoodTrial==1 & PhotoBad~=1 & dISI==0 & RFx==7.5 
+GoodTrial==1 & PhotoBad~=1 & dISI~=0 & RFx==7.5 
+
+#For JUMP
+GoodTrial==1&PhotoBad~=1&RFChecksize==2&SacRelRFOff<0
+GoodTrial==1&PhotoBad~=1&RFChecksize==5&SacRelRFOff<0
+GoodTrial==1&PhotoBad~=1&RFChecksize==8&SacRelRFOff<0
+GoodTrial==1&PhotoBad~=1&RFChecksize==11&SacRelRFOff<0
+GoodTrial==1&PhotoBad~=1&RFChecksize==14&SacRelRFOff<0
+
+

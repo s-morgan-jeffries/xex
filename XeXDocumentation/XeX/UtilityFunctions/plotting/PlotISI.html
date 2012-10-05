@@ -1,0 +1,80 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of PlotISI</title>
+  <meta name="keywords" content="PlotISI">
+  <meta name="description" content="Plots ISIs">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html XeX --><!-- ../menu.html UtilityFunctions --><!-- menu.html plotting -->
+<h1>PlotISI
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>Plots ISIs</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">    Plots ISIs</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../XeX/UtilityFunctions/main/ISISpikes.html" class="code" title="function [isi1s,isi2s]=ISISpikes(Trials,indices,alignTimes,xVec,unitCode,AnalogCorrect)">ISISpikes</a>	function used in isi calculation, modeled after binspikes</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../XeX/AnalysisFunctions/ISIH.html" class="code" title="">ISIH</a>	Script to produce an ISI histogram. Uses PlotISI to do the hard work</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 
+0002 <span class="comment">%    Plots ISIs</span>
+0003 
+0004     FilterHere=1;
+0005     TotalFilter=FilterHere&amp;CurrentFilterVector;
+0006         TemPlotX=(XVector(1)):1:(XVector(end));
+0007 
+0008     <span class="keyword">if</span> length(TotalFilter)==1, TotalFilter=logical(ones(1,length(CurrentAlignTime)));<span class="keyword">end</span>;
+0009     [isi1s,isi2s]=<a href="../../../XeX/UtilityFunctions/main/ISISpikes.html" class="code" title="function [isi1s,isi2s]=ISISpikes(Trials,indices,alignTimes,xVec,unitCode,AnalogCorrect)">ISISpikes</a>(Trials,RFTrialIndex(TotalFilter),CurrentAlignTime(TotalFilter),[TemPlotX], CurrentUnitNumber, CurrentAnalogCorrect );  <span class="comment">%1ms binning</span>
+0010     
+0011     <span class="keyword">if</span> ReturnMap==0
+0012         
+0013         isis=isi1s;
+0014   
+0015     CurrentHistBinWidth=(CurrentSliderValue+5)*10+1;
+0016     [NumberOfISIs,CenterISI]=hist(isis,0:CurrentHistBinWidth:(max(isis)+100));
+0017 
+0018     TemporaryHandle(1)=plot(CenterISI,NumberOfISIs,<span class="string">'k-'</span>); hold on;
+0019     fprintf(<span class="string">'%s\n'</span>,[<span class="string">'Histogram Binwidth was '</span> num2str(CurrentHistBinWidth) <span class="string">' ms'</span>]);
+0020             
+0021     TempVar=find(NumberOfISIs==max(NumberOfISIs));
+0022    fprintf(<span class="string">'%s\n'</span>,[<span class="string">'Histogram mode at '</span> num2str( CenterISI( TempVar(1)))  <span class="string">' ms'</span>]);
+0023    fprintf(<span class="string">'%s\n'</span>,[ num2str(100* length(find(isis&lt;2))/ (length(find(~isnan(isis)))) ,<span class="string">'%3.2f'</span> )  <span class="string">' percent at 1 ms'</span>]);
+0024 <span class="comment">%    fprintf('%s\n',[num2str( length(find(isis==0))) ' at 0 ms !!!']);</span>
+0025    
+0026     set(TemporaryHandle(1),<span class="string">'linewidth'</span>,2);
+0027      set(gca,<span class="string">'box'</span>,<span class="string">'off'</span>,<span class="string">'tickdir'</span>,<span class="string">'out'</span>,<span class="string">'xlim'</span>,[min(XVector) max(PlotXVector)]);
+0028  
+0029     <span class="keyword">else</span> 
+0030         
+0031        TemporaryHandle=plot(isi1s,isi2s,<span class="string">'ko'</span>);
+0032        set(TemporaryHandle,<span class="string">'markersize'</span>,2);
+0033        set(gca,<span class="string">'xlim'</span>,[0 100],<span class="string">'ylim'</span>,[0 100],<span class="string">'box'</span>,<span class="string">'off'</span>,<span class="string">'tickdir'</span>,<span class="string">'out'</span>);
+0034        
+0035         
+0036     <span class="keyword">end</span>
+0037     
+0038</pre></div>
+<hr><address>Generated on Wed 13-Dec-2006 00:06:54 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

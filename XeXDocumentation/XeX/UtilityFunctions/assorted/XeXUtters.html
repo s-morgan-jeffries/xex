@@ -1,0 +1,96 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of XeXUtters</title>
+  <meta name="keywords" content="XeXUtters">
+  <meta name="description" content="Legacy function (too slow) to speak out instead of printing to screen, if SpeakToMe is set">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html XeX --><!-- ../menu.html UtilityFunctions --><!-- menu.html assorted -->
+<h1>XeXUtters
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>Legacy function (too slow) to speak out instead of printing to screen, if SpeakToMe is set</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function XeXUtters(DarkVar,SpeakToMe) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">    Legacy function (too slow) to speak out instead of printing to screen, if SpeakToMe is set
+    DarkVar toggles depressed or manic status of XeX Utters
+    XeXUtters(DarkVar,SpeakToMe)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="TellMe.html" class="code" title="function TellMe(formatvar,stringvar,speakvar)">TellMe</a>	This function uses tts to speak out the stringvar if speaktovar is set, else fprintfs it to cmd window</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../XeX/XeX.html" class="code" title="function varargout = XeX(varargin)">XeX</a>	XEX M-file for XeX.fig</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 
+0002 <a name="_sub0" href="#_subfunctions" class="code">function XeXUtters(DarkVar,SpeakToMe)</a>
+0003 
+0004 <span class="comment">%    Legacy function (too slow) to speak out instead of printing to screen, if SpeakToMe is set</span>
+0005 <span class="comment">%    DarkVar toggles depressed or manic status of XeX Utters</span>
+0006 <span class="comment">%    XeXUtters(DarkVar,SpeakToMe)</span>
+0007 
+0008 BrightUtterances={<span class="keyword">...</span>
+0009   <span class="string">'Hey, you are looking REALLY GOOD'</span><span class="keyword">...</span>
+0010   <span class="string">'Nature. N A T U R E.       Publish !!'</span><span class="keyword">...</span>
+0011   <span class="string">'You Got It !! Significance.'</span> <span class="keyword">...</span>
+0012   <span class="string">'Ooh La La !!'</span> <span class="keyword">...</span>
+0013   <span class="string">'Oh My, That looks so wonderful'</span><span class="keyword">...</span>
+0014   <span class="string">'How do you do it ?? You must be a Genius !!'</span><span class="keyword">...</span>
+0015   <span class="string">'That is some data !!! WOW !!'</span><span class="keyword">...</span>
+0016   <span class="string">'Is that your data ?? WOW !!!'</span> <span class="keyword">...</span>
+0017   <span class="string">'Oh my God !! You are so cool !'</span><span class="keyword">...</span>
+0018   };
+0019 
+0020 
+0021 DarkUtterances={<span class="keyword">...</span>
+0022   <span class="string">'I knew you were stupid, but this is TOO much !!'</span><span class="keyword">...</span>
+0023   <span class="string">'You idiot !'</span><span class="keyword">...</span>
+0024   <span class="string">'Stop fooling around and get to work !'</span><span class="keyword">...</span>
+0025   <span class="string">'Do they pay you for this ? REally ??'</span><span class="keyword">...</span>
+0026   <span class="string">'Did you even think about what you just did ?'</span><span class="keyword">...</span>
+0027   <span class="string">'How do you sleep ??'</span><span class="keyword">...</span><span class="comment">..</span>
+0028   <span class="string">'Is this slow enough for you ??? M !! O !! R  !! O !! N !!'</span><span class="keyword">...</span>
+0029   <span class="string">'Sigh ! There you go again ... '</span><span class="keyword">...</span>
+0030   <span class="string">'How many times do I have to explain this to you ?'</span><span class="keyword">...</span>
+0031   <span class="string">'Are you retarded or what ?? '</span><span class="keyword">...</span>
+0032   <span class="string">'Did you get dropped a lot when you were a baby ?'</span><span class="keyword">...</span>
+0033   <span class="string">'Stop smoking that stuff !! Not in the lab, for heaven''s sake'</span><span class="keyword">...</span>
+0034   };
+0035 
+0036 
+0037 <span class="keyword">if</span> ~exist(<span class="string">'SpeakToMe'</span>,<span class="string">'var'</span>) || isempty(SpeakToMe), SpeakToMe=1;<span class="keyword">end</span>
+0038 <span class="keyword">if</span> ~exist(<span class="string">'DarkVar'</span>,<span class="string">'var'</span>)
+0039     randomDark=rand;
+0040     <span class="keyword">if</span> randomDark&gt;=.5,
+0041     <a href="TellMe.html" class="code" title="function TellMe(formatvar,stringvar,speakvar)">TellMe</a>(<span class="string">'%s\n'</span>,BrightUtterances{ceil(rand*length(BrightUtterances))},1);
+0042     <span class="keyword">else</span>
+0043     <a href="TellMe.html" class="code" title="function TellMe(formatvar,stringvar,speakvar)">TellMe</a>(<span class="string">'%s\n'</span>,DarkUtterances{ceil(rand*length(DarkUtterances))},1);
+0044     <span class="keyword">end</span>
+0045 
+0046 <span class="keyword">elseif</span> DarkVar==1,
+0047     
+0048     <a href="TellMe.html" class="code" title="function TellMe(formatvar,stringvar,speakvar)">TellMe</a>(<span class="string">'%s\n'</span>,DarkUtterances{ceil(rand*length(DarkUtterances))},SpeakToMe);
+0049 
+0050 <span class="keyword">else</span>    <a href="TellMe.html" class="code" title="function TellMe(formatvar,stringvar,speakvar)">TellMe</a>(<span class="string">'%s\n'</span>,BrightUtterances{ceil(rand*length(BrightUtterances))},SpeakToMe);
+0051  
+0052 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Wed 13-Dec-2006 00:06:54 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

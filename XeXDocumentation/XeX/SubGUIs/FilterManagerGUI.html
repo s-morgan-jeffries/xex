@@ -1,0 +1,592 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of FilterManagerGUI</title>
+  <meta name="keywords" content="FilterManagerGUI">
+  <meta name="description" content="FILTERMANAGERGUI M-file for FilterManagerGUI.fig">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html XeX --><!-- menu.html SubGUIs -->
+<h1>FilterManagerGUI
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>FILTERMANAGERGUI M-file for FilterManagerGUI.fig</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function varargout = FilterManagerGUI(varargin) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> FILTERMANAGERGUI M-file for FilterManagerGUI.fig
+      FILTERMANAGERGUI, by itself, creates a new FILTERMANAGERGUI or raises the existing
+      singleton*.
+       Meant to be called from XeX, but can probably be used from outside as well (but untested, 
+       may depend on global variables).
+      Opens the filter manager.
+
+      H = FILTERMANAGERGUI returns the handle to a new FILTERMANAGERGUI or the handle to
+      the existing singleton*.
+
+      FILTERMANAGERGUI('CALLBACK',hObject,eventData,handles,...) calls the local
+      function named CALLBACK in FILTERMANAGERGUI.M with the given input arguments.
+
+      FILTERMANAGERGUI('Property','Value',...) creates a new FILTERMANAGERGUI or raises the
+      existing singleton*.  Starting from the left, property value pairs are
+      applied to the GUI before FilterManagerGUI_OpeningFunction gets called.  An
+      unrecognized property name or invalid value makes property application
+      stop.  All inputs are passed to FilterManagerGUI_OpeningFcn via varargin.
+
+      *See GUI Options on GUIDE's Tools menu.  Choose &quot;GUI allows only one
+      instance to run (singleton)&quot;.
+
+ See also: GUIDE, GUIDATA, GUIHANDLES</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../XeX/UtilityFunctions/handlingGraphics/makeInvisible.html" class="code" title="function makeInvisible(handleObjects)">makeInvisible</a>	To make objects supplied invisible</li><li><a href="../../XeX/UtilityFunctions/handlingGraphics/makeVisible.html" class="code" title="function makeVisible(handleObjects)">makeVisible</a>	To make objects supplied visible</li><li><a href="../../XeX/UtilityFunctions/subgui_related/FilterGUIclosereq.html" class="code" title="function FilterGUIclosereq">FilterGUIclosereq</a>	FilterGUIclosereq  Figure close request function for the Filters GUI</li><li><a href="../../XeX/XeX.html" class="code" title="function varargout = XeX(varargin)">XeX</a>	XEX M-file for XeX.fig</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../XeX/XeX.html" class="code" title="function varargout = XeX(varargin)">XeX</a>	XEX M-file for XeX.fig</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function FilterManagerGUI_OpeningFcn(hObject, eventdata, handles, varargin)</a></li><li><a href="#_sub2" class="code">function varargout = FilterManagerGUI_OutputFcn(hObject, eventdata, handles)</a></li><li><a href="#_sub3" class="code">function MyFilters_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub4" class="code">function MyFilters_CreateFcn(hObject, eventdata, handles)</a></li><li><a href="#_sub5" class="code">function SendFilters_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub6" class="code">function SaveFilters_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub7" class="code">function ReadFilters_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub8" class="code">function EditFilters_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub9" class="code">function BackToXeX_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub10" class="code">function SelectedFilters_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub11" class="code">function SelectedFilters_CreateFcn(hObject, eventdata, handles)</a></li><li><a href="#_sub12" class="code">function RemoveItems_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub13" class="code">function UpButton_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub14" class="code">function ToOrg_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub15" class="code">function DownButton_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub16" class="code">function EditMyFilters_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub17" class="code">function EditMyFilters_CreateFcn(hObject, eventdata, handles)</a></li><li><a href="#_sub18" class="code">function EditOrSave_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub19" class="code">function SaveSend_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub20" class="code">function Untitled_3_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub21" class="code">function figure1_CreateFcn(hObject, eventdata, handles)</a></li></ul>
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function varargout = FilterManagerGUI(varargin)</a>
+0002 <span class="comment">% FILTERMANAGERGUI M-file for FilterManagerGUI.fig</span>
+0003 <span class="comment">%      FILTERMANAGERGUI, by itself, creates a new FILTERMANAGERGUI or raises the existing</span>
+0004 <span class="comment">%      singleton*.</span>
+0005 <span class="comment">%       Meant to be called from XeX, but can probably be used from outside as well (but untested,</span>
+0006 <span class="comment">%       may depend on global variables).</span>
+0007 <span class="comment">%      Opens the filter manager.</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">%      H = FILTERMANAGERGUI returns the handle to a new FILTERMANAGERGUI or the handle to</span>
+0010 <span class="comment">%      the existing singleton*.</span>
+0011 <span class="comment">%</span>
+0012 <span class="comment">%      FILTERMANAGERGUI('CALLBACK',hObject,eventData,handles,...) calls the local</span>
+0013 <span class="comment">%      function named CALLBACK in FILTERMANAGERGUI.M with the given input arguments.</span>
+0014 <span class="comment">%</span>
+0015 <span class="comment">%      FILTERMANAGERGUI('Property','Value',...) creates a new FILTERMANAGERGUI or raises the</span>
+0016 <span class="comment">%      existing singleton*.  Starting from the left, property value pairs are</span>
+0017 <span class="comment">%      applied to the GUI before FilterManagerGUI_OpeningFunction gets called.  An</span>
+0018 <span class="comment">%      unrecognized property name or invalid value makes property application</span>
+0019 <span class="comment">%      stop.  All inputs are passed to FilterManagerGUI_OpeningFcn via varargin.</span>
+0020 <span class="comment">%</span>
+0021 <span class="comment">%      *See GUI Options on GUIDE's Tools menu.  Choose &quot;GUI allows only one</span>
+0022 <span class="comment">%      instance to run (singleton)&quot;.</span>
+0023 <span class="comment">%</span>
+0024 <span class="comment">% See also: GUIDE, GUIDATA, GUIHANDLES</span>
+0025 
+0026 <span class="comment">% Copyright 2002-2003 The MathWorks, Inc.</span>
+0027 
+0028 <span class="comment">% Edit the above text to modify the response to help FilterManagerGUI</span>
+0029 
+0030 <span class="comment">% Last Modified by GUIDE v2.5 02-Feb-2006 20:28:58</span>
+0031 
+0032 <span class="comment">% Begin initialization code - DO NOT EDIT</span>
+0033 gui_Singleton = 1;
+0034 gui_State = struct(<span class="string">'gui_Name'</span>,       mfilename, <span class="keyword">...</span>
+0035                    <span class="string">'gui_Singleton'</span>,  gui_Singleton, <span class="keyword">...</span>
+0036                    <span class="string">'gui_OpeningFcn'</span>, @<a href="#_sub1" class="code" title="subfunction FilterManagerGUI_OpeningFcn(hObject, eventdata, handles, varargin)">FilterManagerGUI_OpeningFcn</a>, <span class="keyword">...</span>
+0037                    <span class="string">'gui_OutputFcn'</span>,  @<a href="#_sub2" class="code" title="subfunction varargout = FilterManagerGUI_OutputFcn(hObject, eventdata, handles)">FilterManagerGUI_OutputFcn</a>, <span class="keyword">...</span>
+0038                    <span class="string">'gui_LayoutFcn'</span>,  [] , <span class="keyword">...</span>
+0039                    <span class="string">'gui_Callback'</span>,   []);
+0040 <span class="keyword">if</span> nargin &amp;&amp; ischar(varargin{1})
+0041     gui_State.gui_Callback = str2func(varargin{1});
+0042 <span class="keyword">end</span>
+0043 
+0044 <span class="keyword">if</span> nargout
+0045     [varargout{1:nargout}] = gui_mainfcn(gui_State, varargin{:});
+0046 <span class="keyword">else</span>
+0047     gui_mainfcn(gui_State, varargin{:});
+0048 <span class="keyword">end</span>
+0049 <span class="comment">% End initialization code - DO NOT EDIT</span>
+0050 
+0051 
+0052 <span class="comment">% --- Executes just before FilterManagerGUI is made visible.</span>
+0053 <a name="_sub1" href="#_subfunctions" class="code">function FilterManagerGUI_OpeningFcn(hObject, eventdata, handles, varargin)</a>
+0054 <span class="comment">% This function has no output args, see OutputFcn.</span>
+0055 <span class="comment">% hObject    handle to figure</span>
+0056 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0057 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0058 <span class="comment">% varargin   command line arguments to FilterManagerGUI (see VARARGIN)</span>
+0059 
+0060 <span class="comment">% Choose default command line output for FilterManagerGUI</span>
+0061 handles.output = hObject;
+0062 set(handles.figure1,<span class="string">'windowstyle'</span>,<span class="string">'docked'</span>);
+0063 setappdata(0,<span class="string">'FilterGUIHandle'</span>,handles.figure1);
+0064 set(handles.figure1,<span class="string">'CloseRequestFcn'</span>,<span class="string">'FilterGUIclosereq'</span>);
+0065 <a href="../../XeX/UtilityFunctions/handlingGraphics/makeInvisible.html" class="code" title="function makeInvisible(handleObjects)">makeInvisible</a>(handles.EditMyFilters);
+0066 set(handles.EditOrSave,<span class="string">'string'</span>,<span class="string">'E'</span>);
+0067 
+0068 <span class="comment">% Update handles structure</span>
+0069 guidata(hObject, handles);
+0070 
+0071 <span class="comment">% UIWAIT makes FilterManagerGUI wait for user response (see UIRESUME)</span>
+0072 <span class="comment">% uiwait(handles.figure1);</span>
+0073 
+0074 
+0075 <span class="comment">% --- Outputs from this function are returned to the command line.</span>
+0076 <a name="_sub2" href="#_subfunctions" class="code">function varargout = FilterManagerGUI_OutputFcn(hObject, eventdata, handles) </a>
+0077 <span class="comment">% varargout  cell array for returning output args (see VARARGOUT);</span>
+0078 <span class="comment">% hObject    handle to figure</span>
+0079 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0080 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0081 
+0082 <span class="comment">% Get default command line output from handles structure</span>
+0083 
+0084 varargout{1} = handles.output;
+0085 
+0086 
+0087 <span class="comment">% --- Executes on selection change in MyFilters.</span>
+0088 <a name="_sub3" href="#_subfunctions" class="code">function MyFilters_Callback(hObject, eventdata, handles)</a>
+0089 <span class="comment">% hObject    handle to MyFilters (see GCBO)</span>
+0090 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0091 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0092 
+0093 <span class="comment">% Hints: contents = get(hObject,'String') returns MyFilters contents as cell array</span>
+0094 <span class="comment">%        contents{get(hObject,'Value')} returns selected item from MyFilters</span>
+0095 
+0096 
+0097 
+0098 <span class="comment">% --- Executes during object creation, after setting all properties.</span>
+0099 <a name="_sub4" href="#_subfunctions" class="code">function MyFilters_CreateFcn(hObject, eventdata, handles)</a>
+0100 <span class="comment">% hObject    handle to MyFilters (see GCBO)</span>
+0101 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0102 <span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+0103 
+0104 <span class="comment">% Hint: listbox controls usually have a white background on Windows.</span>
+0105 <span class="comment">%       See ISPC and COMPUTER.</span>
+0106 <span class="keyword">if</span> ispc &amp;&amp; isequal(get(hObject,<span class="string">'BackgroundColor'</span>), get(0,<span class="string">'defaultUicontrolBackgroundColor'</span>))
+0107     set(hObject,<span class="string">'BackgroundColor'</span>,<span class="string">'white'</span>);
+0108 <span class="keyword">end</span>
+0109 
+0110 
+0111 <span class="comment">% --- Executes on button press in SendFilters.</span>
+0112 <a name="_sub5" href="#_subfunctions" class="code">function SendFilters_Callback(hObject, eventdata, handles)</a>
+0113 <span class="comment">% hObject    handle to SendFilters (see GCBO)</span>
+0114 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0115 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0116 
+0117 TrialFilterHandle=getappdata(0,<span class="string">'TrialFilterHandle'</span>);
+0118 UseFilterHandle=getappdata(0,<span class="string">'UseFilterHandle'</span>);
+0119 HoldFilterHandle=getappdata(0,<span class="string">'HoldFilterHandle'</span>);
+0120 UsePlottingHandle=getappdata(0,<span class="string">'UsePlottingHandle'</span>);
+0121 
+0122 CurrentFilterSet=get(handles.SelectedFilters,<span class="string">'string'</span>);
+0123 CurrentFilters=CurrentFilterSet; <span class="comment">%(get(handles.SelectedFilters,'value'));</span>
+0124 <span class="comment">% keyboard;</span>
+0125 
+0126 testfilter=ones(1,length(CurrentFilters));
+0127 
+0128 <span class="keyword">for</span> TempVar=1:length(testfilter)
+0129     testme=strtok(CurrentFilters{TempVar});
+0130     <span class="keyword">if</span> ~isempty(strfind(testme,<span class="string">'#'</span>)) || isempty(testme) || ~isempty(strfind(testme,<span class="string">'*'</span>))||~isempty(strfind(testme,<span class="string">'%'</span>))
+0131         testfilter(TempVar)=0;
+0132     <span class="keyword">end</span>
+0133 <span class="keyword">end</span>
+0134 
+0135 CurrentFilters=CurrentFilters(logical(testfilter));
+0136 
+0137 <span class="comment">% this is just a safety measure !</span>
+0138 
+0139 WhereNew=find(strcmp(CurrentFilters,<span class="string">'NEWAXIS'</span>));
+0140 
+0141 <span class="keyword">if</span> ~isempty(WhereNew)
+0142     
+0143     Testa=[1 WhereNew' length(CurrentFilters)];
+0144     DTest=diff(Testa);
+0145     
+0146     <span class="keyword">if</span> any(DTest&gt;1)
+0147 set(HoldFilterHandle,<span class="string">'value'</span>,1);
+0148     <span class="keyword">end</span>
+0149 
+0150 <span class="keyword">end</span>
+0151 
+0152 set(TrialFilterHandle,<span class="string">'string'</span>,(CurrentFilters));
+0153 <span class="comment">% set(UseFilterHandle,'value',1);</span>
+0154 <span class="comment">% set(UsePlottingHandle,'value',1);</span>
+0155 
+0156 figure(getappdata(0,<span class="string">'XeXGUIHandle'</span>));
+0157 
+0158 <span class="comment">% --- Executes on button press in SaveFilters.</span>
+0159 <a name="_sub6" href="#_subfunctions" class="code">function SaveFilters_Callback(hObject, eventdata, handles)</a>
+0160 <span class="comment">% hObject    handle to SaveFilters (see GCBO)</span>
+0161 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0162 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0163 
+0164 Old_Dir=pwd;
+0165 
+0166 <span class="keyword">if</span> isfield(handles,<span class="string">'pathname'</span>), cd(handles.pathname);
+0167 <span class="keyword">else</span>
+0168 <span class="keyword">try</span>,
+0169     cd(<span class="string">'c:\matlab\work\MyFilters\'</span>);
+0170 <span class="keyword">catch</span>,
+0171 <span class="keyword">end</span>
+0172 <span class="keyword">end</span>
+0173 
+0174 
+0175      [filename, pathname, filterindex] = uiputfile( <span class="keyword">...</span>
+0176        {<span class="string">'*_xexFilt.txt'</span>,<span class="string">'XeX filter files (*_xexFilt.txt)'</span>; <span class="keyword">...</span>
+0177         <span class="string">'*.*'</span>,  <span class="string">'All Files (*.*)'</span>}, <span class="keyword">...</span>
+0178         <span class="string">'Save/Append Filter as'</span>, <span class="string">'MyNew_xexFilt.txt'</span>);
+0179  
+0180     <span class="keyword">if</span> ~isnumeric(filename),
+0181 
+0182         fid=fopen([pathname filename],<span class="string">'a+'</span>);
+0183        
+0184         handles.filterpath=pathname;
+0185         
+0186         <span class="keyword">if</span> fid~=-1,
+0187             
+0188         CurrentFilterSet=get(handles.MyFilters,<span class="string">'string'</span>);
+0189         
+0190         <span class="keyword">for</span> TempInd=1:length(CurrentFilterSet)
+0191             fprintf(fid,<span class="string">'%s\n'</span>,CurrentFilterSet{TempInd});
+0192         <span class="keyword">end</span>
+0193         
+0194         fclose(fid);
+0195         
+0196         <span class="keyword">else</span> fprintf(<span class="string">'%s\n'</span>,<span class="string">'Some problem.. Not saved'</span>);
+0197             
+0198         <span class="keyword">end</span>
+0199         
+0200     <span class="keyword">end</span>
+0201 
+0202 
+0203 cd(Old_Dir);
+0204 guidata(hObject,handles);
+0205 
+0206 <span class="comment">% --- Executes on button press in ReadFilters.</span>
+0207 <a name="_sub7" href="#_subfunctions" class="code">function ReadFilters_Callback(hObject, eventdata, handles)</a>
+0208 <span class="comment">% hObject    handle to ReadFilters (see GCBO)</span>
+0209 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0210 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0211 
+0212 
+0213 Old_Dir=pwd;
+0214 
+0215 <span class="keyword">if</span> isfield(handles,<span class="string">'pathname'</span>), cd(handles.pathname);
+0216 <span class="keyword">else</span>
+0217 <span class="keyword">try</span>,
+0218     cd(<span class="string">'c:\matlab\work\MyFilters\'</span>);
+0219 <span class="keyword">catch</span>,
+0220 <span class="keyword">end</span>
+0221 <span class="keyword">end</span>
+0222 
+0223    [input_filename, input_pathname] = uigetfile( <span class="keyword">...</span>
+0224        {<span class="string">'*_xexFilt.txt'</span>,<span class="string">'XeX filter files (*_xexFilt.txt)'</span>;
+0225         <span class="string">'*.*'</span>,  <span class="string">'All Files (*.*)'</span>}, <span class="keyword">...</span>
+0226         <span class="string">'Read Filter file'</span>, <span class="keyword">...</span>
+0227         <span class="string">'MultiSelect'</span>, <span class="string">'off'</span>);
+0228 
+0229     <span class="comment">%%loading the files</span>
+0230 
+0231      <span class="keyword">if</span> ~isnumeric(input_filename)
+0232 
+0233          cd(input_pathname);
+0234          handles.pathname=input_pathname;
+0235          fid=fopen(input_filename);
+0236          
+0237     c=textscan(fid,<span class="string">'%s'</span>,<span class="string">'delimiter'</span>,<span class="string">'\n'</span>);
+0238 
+0239 <span class="keyword">if</span> ~isempty(c{1}), 
+0240     
+0241 set(handles.MyFilters,<span class="string">'string'</span>,c{1},<span class="string">'value'</span>,1);
+0242     
+0243   <span class="keyword">else</span>    fprintf(<span class="string">'%s\n'</span>,<span class="string">'That aint a valid filter file'</span>); <span class="keyword">end</span>
+0244 
+0245      <span class="keyword">end</span>
+0246 
+0247 cd(Old_Dir);
+0248 guidata(hObject,handles);
+0249 
+0250 <span class="comment">% --- Executes on button press in EditFilters.</span>
+0251 <a name="_sub8" href="#_subfunctions" class="code">function EditFilters_Callback(hObject, eventdata, handles)</a>
+0252 <span class="comment">% hObject    handle to EditFilters (see GCBO)</span>
+0253 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0254 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0255 
+0256 Old_Dir=pwd;
+0257 
+0258 <span class="keyword">if</span> isfield(handles,<span class="string">'pathname'</span>), cd(handles.pathname);
+0259 <span class="keyword">else</span>
+0260 <span class="keyword">try</span>,
+0261     cd(<span class="string">'c:\matlab\work\MyFilters\'</span>);
+0262 <span class="keyword">catch</span>,
+0263 <span class="keyword">end</span>
+0264 <span class="keyword">end</span>
+0265 
+0266 
+0267    [input_filename, input_pathname] = uigetfile( <span class="keyword">...</span>
+0268        {<span class="string">'*_xexFilt.txt'</span>,<span class="string">'XeX filter files (*_xexFilt.txt)'</span>;
+0269         <span class="string">'*.*'</span>,  <span class="string">'All Files (*.*)'</span>}, <span class="keyword">...</span>
+0270         <span class="string">'Edit Filter File'</span>, <span class="keyword">...</span>
+0271         <span class="string">'MultiSelect'</span>, <span class="string">'off'</span>);
+0272 
+0273     <span class="comment">%%loading the files</span>
+0274 
+0275      <span class="keyword">if</span> ~isnumeric(input_filename)
+0276 
+0277 handles.pathname=input_pathname;
+0278          edit([input_pathname input_filename]);
+0279      <span class="keyword">end</span>
+0280 cd(Old_Dir);
+0281 guidata(hObject,handles);
+0282 
+0283 
+0284 <span class="comment">% --- Executes on button press in BackToXeX.</span>
+0285 <a name="_sub9" href="#_subfunctions" class="code">function BackToXeX_Callback(hObject, eventdata, handles)</a>
+0286 <span class="comment">% hObject    handle to BackToXeX (see GCBO)</span>
+0287 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0288 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0289 
+0290 figure(getappdata(0,<span class="string">'XeXGUIHandle'</span>));
+0291 
+0292 
+0293 <span class="comment">% --- Executes on selection change in SelectedFilters.</span>
+0294 <a name="_sub10" href="#_subfunctions" class="code">function SelectedFilters_Callback(hObject, eventdata, handles)</a>
+0295 <span class="comment">% hObject    handle to SelectedFilters (see GCBO)</span>
+0296 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0297 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0298 
+0299 <span class="comment">% Hints: contents = get(hObject,'String') returns SelectedFilters contents as cell array</span>
+0300 <span class="comment">%        contents{get(hObject,'Value')} returns selected item from SelectedFilters</span>
+0301 
+0302 
+0303 <span class="comment">% --- Executes during object creation, after setting all properties.</span>
+0304 <a name="_sub11" href="#_subfunctions" class="code">function SelectedFilters_CreateFcn(hObject, eventdata, handles)</a>
+0305 <span class="comment">% hObject    handle to SelectedFilters (see GCBO)</span>
+0306 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0307 <span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+0308 
+0309 <span class="comment">% Hint: listbox controls usually have a white background on Windows.</span>
+0310 <span class="comment">%       See ISPC and COMPUTER.</span>
+0311 <span class="keyword">if</span> ispc &amp;&amp; isequal(get(hObject,<span class="string">'BackgroundColor'</span>), get(0,<span class="string">'defaultUicontrolBackgroundColor'</span>))
+0312     set(hObject,<span class="string">'BackgroundColor'</span>,<span class="string">'white'</span>);
+0313 <span class="keyword">end</span>
+0314 
+0315 
+0316 <span class="comment">% --- Executes on button press in RemoveItems.</span>
+0317 <a name="_sub12" href="#_subfunctions" class="code">function RemoveItems_Callback(hObject, eventdata, handles)</a>
+0318 <span class="comment">% hObject    handle to RemoveItems (see GCBO)</span>
+0319 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0320 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0321 
+0322 contents = cellstr(get(handles.SelectedFilters,<span class="string">'String'</span>));
+0323 CurrentlySelectedFiles=get(handles.SelectedFilters,<span class="string">'Value'</span>);
+0324 
+0325 contents(CurrentlySelectedFiles)=[];
+0326 
+0327 <span class="keyword">if</span> ~isempty(contents)
+0328 set(handles.SelectedFilters,<span class="string">'String'</span>,contents,<span class="string">'value'</span>,1);
+0329 <span class="keyword">else</span>
+0330     set(handles.SelectedFilters,<span class="string">'String'</span>,<span class="string">''</span>,<span class="string">'Value'</span>,1);
+0331 <span class="keyword">end</span>
+0332 
+0333 
+0334 
+0335 <span class="comment">% --- Executes on button press in UpButton.</span>
+0336 <a name="_sub13" href="#_subfunctions" class="code">function UpButton_Callback(hObject, eventdata, handles)</a>
+0337 <span class="comment">% hObject    handle to UpButton (see GCBO)</span>
+0338 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0339 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0340 
+0341 contents = cellstr(get(handles.SelectedFilters,<span class="string">'String'</span>));
+0342 CurrentSelections=sort(get(handles.SelectedFilters,<span class="string">'Value'</span>));
+0343 
+0344 <span class="keyword">for</span> ind=1:length(CurrentSelections)
+0345     sel=CurrentSelections(ind);
+0346     
+0347     <span class="keyword">if</span> sel~=1
+0348         bak=contents(sel-1);
+0349         contents(sel-1)=contents(sel);
+0350         contents(sel)=bak;
+0351         set(handles.SelectedFilters,<span class="string">'string'</span>,contents);
+0352     <span class="keyword">else</span>
+0353         fprintf(<span class="string">'%s\n'</span>,<span class="string">'Sorry, that is it. Top of stack for item no. 1'</span>);
+0354     <span class="keyword">end</span>
+0355 <span class="keyword">end</span>
+0356 
+0357 newvals=CurrentSelections-1;
+0358 newvals(newvals==0)=1;
+0359 set(handles.SelectedFilters,<span class="string">'value'</span>,newvals);
+0360 
+0361 guidata(hObject,handles);
+0362 
+0363 <span class="comment">% --- Executes on button press in ToOrg.</span>
+0364 <a name="_sub14" href="#_subfunctions" class="code">function ToOrg_Callback(hObject, eventdata, handles)</a>
+0365 <span class="comment">% hObject    handle to ToOrg (see GCBO)</span>
+0366 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0367 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0368 
+0369 contents = cellstr(get(handles.MyFilters,<span class="string">'String'</span>));
+0370 CurrentlySelectedFiles=contents(get(handles.MyFilters,<span class="string">'Value'</span>));
+0371 
+0372 <span class="comment">% keyboard;</span>
+0373 
+0374 AlreadySelected=cellstr(get(handles.SelectedFilters,<span class="string">'String'</span>));
+0375 
+0376 <span class="keyword">if</span> isempty(AlreadySelected{1}) &amp;&amp; length(AlreadySelected)&lt;2
+0377 set(handles.SelectedFilters,<span class="string">'string'</span>,CurrentlySelectedFiles);
+0378 <span class="keyword">else</span>
+0379     set(handles.SelectedFilters,<span class="string">'string'</span>,[AlreadySelected; CurrentlySelectedFiles]);
+0380 <span class="keyword">end</span>
+0381 
+0382 guidata(hObject,handles);
+0383 
+0384 <span class="comment">% --- Executes on button press in DownButton.</span>
+0385 <a name="_sub15" href="#_subfunctions" class="code">function DownButton_Callback(hObject, eventdata, handles)</a>
+0386 <span class="comment">% hObject    handle to DownButton (see GCBO)</span>
+0387 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0388 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0389 
+0390 contents = cellstr(get(handles.SelectedFilters,<span class="string">'String'</span>));
+0391 CurrentSelections=sort(get(handles.SelectedFilters,<span class="string">'Value'</span>));
+0392 
+0393 <span class="keyword">for</span> ind=1:length(CurrentSelections)
+0394     sel=CurrentSelections(ind);
+0395     
+0396     <span class="keyword">if</span> sel~=length(contents)
+0397         bak=contents(sel+1);
+0398         contents(sel+1)=contents(sel);
+0399         contents(sel)=bak;
+0400         set(handles.SelectedFilters,<span class="string">'string'</span>,contents);
+0401     <span class="keyword">else</span>
+0402         fprintf(<span class="string">'%s\n'</span>,<span class="string">'Sorry, that is it. End of stack for last item'</span>);
+0403     <span class="keyword">end</span>
+0404 <span class="keyword">end</span>
+0405 
+0406 newvals=CurrentSelections+1;
+0407 newvals(newvals&gt;length(contents))=length(contents);
+0408 set(handles.SelectedFilters,<span class="string">'value'</span>,newvals);
+0409 
+0410 guidata(hObject,handles);
+0411 
+0412 
+0413 
+0414 <a name="_sub16" href="#_subfunctions" class="code">function EditMyFilters_Callback(hObject, eventdata, handles)</a>
+0415 <span class="comment">% hObject    handle to EditMyFilters (see GCBO)</span>
+0416 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0417 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0418 
+0419 <span class="comment">% Hints: get(hObject,'String') returns contents of EditMyFilters as text</span>
+0420 <span class="comment">%        str2double(get(hObject,'String')) returns contents of EditMyFilters as a double</span>
+0421 
+0422 
+0423 
+0424 
+0425 <span class="comment">% --- Executes during object creation, after setting all properties.</span>
+0426 <a name="_sub17" href="#_subfunctions" class="code">function EditMyFilters_CreateFcn(hObject, eventdata, handles)</a>
+0427 <span class="comment">% hObject    handle to EditMyFilters (see GCBO)</span>
+0428 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0429 <span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+0430 
+0431 <span class="comment">% Hint: edit controls usually have a white background on Windows.</span>
+0432 <span class="comment">%       See ISPC and COMPUTER.</span>
+0433 <span class="keyword">if</span> ispc &amp;&amp; isequal(get(hObject,<span class="string">'BackgroundColor'</span>), get(0,<span class="string">'defaultUicontrolBackgroundColor'</span>))
+0434     set(hObject,<span class="string">'BackgroundColor'</span>,<span class="string">'white'</span>);
+0435 <span class="keyword">end</span>
+0436 
+0437 
+0438 <span class="comment">% --- Executes on button press in EditOrSave.</span>
+0439 <a name="_sub18" href="#_subfunctions" class="code">function EditOrSave_Callback(hObject, eventdata, handles)</a>
+0440 <span class="comment">% hObject    handle to EditOrSave (see GCBO)</span>
+0441 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0442 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0443 
+0444 
+0445 <span class="keyword">if</span> strcmp(get(hObject,<span class="string">'string'</span>),<span class="string">'E'</span>)
+0446     
+0447     <a href="../../XeX/UtilityFunctions/handlingGraphics/makeInvisible.html" class="code" title="function makeInvisible(handleObjects)">makeInvisible</a>(handles.MyFilters');
+0448     <a href="../../XeX/UtilityFunctions/handlingGraphics/makeVisible.html" class="code" title="function makeVisible(handleObjects)">makeVisible</a>(handles.EditMyFilters');
+0449     set(handles.EditMyFilters,<span class="string">'string'</span>,get(handles.MyFilters,<span class="string">'string'</span>));
+0450     set(hObject,<span class="string">'string'</span>,<span class="string">'S'</span>);
+0451     
+0452 <span class="keyword">else</span>
+0453 
+0454     <a href="../../XeX/UtilityFunctions/handlingGraphics/makeVisible.html" class="code" title="function makeVisible(handleObjects)">makeVisible</a>(handles.MyFilters');
+0455     <a href="../../XeX/UtilityFunctions/handlingGraphics/makeInvisible.html" class="code" title="function makeInvisible(handleObjects)">makeInvisible</a>(handles.EditMyFilters');
+0456     set(handles.MyFilters,<span class="string">'string'</span>,cellstr(get(handles.EditMyFilters,<span class="string">'string'</span>)));
+0457     
+0458     set(hObject,<span class="string">'string'</span>,<span class="string">'E'</span>);
+0459  
+0460 <span class="keyword">end</span>
+0461 
+0462 
+0463 <span class="comment">% --------------------------------------------------------------------</span>
+0464 <a name="_sub19" href="#_subfunctions" class="code">function SaveSend_Callback(hObject, eventdata, handles)</a>
+0465 <span class="comment">% hObject    handle to EditFilters (see GCBO)</span>
+0466 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0467 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0468 
+0469 Old_Dir=pwd;
+0470 
+0471 <span class="keyword">if</span> isfield(handles,<span class="string">'pathname'</span>), cd(handles.pathname);
+0472 <span class="keyword">else</span>
+0473 <span class="keyword">try</span>,
+0474     cd(<span class="string">'c:\matlab\work\MyFilters\'</span>);
+0475 <span class="keyword">catch</span>,
+0476 <span class="keyword">end</span>
+0477 <span class="keyword">end</span>
+0478 
+0479 
+0480      [filename, pathname, filterindex] = uiputfile( <span class="keyword">...</span>
+0481        {<span class="string">'*_xexFilt.txt'</span>,<span class="string">'XeX filter files (*_xexFilt.txt)'</span>; <span class="keyword">...</span>
+0482         <span class="string">'*.*'</span>,  <span class="string">'All Files (*.*)'</span>}, <span class="keyword">...</span>
+0483         <span class="string">'Save/Append Filter as'</span>, <span class="string">'MyNew_xexFilt.txt'</span>);
+0484  
+0485     <span class="keyword">if</span> ~isnumeric(filename),
+0486 
+0487         fid=fopen([pathname filename],<span class="string">'a+'</span>);
+0488        
+0489         handles.filterpath=pathname;
+0490         
+0491         <span class="keyword">if</span> fid~=-1,
+0492             
+0493         CurrentFilterSet=get(handles.SelectedFilters,<span class="string">'string'</span>);
+0494         
+0495         <span class="keyword">for</span> TempInd=1:length(CurrentFilterSet)
+0496             fprintf(fid,<span class="string">'%s\n'</span>,CurrentFilterSet{TempInd});
+0497         <span class="keyword">end</span>
+0498         
+0499         fclose(fid);
+0500         
+0501         <span class="keyword">else</span> fprintf(<span class="string">'%s\n'</span>,<span class="string">'Some problem.. Not saved'</span>);
+0502             
+0503         <span class="keyword">end</span>
+0504         
+0505     <span class="keyword">end</span>
+0506 
+0507 
+0508 cd(Old_Dir);
+0509 guidata(hObject,handles);
+0510 
+0511 <span class="comment">% --------------------------------------------------------------------</span>
+0512 <a name="_sub20" href="#_subfunctions" class="code">function Untitled_3_Callback(hObject, eventdata, handles)</a>
+0513 <span class="comment">% hObject    handle to SaveFilters (see GCBO)</span>
+0514 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0515 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0516 
+0517 
+0518 
+0519 
+0520 <span class="comment">% --- Executes during object creation, after setting all properties.</span>
+0521 <a name="_sub21" href="#_subfunctions" class="code">function figure1_CreateFcn(hObject, eventdata, handles)</a>
+0522 <span class="comment">% hObject    handle to figure1 (see GCBO)</span>
+0523 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0524 <span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+0525 
+0526</pre></div>
+<hr><address>Generated on Wed 13-Dec-2006 00:06:54 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

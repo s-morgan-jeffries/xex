@@ -1,0 +1,533 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of OneJump1215</title>
+  <meta name="keywords" content="OneJump1215">
+  <meta name="description" content="This function analyzes trials from the Jump paradigms">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html XeX --><!-- menu.html PreProcFunctions -->
+<h1>OneJump1215
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This function analyzes trials from the Jump paradigms</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function CurrentVariables=OneJump(Trials,klugestring,UseAx,SacOpts) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">    This function analyzes trials from the Jump paradigms
+    CurrentVariables=OneJump(Trials,klugestring,UseAx,SacOpts)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../XeX/UtilityFunctions/assorted/ArrayFiddleCodeBit.html" class="code" title="">ArrayFiddleCodeBit</a>	A little scriplet that does</li><li><a href="../../XeX/UtilityFunctions/assorted/CreateTempSac.html" class="code" title="">CreateTempSac</a>	This scriptlet is used in OneJump, for instance.</li><li><a href="../../XeX/UtilityFunctions/assorted/MakeSacStruct.html" class="code" title="function SacStruct=MakeSacStruct(WhichType)">MakeSacStruct</a>	function SacStruct=MakeSacStruct(WhichType)</li><li><a href="../../XeX/UtilityFunctions/assorted/attachvars.html" class="code" title="">attachvars</a>	This script evaluates what variables are present in the calling</li><li><a href="../../XeX/UtilityFunctions/assorted/un.html" class="code" title="function X1=un(X)">un</a>	This function takes in a vector (or a matrix) , and returns unique values (or rows). NaNs (and rows with NaNs) are removed.</li><li><a href="../../XeX/UtilityFunctions/gettingAndsettingParameters/DiscretizeMe.html" class="code" title="function DiscretizedX=DiscretizeMe(X,CenterVector)">DiscretizeMe</a>	this function takes in a vector and discretizes it, by finding the closest</li><li><a href="../../XeX/UtilityFunctions/main/SacFind.html" class="code" title="function [Saccades,FiltX,FiltY]=SacFind(Trial,CorrectCode,MinISI,MinLat,PlotVar,FigNum,Threshold,Ax)">SacFind</a>	The main XeX saccade parser</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function CurrentVariables=OneJump(Trials,klugestring,UseAx,SacOpts)</a>
+0002 
+0003 <span class="comment">%    This function analyzes trials from the Jump paradigms</span>
+0004 <span class="comment">%    CurrentVariables=OneJump(Trials,klugestring,UseAx,SacOpts)</span>
+0005 
+0006 
+0007 <span class="comment">%Initializing Variables</span>
+0008 
+0009 ArrayNumber=nan*ones(1,length(Trials));
+0010 GoodTrial=ArrayNumber;
+0011 BadTrial=ArrayNumber;
+0012 PhotoBad=ArrayNumber;
+0013 RFPhotoBad=ArrayNumber;
+0014 GotToGap=ArrayNumber;
+0015 TrialNumber=1:length(Trials);
+0016 
+0017 AbortTrial=ArrayNumber;
+0018 FixationBreak=ArrayNumber;
+0019 
+0020 RewardTime=ArrayNumber;
+0021 ErrorTime=ArrayNumber;
+0022 RFOnTime=ArrayNumber;
+0023 RFOffTime=ArrayNumber;
+0024 RFx=ArrayNumber;
+0025 RFy=ArrayNumber;
+0026 RFTrialIndex=ArrayNumber;
+0027 RFChecksize=ArrayNumber;
+0028 
+0029 Jumpx=ArrayNumber;
+0030 Jumpy=ArrayNumber;
+0031 
+0032 RFRed=ArrayNumber;
+0033 RFGreen=ArrayNumber;
+0034 RFBlue=ArrayNumber;
+0035 
+0036 RF2OnTime=ArrayNumber;
+0037 RF2Checksize=ArrayNumber;
+0038 RF2x=RF2OnTime;
+0039 RF2y=RF2OnTime;
+0040 
+0041 MarkerCode=ArrayNumber;
+0042 FPx=RFx;
+0043 FPy=RFy;
+0044 
+0045 RGood=ArrayNumber;
+0046 
+0047 <span class="keyword">if</span> ~exist(<span class="string">'klugestring'</span>,<span class="string">'var'</span>) | (exist(<span class="string">'klugestring'</span>,<span class="string">'var'</span>)  &amp; isempty(strfind(klugestring,<span class="string">'z050808'</span>)))
+0048 FPx(:)=0;
+0049 FPy(:)=0;
+0050 <span class="keyword">end</span>
+0051 
+0052 FPOnTime=RFy;
+0053 
+0054 WTF=ArrayNumber;
+0055 
+0056 SacEndX1=ArrayNumber;
+0057 SacEndY1=ArrayNumber;
+0058 
+0059 GapTime=ArrayNumber;
+0060 
+0061 fprintf(<span class="string">'%s\n'</span>,<span class="string">'Storing sacs'</span>);
+0062 Sacs=cell(1,length(ArrayNumber));
+0063 
+0064 JNumSacs=ArrayNumber; <span class="comment">%number of saccades between gap on and reward</span>
+0065 JWhichSac=ArrayNumber;
+0066 
+0067 TempSacStruct=<a href="../../XeX/UtilityFunctions/assorted/MakeSacStruct.html" class="code" title="function SacStruct=MakeSacStruct(WhichType)">MakeSacStruct</a>(2);
+0068 FPToRF2Sac=repmat(TempSacStruct,1,length(Trials));
+0069 FromRF2Sac=FPToRF2Sac;
+0070 FromFPSac=FPToRF2Sac;
+0071 ToRF2Sac=FPToRF2Sac;
+0072 ToRFSac=FPToRF2Sac;
+0073 ToFPSac=FPToRF2Sac;
+0074 FirstGapSac=FPToRF2Sac;
+0075 
+0076 FPToRF2=ArrayNumber;
+0077 ToRF2=ArrayNumber;
+0078 ToRF=ArrayNumber;
+0079 
+0080 HowManySacs=ArrayNumber;
+0081 SaccadicLatency=ArrayNumber;
+0082 HowManyFinSacs=ArrayNumber;
+0083 FinWhichSac=ArrayNumber;
+0084 FinWhichSacLat=ArrayNumber;
+0085 Curv=ArrayNumber;
+0086 FirstDSac=ArrayNumber;
+0087 FirstDSacLat=ArrayNumber;
+0088 HowManyDSacs=ArrayNumber;
+0089 
+0090 ArrayBak=[];   <span class="comment">%for ArrayFiddleCodeBit</span>
+0091 
+0092 MyVariableList={<span class="string">'ArrayNumber'</span>,<span class="string">'GoodTrial'</span>,<span class="string">'BadTrial'</span>,<span class="string">'PhotoBad'</span>,<span class="string">'RGood'</span>,<span class="string">'TrialNumber'</span>,<span class="string">'AbortTrial'</span>,<span class="keyword">...</span>
+0093     <span class="string">'FixationBreak'</span>,<span class="string">'RewardTime'</span>,<span class="string">'ErrorTime'</span>,<span class="string">'RFOnTime'</span>,<span class="string">'RFOffTime'</span>,<span class="string">'RFx'</span>,<span class="string">'RFy'</span>,<span class="string">'RFTrialIndex'</span>,<span class="string">'RF2OnTime'</span>,<span class="keyword">...</span>
+0094     <span class="string">'RF2x'</span>,<span class="string">'RF2y'</span>,<span class="string">'FPx'</span>,<span class="string">'FPy'</span>,<span class="string">'FPOnTime'</span>,<span class="string">'WTF'</span>,<span class="string">'GapTime'</span>,<span class="string">'JNumSacs'</span>,<span class="string">'JWhichSac'</span>,<span class="string">'TrueGood'</span>,<span class="string">'RFEccentricity'</span>,<span class="keyword">...</span>
+0095     <span class="string">'RF2dist_toRF'</span>,<span class="string">'RFGood'</span>,<span class="string">'SacRelRFOn'</span>,<span class="string">'SacRelRFOff'</span>,<span class="string">'JumpSacTime'</span>,<span class="string">'RFLat'</span>,<span class="string">'dRFLat'</span>,<span class="string">'RFSacLat'</span>,<span class="string">'SacLat'</span>,<span class="keyword">...</span>
+0096     <span class="string">'RFSacLat_Cor'</span>,<span class="string">'RFChecksize'</span>,<span class="string">'RF2Checksize'</span>,<span class="string">'RFRed'</span>,<span class="string">'RFGreen'</span>,<span class="string">'RFBlue'</span>,<span class="string">'MarkerCode'</span>,<span class="string">'HowManySacs'</span>,<span class="keyword">...</span>
+0097     <span class="string">'HowManyFinSacs'</span>,<span class="string">'FinWhichSac'</span>,<span class="string">'FinWhichSacLat'</span>,<span class="string">'FirstDSac'</span>,<span class="string">'FirstDSacLat'</span>,<span class="string">'Curv'</span>,<span class="string">'SacEndX1'</span>,<span class="string">'SacEndY1'</span>};
+0098 MyResponseVariableList={<span class="string">'GoodTrial'</span>};
+0099 
+0100 
+0101 <span class="keyword">for</span> TrialIndex=1:length(Trials)
+0102     
+0103     <span class="keyword">if</span> rem(TrialIndex,500)==0, fprintf(<span class="string">'%s\n'</span>,[<span class="string">'Finished   '</span> num2str(TrialIndex) <span class="string">'  Trials'</span>]);<span class="keyword">end</span>
+0104     
+0105     CurrentEvents=Trials(TrialIndex).Events;
+0106     CurrentCodes=double([CurrentEvents.Code]);
+0107     CurrentTimes=double([CurrentEvents.Time]);
+0108     CodeIndex=1:length(CurrentCodes);
+0109     
+0110     RFTrialIndex(TrialIndex)=TrialIndex;
+0111     
+0112     is_reward=find(CurrentCodes==1012);
+0113     is_error=find(CurrentCodes==1013);
+0114     is_fp=find(CurrentCodes==1003);
+0115     is_rf=find(CurrentCodes==1007);
+0116     is_rfoff=find(CurrentCodes==1010);
+0117     is_photobad=find(CurrentCodes==1092);
+0118     is_abort=find(CurrentCodes==1090);
+0119     is_fixationbreak=find(CurrentCodes==1091);
+0120     is_gap=find(CurrentCodes==1004);
+0121     is_rf2=find(CurrentCodes==1047);
+0122     is_jump=find(CurrentCodes==1005);
+0123     
+0124     <span class="keyword">if</span> ~isempty(is_gap), GotToGap(TrialIndex)=1;<span class="keyword">end</span> <span class="comment">%this will help estimate percentage of saccades to distractor</span>
+0125     
+0126         <span class="keyword">if</span> ~isempty(is_reward) &amp;&amp; ~isempty(is_error), WTF(TrialIndex)=100;<span class="keyword">end</span>
+0127         <span class="keyword">if</span> length(is_reward)&gt;1, WTF(TrialIndex)=101;<span class="keyword">end</span>
+0128             
+0129     <span class="keyword">if</span> ~isempty(is_fp)
+0130         EarlyDrops=find(CurrentCodes&gt;=10700);
+0131         <span class="keyword">if</span> length(EarlyDrops)&gt;=4
+0132         MarkerCode(TrialIndex)=(CurrentCodes(EarlyDrops(1))-11000);
+0133             FPx(TrialIndex)=(CurrentCodes(EarlyDrops(3))-11000)/10;
+0134         FPy(TrialIndex)=(CurrentCodes(EarlyDrops(4))-11000)/10;
+0135         <span class="keyword">end</span>
+0136     <span class="keyword">end</span>
+0137     
+0138     <span class="keyword">if</span> ~isempty(is_reward), GoodTrial(TrialIndex)=1;
+0139             RewTimeVar=CurrentTimes(find(CurrentCodes==1012));
+0140     RewardTime(TrialIndex)=RewTimeVar(1);    
+0141     <span class="keyword">elseif</span> ~isempty(is_error),
+0142     ErrorTime(TrialIndex)=CurrentTimes(find(CurrentCodes==1013));
+0143     <span class="keyword">end</span>
+0144 
+0145     <span class="keyword">if</span> ~isempty(is_fp), FPOnTime(TrialIndex)=CurrentTimes(is_fp(1));<span class="keyword">end</span>
+0146     <span class="keyword">if</span> ~isempty(is_photobad), PhotoBad(TrialIndex)=1;<span class="keyword">end</span>
+0147     <span class="keyword">if</span> ~isempty(is_abort) AbortTrial(TrialIndex)=1;<span class="keyword">end</span>
+0148     <span class="keyword">if</span> ~isempty(is_fixationbreak) FixationBreak(TrialIndex)=1;<span class="keyword">end</span>
+0149     
+0150     <span class="comment">%RF Properties</span>
+0151 
+0152     
+0153     <span class="keyword">if</span> ~isempty(is_rf), RFOnTime(TrialIndex)=CurrentTimes(is_rf(1));
+0154     
+0155             is_rfphotobad=find(CurrentCodes==1092&amp;CurrentTimes&gt;=RFOnTime(TrialIndex)); <span class="comment">%note that if rf is not present, rfphotobad will not report either</span>
+0156 
+0157             <span class="keyword">if</span> ~isempty(is_rfphotobad) RFPhotoBad(TrialIndex)=1;<span class="keyword">end</span>
+0158         
+0159                FindResult=find(CurrentCodes&gt;=10000 &amp; abs(CurrentTimes-RFOnTime(TrialIndex))&lt;5);
+0160           <span class="keyword">if</span> length(FindResult)&gt;=1
+0161               RFChecksize(TrialIndex)=nanmin(CurrentCodes(FindResult)-10000); <span class="keyword">end</span>  
+0162 
+0163                   TemporaryVariable=find(abs(CurrentTimes-RFOnTime(TrialIndex))&lt;5 &amp; CurrentCodes&lt;=5255&amp;CurrentCodes&gt;=5000);
+0164 <span class="keyword">if</span> ~isempty(TemporaryVariable), RFRed(TrialIndex)=CurrentCodes(TemporaryVariable(1))-5000;
+0165  RFGreen(TrialIndex)=CurrentCodes(TemporaryVariable(1)+1)-5300;
+0166  RFBlue(TrialIndex)=CurrentCodes(TemporaryVariable(1)+2)-5600;
+0167 <span class="keyword">end</span>
+0168 
+0169         <span class="keyword">if</span> ~isempty(is_rfoff)
+0170             RFOffTime(TrialIndex)=CurrentTimes(is_rfoff(1));
+0171         <span class="comment">%else fprintf('%s\n','Weird in OneJump: RFOff without RFOn');</span>
+0172 <span class="comment">%         else keyboard;</span>
+0173         <span class="keyword">end</span>
+0174         
+0175         TemporaryVariable=find(abs(CurrentTimes-RFOnTime(TrialIndex))&lt;5 &amp; CurrentCodes&lt;=6850&amp;CurrentCodes&gt;=5650);
+0176 <span class="comment">%         TemporaryVariable=find(CurrentTimes&gt;=RFOnTime(TrialIndex)&amp;CurrentCodes&lt;6350&amp;CurrentCodes&gt;=5650);</span>
+0177         <span class="keyword">if</span> ~isempty(TemporaryVariable), RFx(TrialIndex)=(CurrentCodes(TemporaryVariable(1))-6000)/10;<span class="keyword">end</span>
+0178 <span class="comment">%         TemporaryVariable=find(CurrentTimes&gt;=RFOnTime(TrialIndex)&amp;CurrentCodes&gt;6250&amp;CurrentCodes&lt;=6750);</span>
+0179         <span class="keyword">if</span> ~isempty(TemporaryVariable), RFy(TrialIndex)=(CurrentCodes(TemporaryVariable(2))-6500)/10;<span class="keyword">end</span>
+0180 
+0181 <span class="comment">%         if RFy(TrialIndex)&lt;0, keyboard;end</span>
+0182           
+0183     <span class="keyword">end</span> <span class="comment">%ending the if ~isempty(is_rf) loop</span>
+0184     
+0185 
+0186         
+0187     <span class="keyword">if</span> ~isempty(is_rf2), RF2OnTime(TrialIndex)=CurrentTimes(is_rf2(1));
+0188         
+0189         FindResult=find(CurrentCodes&gt;=10000 &amp; abs(CurrentTimes-RF2OnTime(TrialIndex))&lt;60);
+0190           <span class="keyword">if</span> length(FindResult)&gt;=1
+0191               RF2Checksize(TrialIndex)=nanmin(CurrentCodes(FindResult)-10000); <span class="keyword">end</span>  
+0192         
+0193         TemporaryVariable=find(abs(CurrentTimes-RF2OnTime(TrialIndex))&lt;100 &amp; CurrentCodes&lt;=6850&amp;CurrentCodes&gt;=5650);
+0194 
+0195 <span class="comment">%         TemporaryVariable=find(CurrentTimes&gt;=RF2OnTime(TrialIndex)&amp;CurrentCodes&lt;6250&amp;CurrentCodes&gt;=5750);</span>
+0196         <span class="keyword">if</span> ~isempty(TemporaryVariable), RF2x(TrialIndex)=(CurrentCodes(TemporaryVariable(1))-6000)/10;<span class="keyword">end</span>
+0197 <span class="comment">%         TemporaryVariable=find(CurrentTimes&gt;=RF2OnTime(TrialIndex)&amp;CurrentCodes&gt;6250&amp;CurrentCodes&lt;=6750);</span>
+0198         <span class="keyword">if</span> ~isempty(TemporaryVariable), RF2y(TrialIndex)=(CurrentCodes(TemporaryVariable(2))-6500)/10;<span class="keyword">end</span>
+0199     <span class="keyword">end</span> <span class="comment">%ending the if ~isempty(is_rf2) loop</span>
+0200         
+0201     <span class="keyword">if</span> ~isempty(is_jump), JumpOnTime=CurrentTimes(is_jump(1));
+0202         FindResult=find(CurrentCodes&gt;=10000 &amp; abs(CurrentTimes-JumpOnTime)&lt;60);
+0203         
+0204         TemporaryVariable=find(abs(CurrentTimes-JumpOnTime)&lt;100 &amp; CurrentCodes&lt;=6850&amp;CurrentCodes&gt;=5650);
+0205 
+0206 <span class="comment">%         TemporaryVariable=find(CurrentTimes&gt;=RF2OnTime(TrialIndex)&amp;CurrentCodes&lt;6250&amp;CurrentCodes&gt;=5750);</span>
+0207         <span class="keyword">if</span> ~isempty(TemporaryVariable), Jumpx(TrialIndex)=(CurrentCodes(TemporaryVariable(1))-6000)/10;<span class="keyword">end</span>
+0208 <span class="comment">%         TemporaryVariable=find(CurrentTimes&gt;=RF2OnTime(TrialIndex)&amp;CurrentCodes&gt;6250&amp;CurrentCodes&lt;=6750);</span>
+0209         <span class="keyword">if</span> ~isempty(TemporaryVariable), Jumpy(TrialIndex)=(CurrentCodes(TemporaryVariable(2))-6500)/10;<span class="keyword">end</span>
+0210     <span class="keyword">end</span> <span class="comment">%ending the if ~isempty(is_rf2) loop</span>
+0211     
+0212     
+0213 <span class="comment">%If gap, set bad trials</span>
+0214 
+0215 <span class="keyword">if</span> ~isempty(is_gap), 
+0216     GapTime(TrialIndex)=CurrentTimes(is_gap(1));
+0217     <span class="keyword">if</span> GoodTrial(TrialIndex)~=1 &amp; AbortTrial(TrialIndex)~=1 &amp; FixationBreak(TrialIndex)~=1
+0218         <span class="keyword">if</span> ~isempty(is_error), BadTrial(TrialIndex)=1;     
+0219         <span class="keyword">else</span> BadTrial(TrialIndex)=2;
+0220         <span class="keyword">end</span>
+0221     <span class="keyword">end</span>
+0222 <span class="keyword">end</span>   <span class="comment">%gap has to have occurred for a true bad trial</span>
+0223 
+0224 <span class="comment">%array number filling</span>
+0225 
+0226 <a href="../../XeX/UtilityFunctions/assorted/ArrayFiddleCodeBit.html" class="code" title="">ArrayFiddleCodeBit</a>;    <span class="comment">%ArrayBak needs to be initialized at onset. Make sure</span>
+0227 
+0228 <span class="comment">%SaccadeAnalysis</span>
+0229 
+0230         <span class="keyword">if</span> WTF(TrialIndex)&gt;=100,  GoodTrial(TrialIndex)=NaN; BadTrial(TrialIndex)=NaN; <span class="keyword">end</span>
+0231         
+0232         <span class="keyword">if</span>(GoodTrial(TrialIndex)==1 || BadTrial(TrialIndex)==1)
+0233             
+0234        SacStruct=<a href="../../XeX/UtilityFunctions/main/SacFind.html" class="code" title="function [Saccades,FiltX,FiltY]=SacFind(Trial,CorrectCode,MinISI,MinLat,PlotVar,FigNum,Threshold,Ax)">SacFind</a>(Trials((TrialIndex)),1003,SacOpts.ISICut,SacOpts.MinLat,0,0,SacOpts.Threshold);
+0235        Sacs{TrialIndex}=SacStruct;
+0236   
+0237        <span class="comment">%Now search and allocate</span>
+0238        
+0239 <span class="comment">% if ~isnan(SacStruct(1).latency) %i hope this is enough</span>
+0240             
+0241     SacAmp=[SacStruct.amplitude];
+0242     SacLat=[SacStruct.latency];
+0243     SacDur=[SacStruct.duration];
+0244     StartX=[SacStruct.startx];
+0245     EndX=[SacStruct.endx];
+0246     StartY=[SacStruct.starty];
+0247     EndY=[SacStruct.endy];
+0248     EndAtRF2=sqrt( (EndX-RF2x(TrialIndex)).^2 + (EndY-RF2y(TrialIndex)).^2 );
+0249     EndAtJump=sqrt( (EndX-Jumpx(TrialIndex)).^2 + (EndY-Jumpy(TrialIndex)).^2 );
+0250     EndAtRF=sqrt( (EndX-RFx(TrialIndex)).^2 + (EndY-RFy(TrialIndex)).^2 );    
+0251     EndAtFP=sqrt( (EndX-FPx(TrialIndex)).^2 + (EndY-FPy(TrialIndex)).^2 ); 
+0252     StartFromFP=sqrt( (StartX-FPx(TrialIndex)).^2 + (StartY-FPy(TrialIndex)).^2 );
+0253     StartFromRF2=sqrt( (StartX-RF2x(TrialIndex)).^2 + (StartY-RF2y(TrialIndex)).^2 );
+0254     StartFromRF=sqrt( (StartX-RFx(TrialIndex)).^2 + (StartY-RFy(TrialIndex)).^2 );    
+0255     
+0256     
+0257     RefTime=GapTime(TrialIndex)-FPOnTime(TrialIndex)-100;
+0258     
+0259 find_the_sac=find(SacLat&gt;= RefTime &amp; SacLat&lt;=(RefTime+500)); <span class="comment">%this gives me 400 ms after true gap on begins</span>
+0260     
+0261     HowManySacs(TrialIndex)=length(find_the_sac);
+0262     <span class="keyword">if</span> HowManySacs(TrialIndex)&gt;0
+0263     SaccadicLatency(TrialIndex)=SacStruct(find_the_sac(1)).latency;
+0264     SacEndX1(TrialIndex)=EndX(1);
+0265     SacEndY1(TrialIndex)=EndY(1);
+0266     <span class="keyword">end</span>
+0267     
+0268 find_the_sac=find(SacLat&gt;= RefTime &amp; SacLat&lt;=(RefTime+500) &amp; EndAtRF2&lt;5.5); <span class="comment">%this gives me 400 ms after true gap on begins</span>
+0269 HowManyFinSacs(TrialIndex)=length(find_the_sac);
+0270 <span class="keyword">if</span> HowManyFinSacs(TrialIndex)&gt;0
+0271 FinWhichSac(TrialIndex)=find_the_sac(1);
+0272 FinWhichSacLat(TrialIndex)=SacLat(find_the_sac(1));
+0273 Curv(TrialIndex)=SacStruct(find_the_sac(1)).curvature(1);
+0274 <span class="keyword">end</span>
+0275 
+0276 find_the_sac=find(SacLat&gt;= RefTime &amp; SacLat&lt;=(RefTime+500) &amp; EndAtRF&lt;5.0); <span class="comment">%this gives me 400 ms after true gap on begins</span>
+0277 HowManyDSacs(TrialIndex)=length(find_the_sac);
+0278 <span class="keyword">if</span> HowManyDSacs(TrialIndex)&gt;0
+0279 FirstDSac(TrialIndex)=find_the_sac(1);  <span class="comment">%note that firstdsac can be 1, and also finwhichsac will be 1, if rf2 and rf are really close to each other</span>
+0280 FirstDSacLat(TrialIndex)=SacLat(find_the_sac(1));
+0281 <span class="keyword">end</span>   
+0282     
+0283     <span class="comment">%Key Saccade !!!</span>
+0284     
+0285     find_the_sac=find(StartFromFP&lt;3 &amp; EndAtRF2 &lt; 3 &amp; SacLat&gt;= (GapTime(TrialIndex)-FPOnTime(TrialIndex)));
+0286     find_the_sac=find(StartFromFP&lt;4 &amp; (EndAtRF2 &lt; 5|EndAtJump&lt;5) &amp; SacLat&gt;= (GapTime(TrialIndex)-FPOnTime(TrialIndex))-50); <span class="comment">%used to be 2,2 for fp and rf2</span>
+0287     <span class="keyword">if</span> length(find_the_sac)&gt;1, fprintf(<span class="string">'%d\t%s\n'</span>,TrialIndex,<span class="string">'More than one fp_to_rf2 !!'</span>);<span class="keyword">end</span>
+0288 
+0289 <span class="comment">%     if GoodTrial(TrialIndex)==1 &amp; length(find_the_sac)==0, fprintf('change parameters   %d\n',TrialIndex);end</span>
+0290 <span class="comment">%     if(TrialIndex==27), keyboard;end</span>
+0291     
+0292 <span class="comment">%     if GoodTrial(TrialIndex)==1, keyboard;end</span>
+0293     
+0294     <a href="../../XeX/UtilityFunctions/assorted/CreateTempSac.html" class="code" title="">CreateTempSac</a>;
+0295     <span class="keyword">if</span> isempty(find_the_sac), FPToRF2(TrialIndex)=0;<span class="keyword">end</span>
+0296     FPToRF2Sac(TrialIndex)=TempSac; clear TempSac;
+0297     
+0298     <span class="comment">%Others</span>
+0299     
+0300 <span class="comment">%     find_the_sac=find(StartFromRF2 &lt; 4);</span>
+0301 <span class="comment">% %     if length(find_the_sac)&gt;1, fprintf('%d\t%s\n',TrialIndex,'More than one start from rf2 !!');end</span>
+0302 <span class="comment">%     CreateTempSac;</span>
+0303 <span class="comment">%     FromRF2Sac(TrialIndex)=TempSac; clear TempSac;</span>
+0304 <span class="comment">%</span>
+0305 <span class="comment">%     find_the_sac=find(StartFromFP &lt; 4);</span>
+0306 <span class="comment">% %     if length(find_the_sac)&gt;1, fprintf('%d\t%s\n',TrialIndex,'More than one start from fp !!');end</span>
+0307 <span class="comment">%     CreateTempSac;</span>
+0308 <span class="comment">%     FromFPSac(TrialIndex)=TempSac; clear TempSac;</span>
+0309 <span class="comment">%</span>
+0310 
+0311     find_the_sac=find(EndAtRF2 &lt; 3 &amp; SacLat&gt;= (GapTime(TrialIndex)-FPOnTime(TrialIndex))-50);
+0312 
+0313 <span class="comment">%     find_the_sac=find(EndAtRF2 &lt; 4);</span>
+0314 <span class="comment">% %     if length(find_the_sac)&gt;1, fprintf('%d\t%s\n',TrialIndex,'More than one ends at rf2 !!');end</span>
+0315     <a href="../../XeX/UtilityFunctions/assorted/CreateTempSac.html" class="code" title="">CreateTempSac</a>;
+0316     <span class="keyword">if</span> isempty(find_the_sac), ToRF2(TrialIndex)=0;<span class="keyword">else</span> ToRF2(TrialIndex)=1;<span class="keyword">end</span>
+0317     ToRF2Sac(TrialIndex)=TempSac; clear TempSac;
+0318     
+0319 <span class="comment">%</span>
+0320     find_the_sac=find(EndAtRF &lt; 6 &amp; StartFromFP&lt;3 &amp; EndAtRF2&gt;3&amp; SacLat&gt;= (GapTime(TrialIndex)-FPOnTime(TrialIndex))-50);
+0321 <span class="comment">% %     if length(find_the_sac)&gt;1, fprintf('%d\t%s\n',TrialIndex,'More than one ends at rf !!');end</span>
+0322     <a href="../../XeX/UtilityFunctions/assorted/CreateTempSac.html" class="code" title="">CreateTempSac</a>;
+0323     <span class="keyword">if</span> isempty(find_the_sac), ToRF(TrialIndex)=0;<span class="keyword">else</span> ToRF(TrialIndex)=1;<span class="keyword">end</span>
+0324     ToRFSac(TrialIndex)=TempSac; clear TempSac;
+0325 <span class="comment">%</span>
+0326 <span class="comment">%     find_the_sac=find(EndAtFP &lt; 4);</span>
+0327 <span class="comment">% %     if length(find_the_sac)&gt;1, fprintf('%d\t%s\n',TrialIndex,'More than one ends at fp !!');end</span>
+0328 <span class="comment">%     CreateTempSac;</span>
+0329 <span class="comment">%     ToFPSac(TrialIndex)=TempSac; clear TempSac;</span>
+0330 <span class="comment">%</span>
+0331 <span class="comment">%     find_the_sac=find(SacLat&gt;=(GapTime(TrialIndex)-FPOnTime(TrialIndex)-60) &amp; SacLat &lt;= (RewardTime(TrialIndex)-FPOnTime(TrialIndex)) &amp; SacAmp &gt;=5 );</span>
+0332 <span class="comment">%     CreateTempSac;</span>
+0333 <span class="comment">%     FirstGapSac(TrialIndex)=TempSac; clear TempSac;</span>
+0334 <span class="comment">%     JNumSacs(TrialIndex)=length(find_the_sac);</span>
+0335 <span class="comment">%</span>
+0336         <span class="keyword">end</span>  <span class="comment">% ending  if(GoodTrial==1 || BadTrial==1)</span>
+0337     
+0338 <span class="comment">%     if TrialIndex==13, keyboard;end</span>
+0339     
+0340 <span class="comment">%     if JNumSacs(TrialIndex)~=1, keyboard;end</span>
+0341 <span class="comment">%     end  % ending the sacccade analysis loop</span>
+0342     
+0343 
+0344 <span class="keyword">end</span>   <span class="comment">%ending main loop</span>
+0345 
+0346 <span class="comment">% keyboard;</span>
+0347 RFDur=RFOffTime-RFOnTime;
+0348 RFDur(isnan(RFx)&amp;isnan(RFy))=-1; <span class="comment">% hack for no stimulus trials</span>
+0349 
+0350 RFGood=(RFOffTime-RFOnTime)&lt;40 &amp; (RFOffTime-RFOnTime)&gt;20;  <span class="comment">%rf has to be brief, 40 because of 60 Hz refresh rate, and only for flash stimuli. No use for continuous stimuli.</span>
+0351 
+0352 
+0353 
+0354 TrueGood=nan*GoodTrial;
+0355 RFEccentricity=sqrt( (RFx-FPx).^2 + (RFy-FPy).^2 );
+0356 JumpSacTime=[FPToRF2Sac.latency];
+0357 SacRelRFOn=RFOnTime-FPOnTime-JumpSacTime;    <span class="comment">%RFOnTime relative to Saccade Onset</span>
+0358 SacRelRFOff=RFOffTime-FPOnTime-JumpSacTime;  <span class="comment">%RFOffTime relative to Saccade Onset</span>
+0359 
+0360 RFLat=(RFOnTime-GapTime);
+0361 <span class="comment">%dRFLat=DiscretizeMe(RFLat,[50 100 150]);</span>
+0362 dRFLat=<a href="../../XeX/UtilityFunctions/gettingAndsettingParameters/DiscretizeMe.html" class="code" title="function DiscretizedX=DiscretizeMe(X,CenterVector)">DiscretizeMe</a>(RFLat,[50 100 150 200]);
+0363 fprintf(<span class="string">'%s\t'</span>,<span class="string">'dRFing with'</span>); fprintf(<span class="string">'%d '</span>,<a href="../../XeX/UtilityFunctions/assorted/un.html" class="code" title="function X1=un(X)">un</a>(dRFLat)); fprintf(<span class="string">'%s\n'</span>,<span class="string">''</span>);
+0364 RFSacLat=-1*SacRelRFOn;
+0365 SacLat=JumpSacTime-GapTime+FPOnTime;
+0366 FinWhichSacLat=FinWhichSacLat-GapTime+FPOnTime;
+0367 FirstDSacLat=FirstDSacLat-GapTime+FPOnTime;
+0368 RFSacLat_Cor=dRFLat+RFSacLat;
+0369 
+0370 JWhichSac=[FPToRF2Sac.whichsac];
+0371 
+0372 <span class="comment">%alf stuff for top down</span>
+0373 RF2dist_toRF=sqrt( (RF2x-RFx).^2 + (RF2y-RFy).^2 );
+0374 
+0375 <span class="comment">% KLUGE FOR KDE CALC</span>
+0376 
+0377 <span class="comment">% RFSacLat_Cor(BadTrial==1)=10000;</span>
+0378 <span class="comment">% SacLat(BadTrial==1)=10000;</span>
+0379 
+0380 SacAlignTime1=JumpSacTime+FPOnTime;  <span class="comment">%this is crucial !! Or weird bugs</span>
+0381 
+0382 <span class="comment">% cell kluging</span>
+0383 
+0384 <span class="keyword">if</span> ~exist(<span class="string">'klugestring'</span>,<span class="string">'var'</span>) | (exist(<span class="string">'klugestring'</span>,<span class="string">'var'</span>)  &amp; isempty(strfind(klugestring,<span class="string">'z050808'</span>)))
+0385  TrueGood(BadTrial==1&amp;PhotoBad~=1)=0;  <span class="comment">%removed RFGood==1, for continuous stimuli. Use in filter, if needed.</span>
+0386  TrueGood(GoodTrial==1&amp;PhotoBad~=1)=1;
+0387 <span class="keyword">else</span> 
+0388 fprintf(<span class="string">'%s\n'</span>,[<span class="string">'Kluging for cell      '</span> klugestring]);
+0389 <span class="keyword">end</span>
+0390 
+0391 RGood(GoodTrial==1&amp;PhotoBad~=1&amp;RFDur&lt;=50)=1;
+0392 RGood(BadTrial==1&amp;PhotoBad~=1&amp;RFDur&lt;=50)=0;
+0393 
+0394  
+0395  <span class="comment">%Now printing out details of analysis</span>
+0396 
+0397  summaryString=[sprintf(<span class="string">'%s\n'</span>,<span class="string">'******************************************************************'</span>)];
+0398  summaryString=[summaryString sprintf(<span class="string">'%s\n'</span>,[num2str(length(Trials)) <span class="string">'  trials'</span>])];
+0399  summaryString=[summaryString sprintf(<span class="string">'%s\n'</span>,[num2str(length(find(PhotoBad==1))) <span class="string">' PhotoBad Trials'</span>])];
+0400  summaryString=[summaryString sprintf(<span class="string">'%s\n'</span>,[num2str(length(find(RFPhotoBad==1))) <span class="string">'RFPhotoBad Trials'</span>])];
+0401  summaryString=[summaryString sprintf(<span class="string">'%s\n'</span>,[num2str(length(find(FixationBreak==1))) <span class="string">' Fixation Breaks '</span>])];
+0402  summaryString=[summaryString sprintf(<span class="string">'%s\n'</span>,[num2str(length(find(GoodTrial==1))) <span class="string">'  Good Trials'</span>])];
+0403  summaryString=[summaryString sprintf(<span class="string">'%s\n'</span>,[num2str(length(find(BadTrial==1))),<span class="string">'  Bad Trials'</span>])];
+0404  summaryString=[summaryString sprintf(<span class="string">'%s\n'</span>,[num2str(length(find(GoodTrial==1&amp;FPToRF2==0))),<span class="string">'  Good Trials with Bad Saccades'</span>])];
+0405   <span class="keyword">if</span> length(find(GoodTrial==1|BadTrial==1))&gt;0
+0406  summaryString=[summaryString sprintf(<span class="string">'%s\n'</span>,[num2str(100*(length(find(GoodTrial==1)))/length(find(GoodTrial==1|BadTrial==1)),<span class="string">'%3.2f'</span>) <span class="string">'  % correct'</span>])];
+0407   summaryString=[summaryString sprintf(<span class="string">'%s\n'</span>,[num2str( 100*length(find(isnan(RFx) &amp; GoodTrial==1))/length(find(GoodTrial==1)),<span class="string">'%3.2f'</span>) <span class="string">' % good no-stimulus trials'</span>])]; 
+0408  <span class="keyword">else</span> summaryString=[summaryString sprintf(<span class="string">'%s\n'</span>,<span class="string">'No good or bad trials'</span>)];
+0409  <span class="keyword">end</span>
+0410  summaryString=[summaryString sprintf(<span class="string">'%s\n'</span>,[num2str(length(find(WTF&gt;=100))) <span class="string">'   Weird Trials. WTF &gt; 100'</span>])];
+0411  <span class="keyword">if</span> length(find(~isnan(RFOnTime)))&gt;0
+0412  summaryString=[summaryString sprintf(<span class="string">'%s\n'</span>,[num2str( 100*length(find(~isnan(RFOffTime) &amp; RFOffTime-RFOnTime &lt;=100))/length(find(RFOnTime(~isnan(RFOnTime)))),<span class="string">'%3.2f'</span>) <span class="string">' % flashes'</span>])]; 
+0413  <span class="keyword">else</span> summaryString=[summaryString sprintf(<span class="string">'%s\n'</span>,<span class="string">'No RFs'</span>)];<span class="keyword">end</span>
+0414  
+0415 
+0416  
+0417  summaryString=[summaryString sprintf(<span class="string">'%s\n'</span>,<span class="string">'******************************************************************'</span>)];
+0418  
+0419  RFmat=[RFx;RFy]';
+0420 RFmat=RFmat(~isnan(RFmat(:,1)),:);
+0421 
+0422 <span class="keyword">if</span> ~isempty(RFmat)
+0423     
+0424  RFmat=<a href="../../XeX/UtilityFunctions/assorted/un.html" class="code" title="function X1=un(X)">un</a>(RFmat);
+0425  
+0426  <span class="keyword">if</span> exist(<span class="string">'UseAx'</span>,<span class="string">'var'</span>)&amp;&amp;UseAx~=0, axes(UseAx); 
+0427     plot(RFx,RFy,<span class="string">'bo'</span>);
+0428  <span class="keyword">end</span>
+0429 
+0430     summaryString=[summaryString sprintf(<span class="string">'%s\n'</span>,<span class="string">'RFx     RFy'</span>)];
+0431     <span class="keyword">for</span> ii=1:size(RFmat,1)
+0432         summaryString=[summaryString sprintf(<span class="string">'%s\n'</span>,num2str([RFmat(ii,1) RFmat(ii,2)],<span class="string">'%6.2f'</span>))];
+0433     <span class="keyword">end</span>
+0434 <span class="keyword">else</span>
+0435     summaryString=[summaryString sprintf(<span class="string">'%s\n'</span>,<span class="string">'No RF'</span>)];
+0436 <span class="keyword">end</span>
+0437 
+0438  RF2mat=[RF2x;RF2y]';
+0439 RF2mat=RF2mat(~isnan(RF2x),:);
+0440 
+0441 <span class="keyword">if</span> ~isempty(RF2mat)
+0442 RF2mat=<a href="../../XeX/UtilityFunctions/assorted/un.html" class="code" title="function X1=un(X)">un</a>(RF2mat);
+0443 <span class="keyword">if</span> length(RF2mat)&lt;10
+0444     summaryString=[summaryString sprintf(<span class="string">'%s\n'</span>,<span class="string">'RF2x     RF2y'</span>)];
+0445     <span class="keyword">for</span> ii=1:size(RF2mat,1)
+0446         summaryString=[summaryString sprintf(<span class="string">'%s\n'</span>,num2str([RF2mat(ii,1) RF2mat(ii,2)],<span class="string">'%6.2f'</span>))];
+0447     <span class="keyword">end</span>
+0448     summaryString=[summaryString sprintf(<span class="string">'%s\n'</span>,<span class="string">'********'</span>)];
+0449 <span class="keyword">end</span>
+0450 <span class="keyword">else</span> summaryString=[summaryString sprintf(<span class="string">'%s\n'</span>,<span class="string">'No RF2'</span>)];
+0451 <span class="keyword">end</span>
+0452 
+0453 FPmat=[FPx(GoodTrial==1);FPy(GoodTrial==1)]'; <span class="comment">%the GoodTrial==1 prevents 0 from showing up</span>
+0454 FPmat=FPmat(~isnan(FPmat(:,1)),:);
+0455 
+0456 <span class="keyword">if</span> ~isempty(FPmat)
+0457 <span class="keyword">if</span> size(FPmat,1)&gt;1
+0458     FPmat=<a href="../../XeX/UtilityFunctions/assorted/un.html" class="code" title="function X1=un(X)">un</a>(FPmat);
+0459 <span class="keyword">end</span>
+0460 <span class="keyword">if</span> length(FPmat)&lt;10
+0461     summaryString=[summaryString sprintf(<span class="string">'%s\n'</span>,<span class="string">'FPx     FPy'</span>)];
+0462     <span class="keyword">for</span> ii=1:size(FPmat,1)
+0463         summaryString=[summaryString sprintf(<span class="string">'%s\n'</span>,num2str([FPmat(ii,1) FPmat(ii,2)],<span class="string">'%6.2f'</span>))];
+0464     <span class="keyword">end</span>
+0465     summaryString=[summaryString sprintf(<span class="string">'%s\n'</span>,<span class="string">'********'</span>)];
+0466 <span class="keyword">end</span>
+0467 <span class="keyword">else</span> summaryString=[summaryString sprintf(<span class="string">'%s\n'</span>,<span class="string">'No FPs'</span>)];
+0468 <span class="keyword">end</span>
+0469 
+0470 <span class="comment">% summaryString=[summaryString sprintf('%s\n','---------------------ANALYSIS NOTES---------------------------')];</span>
+0471 <span class="comment">% summaryString=[summaryString sprintf('%s\n','1. Look at RFLat histogram, and dRFLat dischistogram')];</span>
+0472 <span class="comment">% summaryString=[summaryString sprintf('%s\n','2. Look at SacLat Histogram for GoodTrial==1&amp;PhotoBad~=1&amp;~isnan(RFx)')];</span>
+0473 <span class="comment">% summaryString=[summaryString sprintf('%s\n','Eventually incorporate into command set ')];</span>
+0474 summaryString=[summaryString sprintf(<span class="string">'%s\n'</span>,<span class="string">'USE RFPHOTOBAD'</span>)];
+0475 <span class="comment">% summaryString=[summaryString sprintf('%s\n','---------------------ANALYSIS NOTES---------------------------')];</span>
+0476 
+0477 <span class="comment">%packing variables into CurrentVariables</span>
+0478 
+0479 fprintf(<span class="string">'%s\n'</span>,summaryString);
+0480 <a href="../../XeX/UtilityFunctions/assorted/attachvars.html" class="code" title="">attachvars</a>;
+0481 
+0482 <span class="comment">%how many gap times</span>
+0483 <span class="comment">%mean control latency</span>
+0484 <span class="comment">%percentage of good trials</span>
+0485 <span class="comment">%percentage of bad trials to rf2</span>
+0486 <span class="comment">%percentage of first saccade to target</span>
+0487 <span class="comment">%percentage of first saccade to rf2</span>
+0488 <span class="comment">%mean curvature index of first saccade to rf2</span>
+0489 <span class="comment">%mean saccade amplitude error (better than endpoint, as calibration can</span>
+0490 <span class="comment">%easily drift)</span></pre></div>
+<hr><address>Generated on Wed 13-Dec-2006 00:06:54 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>
