@@ -4,27 +4,12 @@
 %	DoUseProps SCRIPT
 
 if get(handles.UseProps,'value')==1
-    
-%        FullString=['handles.ResetProps,'];
-        FullString=[];
-    
-    for tempind=1:handles.NumberOfAxes
-        FullString=[FullString 'handles.Axis' num2str(tempind) 'Markers, handles.A' num2str(tempind) 'PropertiesTxt,'];
-    end
-  
-%     FullString(end)=[];
-    eval(['makeVisible([' FullString '])']);
-    
+	visibilityFx = @makeVisible;
 else
-    
-%        FullString=['handles.ResetProps,'];
-            FullString=[];
+	visibilityFx = @makeInvisible;
+end
 
-    for tempind=1:handles.NumberOfAxes
-         FullString=[FullString 'handles.Axis' num2str(tempind) 'Markers, handles.A' num2str(tempind) 'PropertiesTxt,'];
-    end
-    
-%     FullString(end)=[];
-    eval(['makeInvisible([' FullString '])']);
-    
+for tempind=1:handles.NumberOfAxes
+	feval(visibilityFx, handles.(['Axis' num2str(tempind) 'Markers']));
+	feval(visibilityFx, handles.(['A' num2str(tempind) 'PropertiesTxt']));
 end

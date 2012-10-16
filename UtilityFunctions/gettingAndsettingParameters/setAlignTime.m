@@ -1,7 +1,7 @@
 
 %	This script sets CurrentAlignString to the correct value, based on the AlignCode obtained from the GUI
 
-    AlignCodeList=get(handles.AlignCode,'string');
+AlignCodeList=get(handles.AlignCode,'string');
 CurrentAlign=get(handles.AlignCode,'value');
 switch(AlignCodeList{CurrentAlign})
     case 'RF1', CurrentAlignString='RFOnTime';

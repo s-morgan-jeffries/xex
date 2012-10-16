@@ -1,69 +1,67 @@
+function handles = FTPLoadFileStuff(handles)
+	%	This script handles file-loadign after FTP
+	%	Lots of similarities to LoadFileCallbackStuff, probably can be merged at some point...
 
-%	This script handles file-loadign after FTP
-%	Lots of similarities to LoadFileCallbackStuff, probably can be merged at some point...
+	Old_Dir=pwd;
+	cd(handles.FTPLocalDir);
+	CurrentFile=[handles.FTP.filename];
+	currentAnalysisFx = getCurrentAnalysisFx(handles);
 
-Old_Dir=pwd;
-cd(FTPDir);
-% CurrentUseAx=get(handles.UseStimAxes,'Value');
-% if CurrentUseAx==1, CurrentUseAx=handles.axes7;else CurrentUseAx=[];end
-  CurrentFile=[handles.FTP.filename];
+	TemporaryStruct = mrdr('-s 1001','800','-d',CurrentFile);
+	if ~isempty(TemporaryStruct)
+		TemporaryStruct=TemporaryStruct(2:(end-1));
+		handles.(CurrentFile).Trials = TemporaryStruct;
+		clear TemporaryStruct;
+		loadedNames{1}=CurrentFile;
+		KlugeTheTrials;
+		% eval(['ResultVariables_old=' CurrentAnalysisFile '(handles.' CurrentFile '.Trials,''' CurrentFile ''',0,handles.SaccadeOptions);']);  %this 0 is legacy from currentuseax
+		ResultVariables = feval(currentAnalysisFx, handles.(CurrentFile).Trials, CurrentFile, 0, handles.SaccadeOptions);  %this 0 is legacy from currentuseax
+		% keyboard;
+		% ResultVariables = eval(CurrentAnalysisFile)(handles.(CurrentFile).Trials,''' CurrentFile ''',0,handles.SaccadeOptions);']);  %this 0 is legacy from currentuseax
+		handles.(CurrentFile).Analysis=ResultVariables;
+		MyVariableList=ResultVariables.MyVariableList;
+		handles = SetVariables(handles, CurrentFile);
+		fprintf('%s\n',['Completed one   ' CurrentAnalysisFile ]);
+	else
+		fprintf('%s\n','******************No Trials structure here*****************');
+	end
+	
+	LoadedFileNames=get(handles.LoadedFiles,'string');
+	if ~iscell(LoadedFileNames) & ~strcmp(LoadedFileNames,'LoadedFiles')
+		TemporaryStuff{1}=LoadedFileNames;
+		LoadedFileNames=TemporaryStuff;
+	end
 
-    AnalysisFiles=get(handles.AnalysisFile,'string');
-    AnalysisFileValue=get(handles.AnalysisFile,'value');
-    if iscell(AnalysisFiles)
-    CurrentAnalysisFile=AnalysisFiles{AnalysisFileValue};
-    else
-        CurrentAnalysisFile=AnalysisFiles;
-    end
-    CurrentAnalysisFile=CurrentAnalysisFile(1:(end-2));
-             
-             eval(['TemporaryStruct = mrdr(''-s 1001'',''800'',''-d'',''',CurrentFile,''');']);
-             TemporaryStruct=TemporaryStruct(2:(end-1));
-             eval([CurrentFile '.Trials=TemporaryStruct; clear TemporaryStruct;']); 
-             eval(['if isfield(',CurrentFile,',''Trials''),','handles.' CurrentFile '.Trials=' CurrentFile '.Trials;end']);
-             if isfield(handles,CurrentFile)
-             loadedNames{1}=CurrentFile;
-              KlugeTheTrials;        
+	if exist('loadedNames','var')
+		if ~iscell(LoadedFileNames)
+			set(handles.LoadedFiles,'string',sort(loadedNames));
+		else
+			NewNames=setdiff(loadedNames,LoadedFileNames);
+			set(handles.LoadedFiles,'string',sort([NewNames LoadedFileNames']'));
+		end
+		WhereIsFile=strcmp(loadedNames{1},get(handles.LoadedFiles,'string'));
+		if ~isempty(find(WhereIsFile))
+			set(handles.LoadedFiles,'value',find(WhereIsFile));
+		end
+	end
 
-%               if isempty(CurrentUseAx)
-%      eval(['ResultVariables=' CurrentAnalysisFile '(handles.' CurrentFile '.Trials,''' CurrentFile ''');']);
-%               else      eval(['ResultVariables=' CurrentAnalysisFile '(handles.' CurrentFile '.Trials,''' CurrentFile ''', CurrentUseAx);']);
-    eval(['ResultVariables=' CurrentAnalysisFile '(handles.' CurrentFile '.Trials,''' CurrentFile ''',0,handles.SaccadeOptions);']);  %this 0 is legacy from currentuseax
-%               else   
-% eval(['ResultVariables=' CurrentAnalysisFile '(handles.' CurrentFile '.Trials,''' CurrentFile ''', CurrentUseAx,handles.SaccadeOptions);']);
-%               end
+	% clear loadedNames;
 
-              eval(['handles.' CurrentFile '.Analysis=ResultVariables;']);
-              
-              MyVariableList=ResultVariables.MyVariableList;
-         
-   SetVariablesScript;              
-              
-              fprintf('%s\n',['Completed one   ' CurrentAnalysisFile ]);
+	% guidata(hObject,handles);
+	cd(Old_Dir);
+end
 
-             else fprintf('%s\n','******************No Trials structure here*****************');
-             end             
-             
-    LoadedFileNames=get(handles.LoadedFiles,'string');
-    if ~iscell(LoadedFileNames) & ~strcmp(LoadedFileNames,'LoadedFiles')
-        TemporaryStuff{1}=LoadedFileNames;
-        LoadedFileNames=TemporaryStuff;
-    end
-    
-    if exist('loadedNames','var')
-    if ~iscell(LoadedFileNames)
-        set(handles.LoadedFiles,'string',sort(loadedNames));
-    else
-        NewNames=setdiff(loadedNames,LoadedFileNames);
-        set(handles.LoadedFiles,'string',sort([NewNames LoadedFileNames']'));
-    end
-    
-    WhereIsFile=strcmp(loadedNames{1},get(handles.LoadedFiles,'string'));
-  if ~isempty(find(WhereIsFile)),  set(handles.LoadedFiles,'value',find(WhereIsFile)); end
-    
-    end    
-        
-    clear loadedNames;
-    
-     guidata(hObject,handles);
-cd(Old_Dir);
+function currentAnalysisFx = getCurrentAnalysisFx(handles)
+	
+	AnalysisFiles=get(handles.AnalysisFile,'string');
+	AnalysisFileValue=get(handles.AnalysisFile,'value');
+	if iscell(AnalysisFiles)
+		currentAnalysisFile=AnalysisFiles{AnalysisFileValue};
+	else
+		currentAnalysisFile=AnalysisFiles;
+	end
+	% CurrentAnalysisFile=CurrentAnalysisFile(1:(end-2));
+	[pathjunk, currentAnalysisFile] = fileparts(currentAnalysisFile);
+	currentAnalysisFx = str2func(currentAnalysisFile);
+	
+end
