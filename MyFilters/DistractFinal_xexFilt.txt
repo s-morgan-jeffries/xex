@@ -1,6 +1,0 @@
-PLOTTYPE HIST
-HOLD ON
-GoodTrial==1&PhotoBad~=1&isnan(RFx)&JWhichSac==1
-GoodTrial==1&PhotoBad~=1&RFLat==50&JWhichSac==1
-GoodTrial==1&PhotoBad~=1&RFLat==100&JWhichSac==1
-GoodTrial==1&PhotoBad~=1&RFLat==150&JWhichSac==1
