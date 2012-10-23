@@ -64,8 +64,14 @@ handles.config.xexDir = xexDir;
 if isempty(handles.config.xexWorkDir)
 	handles.config.xexWorkDir = [handles.config.xexDir filesep 'work'];
 end
-% set(handles.xexWorkDirText, 'String', handles.config.xexWorkDir);
-% keyboard;
+if ~exist(handles.config.xexWorkDir, 'dir')
+	try
+		mkdir(handles.config.xexWorkDir);
+	catch
+		warnmsg = 'The xex work directory, "%s", does not exist, and an attempt to create it failed. You will need to create it manually.';
+		warning(warnmsg, handles.config.xexWorkDir);
+	end
+end
 
 % Set closing function
 set(handles.figure1, 'CloseRequestFcn', @xex_CloseRequestFcn);
@@ -175,7 +181,12 @@ cd(OldDir);
 AvailableSessionInfo = GetAvailableSessionInfo(handles);
 SelectedSessionInfo = AvailableSessionInfo(get(handles.AvailableSessions, 'Value'));
 
-load(SelectedSessionInfo.Matfile);
+try
+	load(SelectedSessionInfo.Matfile);
+catch
+	disp(['Error loading ' SelectedSessionInfo.Matfile '. Creating empty Trials struct.'])
+	Trials = [];
+end
 feval(AnalysisFunction, Trials);
 
 
@@ -267,7 +278,7 @@ field_pattern = '(?<field>^\w+):';
 base_val_pattern = ':\s*(?<val>\S+.*)';
 
 xexdir = fileparts(which('xex'));
-defaultconfigfile = [xexdir filesep 'config' filesep 'default_xex_config.txt'];
+defaultconfigfile = [xexdir filesep 'config' filesep 'default_xex_config_do_not_edit.txt'];
 configfile = [xexdir filesep 'config' filesep 'xex_config.txt'];
 if ~exist(configfile)
 	copyfile(defaultconfigfile, configfile);

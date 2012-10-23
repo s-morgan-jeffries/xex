@@ -1,0 +1,16 @@
+You launch xex by typing "xex" at the Matlab prompt. (NB: The xex directory needs to be on your Matlab search path first; see the Matlab documentation if you need help with that part.) When you launch xex, a single figure window appears. When xex launches, it scans the work directory for available sessions and displays those in the listbox. Xex assumes that anything in its work directory ending with ".mat" is an available session and that the filename without the extension is the session name. You can change the work directory by hitting the button labeled "Select Directory" or by editing the config file* and relaunching xex.
+
+To get more sessions from the server:
+-Click the button labeled "Get Sessions From Server"; that will launch the xex_ftp module.
+-xex_ftp comes with a bunch of preconfigured server logins. You can select one of these from the popup menu, or you can enter the IP address, username, and password manually.
+-Next, enter the full path to the directory on the server where your data are. You can also set the default directory in your config file*.
+-In the last box, enter the names of the sessions you want to get from the server (a session name is just an A or E filename without the A or the E). You can get more than one session by entering a comma-separated list of session names.
+-Finally, click the button labeled "Get Sessions Now." xex_ftp will pull the corresponding A and E files to the xex work directory and converts them to a matfile using mrdr (included).
+-After it grabs and converts the new sessions, xex_ftp will close.
+
+To analyze your data:
+-Click the button labeled "Analyze Selected Session." This will cause xex to load the selected session and to analyze the Trials struct using the analysis function specified in the config file*.
+-To specify your analysis function, you need to append its name to the line in your config file that begins with "AnalysisFunction:". You can either name a function on the Matlab search path, or you can provide the complete path to a valid m-file.
+-The analysis function can do whatever you want. The only constraint is that it has to accept a Trials struct as its only input argument. Obviously, for online work, it would be useful to have it plot receptive fields, but there are probably many other useful analyses. Get creative. Once I see the kinds of anlyses people are doing, I can starting adding functions to perform those.
+
+*Currently, some of the options have to be set in the config file. In future versions, I'll try to change it so you can modify them through the GUI. To find the file, type "fileparts(which('xex'))" at the prompt; that will give you the xex directory. The config file is in a subdirectory called "config" and is named "xex_config.txt".

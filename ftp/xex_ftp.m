@@ -345,7 +345,7 @@ password_pattern = '^password:\s*(?<password>\w+)';
 server_config = repmat(struct('hostname', '', 'IP', '', 'username', '', 'password', ''), 0, 0);
 
 xexdir = fileparts(which('xex'));
-defaultconfigfile = [xexdir filesep 'config' filesep 'default_server_config.txt'];
+defaultconfigfile = [xexdir filesep 'config' filesep 'default_server_config_do_not_edit.txt'];
 configfile = [xexdir filesep 'config' filesep 'server_config.txt'];
 if ~exist(configfile)
 	copyfile(defaultconfigfile, configfile);
