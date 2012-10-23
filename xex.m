@@ -22,7 +22,7 @@ function varargout = xex(varargin)
 
 % Edit the above text to modify the response to help xex
 
-% Last Modified by GUIDE v2.5 17-Oct-2012 21:28:41
+% Last Modified by GUIDE v2.5 23-Oct-2012 13:08:14
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -57,19 +57,22 @@ xexDir = fileparts(which('xex'));
 addpath(genpath(xexDir),'-begin');
 
 % Get configuration
-handles.config = get_xex_config();
+handles.config = read_xex_config();
 
 handles.config.xexDir = xexDir;
 % Set working directory
 if isempty(handles.config.xexWorkDir)
 	handles.config.xexWorkDir = [handles.config.xexDir filesep 'work'];
 end
+% set(handles.xexWorkDirText, 'String', handles.config.xexWorkDir);
+% keyboard;
 
 % Set closing function
 set(handles.figure1, 'CloseRequestFcn', @xex_CloseRequestFcn);
 
 % Update the AvailableSessions listbox
 handles = UpdateAvailableSessions(handles);
+handles.UpdateAvailableSessionsFx = @UpdateAvailableSessions;
 
 % Choose default command line output for xex
 handles.output = hObject;
@@ -106,6 +109,7 @@ handles = UpdateAvailableSessions(handles);
 % Update handles structure
 guidata(hObject, handles);
 
+
 % --- Executes during object creation, after setting all properties.
 function AvailableSessions_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to AvailableSessions (see GCBO)
@@ -119,33 +123,9 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-% --- Executes on button press in GetRemoteDataButton.
-function GetRemoteDataButton_Callback(hObject, eventdata, handles)
-% hObject    handle to GetRemoteDataButton (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% keyboard;
-handles = xex_ftp(handles);
-
-
-% --- Executes on button press in AnalyzeDataButton.
-function AnalyzeDataButton_Callback(hObject, eventdata, handles)
-% hObject    handle to AnalyzeDataButton (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-
-% --- Executes on button press in PlotDataButton.
-function PlotDataButton_Callback(hObject, eventdata, handles)
-% hObject    handle to PlotDataButton (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-
-% --- Executes on button press in SelectxexWorkDirButton.
-function SelectxexWorkDirButton_Callback(hObject, eventdata, handles)
-% hObject    handle to SelectxexWorkDirButton (see GCBO)
+% --- Executes on button press in ChangeXexWorkDirButton.
+function ChangeXexWorkDirButton_Callback(hObject, eventdata, handles)
+% hObject    handle to ChangeXexWorkDirButton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
@@ -158,18 +138,56 @@ end
 guidata(hObject, handles);
 
 
+% --- Executes on button press in GetSessionsFromServerButton.
+function GetSessionsFromServerButton_Callback(hObject, eventdata, handles)
+% hObject    handle to GetSessionsFromServerButton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% keyboard;
+% set(handles.figure1, 'Visible', 'off');
+% try
+handles = xex_ftp(handles);
+	% set(handles.figure1, 'Visible', 'on');
+% catch
+% 	set(handles.figure1, 'Visible', 'on');
+% end
+
+
+% --- Executes on button press in AnalyzeSelectedSessionButton.
+function AnalyzeSelectedSessionButton_Callback(hObject, eventdata, handles)
+% hObject    handle to AnalyzeSelectedSessionButton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+AnalysisFunctionStr = handles.config.AnalysisFunction;
+if isempty(AnalysisFunctionStr)
+	AnalysisFunctionStr = [handles.config.xexDir filesep 'analysis_functions' filesep 'dummy_analysis_function.m'];
+end
+
+% This is a clunky workaround to make a function_handle out of a string.
+[AnalysisFunctionDir, AnalysisFunctionName] = fileparts(which(AnalysisFunctionStr));
+OldDir = pwd;
+cd(AnalysisFunctionDir);
+AnalysisFunction = str2func(AnalysisFunctionName);
+cd(OldDir);
+
+AvailableSessionInfo = GetAvailableSessionInfo(handles);
+SelectedSessionInfo = AvailableSessionInfo(get(handles.AvailableSessions, 'Value'));
+
+load(SelectedSessionInfo.Matfile);
+feval(AnalysisFunction, Trials);
+
+
 % --- Executes on attempt to close xex.
 function xex_CloseRequestFcn(hObject, eventdata)
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
 
 user_response = questdlg('Do you really want to close xex?', ...
                          'Confirm Close', ...
                          'Yes', 'No',...
                          'No');
-
 if strcmp(user_response, 'Yes')
 	delete(hObject);
 end
@@ -183,12 +201,8 @@ SessionInfoStrs = {AvailableSessionInfo.SessionInfoStr};
 set(handles.AvailableSessions, 'String', SessionInfoStrs);
 handles.SelectedSessionInfo = AvailableSessionInfo(get(handles.AvailableSessions, 'Value'));
 
-% % Update handles structure
-% hObject = handles.figure1;
-% guidata(hObject, handles);
 
-
-% --- Used to get info on sessions in xexWorkDir
+% --- Used to get info on sessions in xexWorkDirText
 function AvailableSessionInfo = GetAvailableSessionInfo(handles)
 
 AFileSuffix = 'A';
@@ -215,26 +229,68 @@ ESessions = regexprep(FileNames(EFileMask), EFileRegexSuffix, '');
 FormattedSessions = regexprep(FileNames(FormattedFileMask), MatFileRegexSuffix, '');
 AnalyzedSessions = regexprep(FileNames(AnalyzedFileMask), AnalyzedFileRegexSuffix, '');
 
-AllSessions = unique([ASessions, ESessions, FormattedSessions, AnalyzedSessions]);
+% AllSessions = unique([ASessions, ESessions, FormattedSessions, AnalyzedSessions]);
+AllSessions = unique(FormattedSessions);
+if isempty(AllSessions)
+	AllSessions = {''};
+end
 for ii = 1 : length(AllSessions)
 	AvailableSessionInfo(ii).SessionName = AllSessions{ii};
-	AvailableSessionInfo(ii).ASession = ismember(AllSessions{ii}, ASessions);
-	AvailableSessionInfo(ii).ESession = ismember(AllSessions{ii}, ESessions);
-	AvailableSessionInfo(ii).FormattedSession = ismember(AllSessions{ii}, FormattedSessions);
-	AvailableSessionInfo(ii).AnalyzedSession = ismember(AllSessions{ii}, AnalyzedSessions);
+	% AvailableSessionInfo(ii).ASession = ismember(AllSessions{ii}, ASessions);
+	% AvailableSessionInfo(ii).ESession = ismember(AllSessions{ii}, ESessions);
+	% AvailableSessionInfo(ii).FormattedSession = ismember(AllSessions{ii}, FormattedSessions);
+	% AvailableSessionInfo(ii).AnalyzedSession = ismember(AllSessions{ii}, AnalyzedSessions);
 	
-	SessionInfoStr = [AvailableSessionInfo(ii).SessionName ' - '];
-	if AvailableSessionInfo(ii).ASession
-		SessionInfoStr = [SessionInfoStr 'A,'];
+	% SessionInfoStr = [AvailableSessionInfo(ii).SessionName ' - '];
+	% if AvailableSessionInfo(ii).ASession
+	% 	SessionInfoStr = [SessionInfoStr 'A,'];
+	% end
+	% if AvailableSessionInfo(ii).ESession
+	% 	SessionInfoStr = [SessionInfoStr 'E,'];
+	% end
+	% if AvailableSessionInfo(ii).FormattedSession
+	% 	SessionInfoStr = [SessionInfoStr 'Formatted,'];
+	% end
+	% if AvailableSessionInfo(ii).AnalyzedSession
+	% 	SessionInfoStr = [SessionInfoStr 'Analyzed,'];
+	% end
+	% AvailableSessionInfo(ii).SessionInfoStr = regexprep(SessionInfoStr, ',$', '');
+	AvailableSessionInfo(ii).SessionInfoStr = AvailableSessionInfo(ii).SessionName;
+	AvailableSessionInfo(ii).Matfile = [handles.config.xexWorkDir filesep AvailableSessionInfo(ii).SessionName MatFileSuffix];
+end
+
+
+% --- Used to read config.txt
+function config = read_xex_config()
+	
+field_pattern = '(?<field>^\w+):';
+base_val_pattern = ':\s*(?<val>\S+.*)';
+
+xexdir = fileparts(which('xex'));
+defaultconfigfile = [xexdir filesep 'config' filesep 'default_xex_config.txt'];
+configfile = [xexdir filesep 'config' filesep 'xex_config.txt'];
+if ~exist(configfile)
+	copyfile(defaultconfigfile, configfile);
+end
+fid = fopen(configfile, 'r');
+try
+	while ~feof(fid)
+		line = fgetl(fid);
+		fieldname = regexp(line, field_pattern, 'tokens');
+		if isempty(fieldname)
+			continue;
+		end
+		fieldname = fieldname{1}{1};
+		val_pattern = [regexptranslate('escape', fieldname) base_val_pattern];
+		value = regexp(line, val_pattern, 'tokens');
+		if ~isempty(value)
+			value = value{1}{1};
+		else
+			value = '';
+		end
+		config.(fieldname) = value;
 	end
-	if AvailableSessionInfo(ii).ESession
-		SessionInfoStr = [SessionInfoStr 'E,'];
-	end
-	if AvailableSessionInfo(ii).FormattedSession
-		SessionInfoStr = [SessionInfoStr 'Formatted,'];
-	end
-	if AvailableSessionInfo(ii).AnalyzedSession
-		SessionInfoStr = [SessionInfoStr 'Analyzed,'];
-	end
-	AvailableSessionInfo(ii).SessionInfoStr = regexprep(SessionInfoStr, ',$', '');
+	fclose(fid);
+catch
+	fclose(fid);
 end

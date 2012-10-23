@@ -1,0 +1,6 @@
+FTPServerIP: 
+FTPServerUsername: 
+FTPServerPassword: 
+FTPServerDataDir: /data
+xexWorkDir: 
+AnalysisFunction: 

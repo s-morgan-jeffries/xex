@@ -1,0 +1,104 @@
+% mastermind
+IP: 192.168.35.100
+username:
+password:
+
+% rex1
+IP: 192.168.35.240
+username: root
+password: shoebox
+
+% mex1
+IP: 192.168.35.238
+username: root
+password: shoebox
+
+% vex1
+IP: 192.168.35.239
+username: root
+password: shoebox
+
+% ao1
+IP: 192.168.35.241
+username:
+password:
+
+% rex2
+IP: 192.168.35.235
+username: root
+password: shoebox
+
+% mex2
+IP: 192.168.35.236
+username: root
+password: shoebox
+
+% vex2
+IP: 192.168.35.234
+username: root
+password: shoebox
+
+% ao2
+IP: 192.168.35.237
+username:
+password:
+
+% rex3
+IP: 192.168.35.231
+username: root
+password: shoebox
+
+% mex3
+IP: 192.168.35.232
+username: root
+password: shoebox
+
+% vex3
+IP: 192.168.35.230
+username: root
+password: shoebox
+
+% ao3
+IP: 192.168.35.233
+username: 
+password: 
+
+% rex4
+IP: 192.168.35.227
+username: root
+password: shoebox
+
+% mex4
+IP: 192.168.35.228
+username: root
+password: shoebox
+
+% vex4
+IP: 192.168.35.226
+username: root
+password: shoebox
+
+% ao4
+IP: 192.168.35.229
+username: 
+password:
+
+% rex5
+IP: 192.168.35.185
+username: root
+password: shoebox
+
+% mex5
+IP: 192.168.35.184
+username: root
+password: shoebox
+
+% vex5
+IP: 192.168.35.183
+username: root
+password: shoebox
+
+% ao5
+IP: 192.168.35.182
+username: 
+password:
