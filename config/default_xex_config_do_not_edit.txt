@@ -3,4 +3,5 @@ FTPServerUsername:
 FTPServerPassword: 
 FTPServerDataDir: /data
 xexWorkDir: 
+AnalysisFunctionDir:
 AnalysisFunction: 

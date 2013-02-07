@@ -250,15 +250,27 @@ options = [' -u ' FTPConfig.Username ' -p ' FTPConfig.Password];
 remotehost = FTPConfig.ServerIP;
 local_directory = handles.xexWorkDir;
 for ii = 1 : length(FTPConfig.SessionNames)
-	Afile = [FTPConfig.ServerDataDirectory '/' FTPConfig.SessionNames{ii} 'A'];
-	Efile = [FTPConfig.ServerDataDirectory '/' FTPConfig.SessionNames{ii} 'E'];
+	disp(['Getting session ' FTPConfig.SessionNames{ii}]);
+	Afile = ['"' FTPConfig.ServerDataDirectory '/' FTPConfig.SessionNames{ii} 'A' '"'];
+	Efile = ['"' FTPConfig.ServerDataDirectory '/' FTPConfig.SessionNames{ii} 'E' '"'];
 	remotefiles = [Afile ' ' Efile];
 	ncftp_command = ['!ncftpget ' options ' ' remotehost ' "' local_directory '" ' remotefiles];
 	eval(ncftp_command);
 	local_file_basename = [local_directory filesep FTPConfig.SessionNames{ii}];
-	local_matfile = [local_file_basename '.mat'];
-	Trials = mrdr('-s 1001','800', '-d', local_file_basename);
+	% This next line is a workaround - mrdr strips trailing As and Es from input filenames, which is fine, unless your base filename ends with an A or an E
+	local_efile = [local_file_basename 'E'];
+	% keyboard;
+	try
+		Trials = mrdr('-s 1001','800', '-d', local_efile);
+		local_matfile = [local_file_basename '.mat'];
+	catch
+		Trials = [];
+		Trials.Error = lasterror();
+		local_matfile = [local_file_basename '-mrdr_error.mat'];
+		disp('Could not process session. See saved file for details.')
+	end
 	save(local_matfile, 'Trials', '-v6');
+	% keyboard;
 end
 close(handles.figure1);
 figure(handles.callerHandles.figure1);

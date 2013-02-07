@@ -22,7 +22,7 @@ function varargout = xex(varargin)
 
 % Edit the above text to modify the response to help xex
 
-% Last Modified by GUIDE v2.5 23-Oct-2012 13:08:14
+% Last Modified by GUIDE v2.5 03-Dec-2012 07:00:38
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -56,6 +56,9 @@ function xex_OpeningFcn(hObject, eventdata, handles, varargin)
 xexDir = fileparts(which('xex'));
 addpath(genpath(xexDir),'-begin');
 
+% Set attribute to indicate we're in startup mode
+handles.inOpeningFcn = 1;
+
 % Get configuration
 handles.config = read_xex_config();
 
@@ -80,8 +83,14 @@ set(handles.figure1, 'CloseRequestFcn', @xex_CloseRequestFcn);
 handles = UpdateAvailableSessions(handles);
 handles.UpdateAvailableSessionsFx = @UpdateAvailableSessions;
 
+% Update the AnalysisFunction popupmenu
+handles = UpdateAnalysisFunction(handles);
+
 % Choose default command line output for xex
 handles.output = hObject;
+
+% Set attribute to indicate we're no longer in startup mode
+handles.inOpeningFcn = 0;
 
 % Update handles structure
 guidata(hObject, handles);
@@ -160,34 +169,60 @@ handles = xex_ftp(handles);
 % end
 
 
+% --- Executes on selection change in SelectAnalysisFunctionPopupmenu.
+function SelectAnalysisFunctionPopupmenu_Callback(hObject, eventdata, handles)
+% hObject    handle to SelectAnalysisFunctionPopupmenu (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = get(hObject,'String') returns SelectAnalysisFunctionPopupmenu contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from SelectAnalysisFunctionPopupmenu
+
+handles = UpdateAnalysisFunction(handles);
+
+% Update handles structure
+guidata(hObject, handles);
+
+% --- Executes during object creation, after setting all properties.
+function SelectAnalysisFunctionPopupmenu_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to SelectAnalysisFunctionPopupmenu (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: popupmenu controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
 % --- Executes on button press in AnalyzeSelectedSessionButton.
 function AnalyzeSelectedSessionButton_Callback(hObject, eventdata, handles)
 % hObject    handle to AnalyzeSelectedSessionButton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-AnalysisFunctionStr = handles.config.AnalysisFunction;
-if isempty(AnalysisFunctionStr)
-	AnalysisFunctionStr = [handles.config.xexDir filesep 'analysis_functions' filesep 'dummy_analysis_function.m'];
-end
+% AnalysisFunctionStr = handles.config.AnalysisFunction;
+% if isempty(AnalysisFunctionStr)
+% 	AnalysisFunctionStr = [handles.config.xexDir filesep 'analysis_functions' filesep 'dummy_analysis_function.m'];
+% end
 
-% This is a clunky workaround to make a function_handle out of a string.
-[AnalysisFunctionDir, AnalysisFunctionName] = fileparts(which(AnalysisFunctionStr));
-OldDir = pwd;
-cd(AnalysisFunctionDir);
-AnalysisFunction = str2func(AnalysisFunctionName);
-cd(OldDir);
+AnalysisFunctionName = handles.SelectedAnalysisFunctionInfo.AnalysisFunctionName;
+AnalysisFunctionHandle = handles.SelectedAnalysisFunctionInfo.AnalysisFunctionHandle;
+SessionName = handles.SelectedSessionInfo.SessionName;
+Matfile = handles.SelectedSessionInfo.Matfile;
 
-AvailableSessionInfo = GetAvailableSessionInfo(handles);
-SelectedSessionInfo = AvailableSessionInfo(get(handles.AvailableSessions, 'Value'));
+% AvailableSessionInfo = GetAvailableSessionInfo(handles);
+% SelectedSessionInfo = AvailableSessionInfo(get(handles.AvailableSessions, 'Value'));
 
 try
-	load(SelectedSessionInfo.Matfile);
+	load(Matfile);
 catch
-	disp(['Error loading ' SelectedSessionInfo.Matfile '. Creating empty Trials struct.'])
+	disp(['Error loading ' Matfile '. Creating empty Trials struct.']);
 	Trials = [];
 end
-feval(AnalysisFunction, Trials);
+disp(['Analyzing session ' SessionName ' using ' AnalysisFunctionName '.'])
+feval(AnalysisFunctionHandle, Trials);
 
 
 % --- Executes on attempt to close xex.
@@ -201,6 +236,56 @@ user_response = questdlg('Do you really want to close xex?', ...
                          'No');
 if strcmp(user_response, 'Yes')
 	delete(hObject);
+end
+
+
+% --- Used to updated the AnalysisFunctionPopupmenu widget
+function handles = UpdateAnalysisFunction(handles)
+
+AnalysisFunctionInfo = GetAnalysisFunctionInfo(handles);
+AnalysisFunctionNames = {AnalysisFunctionInfo.AnalysisFunctionName};
+set(handles.SelectAnalysisFunctionPopupmenu, 'String', AnalysisFunctionNames);
+if handles.inOpeningFcn
+	SelectAnalysisFunctionIdx = min(find(strcmp(handles.config.AnalysisFunction, {AnalysisFunctionInfo.AnalysisFunctionName})));
+	if ~isempty(SelectAnalysisFunctionIdx)
+		set(handles.SelectAnalysisFunctionPopupmenu, 'Value', SelectAnalysisFunctionIdx);
+	end
+end
+handles.SelectedAnalysisFunctionInfo = AnalysisFunctionInfo(get(handles.SelectAnalysisFunctionPopupmenu, 'Value'));
+
+
+% --- Used to get info on functions in xexWorkDirText
+function AnalysisFunctionInfo = GetAnalysisFunctionInfo(handles)
+
+MFileSuffix = '.m';
+MFileRegexSuffix = [strrep(MFileSuffix, '.', '\.') '$'];
+
+AnalysisFunctionDir = handles.config.AnalysisFunctionDir;
+% AnalysisFunctionDir = regexprep(AnalysisFunctionDir, ['^' regexptranslate('escape', ['.' filesep])], [handles.config.xexDir filesep]);
+AnalysisFunctionDir = regexprep(AnalysisFunctionDir, ['^' regexptranslate('escape', ['.' filesep])], regexptranslate('escape', [handles.config.xexDir filesep]));
+if isempty(AnalysisFunctionDir)
+	AnalysisFunctionDir = [handles.config.xexDir filesep 'analysis_function_library\common'];
+end
+AnalysisFunctionDir = regexprep(AnalysisFunctionDir, '\\$', '');
+
+DirContents = dir(AnalysisFunctionDir);
+FileNames = {DirContents.name};
+MFiles = FileNames(~cellfun('isempty', regexp(FileNames, MFileRegexSuffix)));
+AnalysisFunctionPathStrs = strcat([AnalysisFunctionDir filesep], MFiles);
+% keyboard;
+AnalysisFunctionInfo.AnalysisFunctionPathStr = '';
+AnalysisFunctionInfo.AnalysisFunctionName = '<empty>';
+AnalysisFunctionInfo.AnalysisFunctionHandle = @(Trials) disp(['No analysis functions available. Functions should be placed in ' AnalysisFunctionDir]);
+
+for ii = 1 : length(MFiles)
+	AnalysisFunctionInfo(ii).AnalysisFunctionPathStr = AnalysisFunctionPathStrs{ii};
+	[AnalysisFunctionDir, AnalysisFunctionName] = fileparts(which(AnalysisFunctionPathStrs{ii}));
+	AnalysisFunctionInfo(ii).AnalysisFunctionName = regexprep(AnalysisFunctionName, MFileRegexSuffix, '');
+	% This is a clunky workaround to make a function_handle out of a string.
+	OldDir = pwd;
+	cd(AnalysisFunctionDir);
+	AnalysisFunctionInfo(ii).AnalysisFunctionHandle = str2func(AnalysisFunctionName);
+	cd(OldDir);
 end
 
 
@@ -305,3 +390,5 @@ try
 catch
 	fclose(fid);
 end
+
+
