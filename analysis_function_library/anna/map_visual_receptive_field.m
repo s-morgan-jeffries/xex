@@ -62,9 +62,9 @@ session.trials = varargin{1};
 clear('varargin');
 
 session.bin_width = 1;
-session.baseline_period = [-300 0];
+session.baseline_period = [-200 0];
 session.response_period = [60 180];
-session.observation_period = [-300 1000];
+session.observation_period = [-200 500];
 % session.alpha = 0.95;
 
 % For each location get the baseline activity (300ms before cueon[1016])
