@@ -56,7 +56,7 @@ function map_visual_receptive_field_OpeningFcn(hObject, eventdata, handles, vara
 handles.output = hObject;
 
 % keyboard;
-% assignin('base', 'Trials', varargin{1});
+assignin('base', 'Trials', varargin{1});
 
 session.trials = varargin{1};
 clear('varargin');
@@ -64,45 +64,29 @@ clear('varargin');
 session.bin_width = 1;
 session.baseline_period = [-200 0];
 session.response_period = [60 180];
-session.observation_period = [-200 500];
+session.raster_plotting_period = [-200 500];
 % session.alpha = 0.95;
 
-% For each location get the baseline activity (300ms before cueon[1016])
-%	and the visual activity (80-180ms after cueon[1016]) then do a t-test
+session.raster_plotting_period_centers = get_bin_centers(session.raster_plotting_period, session.bin_width);
 
-session.baseline_edges = [min(session.baseline_period) : session.bin_width : max(session.baseline_period)];
-session.response_edges = [min(session.response_period) : session.bin_width : max(session.response_period)];
-session.obs_period_edges = [min(session.observation_period) : session.bin_width : max(session.observation_period)];
-% session.all_edges = [min([session.baseline_period session.response_period]) : session.bin_width : max([session.baseline_period session.response_period])];
-bin_half_width = session.bin_width / 2;
-% session.all_centers = [(min(session.all_edges) + bin_half_width) : session.bin_width : (max(session.all_edges) + bin_half_width)];
-session.obs_period_centers = [(min(session.obs_period_edges) + bin_half_width) : session.bin_width : (max(session.obs_period_edges) + bin_half_width)];
-
-% Format
-% session.num_units = getNumUnits(session);
+% Formatting
 session = get_unit_nums(session);
 session = format_trials(session);
 
-% Group by RF location
-session = group_by_rfloc(session);
+% Analysis
+session = analyze_session(session);
 
 % Put the session struct into handles
 handles.session = session;
 
 % Update unit number
-handles = UpdateUnitNum(handles);
+handles = update_unit_num(handles);
 
 % Get RF loc info
-% handles = UpdateRFLoc(handles);
+% handles = update_rf_loc(handles);
 
 % keyboard;
 % assignin('base', 'session', handles.session);
-
-% Make heat map figure
-% handles = make_heatmap(handles);
-
-% Make raster plot figure
-% handles = make_rasterplot(handles);
 
 % Set closing function
 set(handles.figure1, 'CloseRequestFcn', @map_visual_receptive_field_CloseRequestFcn);
@@ -135,7 +119,7 @@ function UnitNumPopupmenu_Callback(hObject, eventdata, handles)
 % Hints: contents = get(hObject,'String') returns UnitNumPopupmenu contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from UnitNumPopupmenu
 
-handles = UpdateUnitNum(handles);
+handles = update_unit_num(handles);
 
 % Update handles structure
 guidata(hObject, handles);
@@ -163,7 +147,7 @@ function RFLocSelectPopupmenu_Callback(hObject, eventdata, handles)
 % Hints: contents = get(hObject,'String') returns RFLocSelectPopupmenu contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from RFLocSelectPopupmenu
 
-handles = UpdateRFLoc(handles);
+handles = update_rf_loc(handles);
 
 % Update handles structure
 guidata(hObject, handles);
@@ -201,30 +185,54 @@ delete(hObject);
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function session = get_unit_nums(session)
+
+unit_nums = [session.trials(1).Units.Code];
+num_units = length(unit_nums);
+session.num_units = num_units;
+
+for ii = 1 : num_units
+	session.unit_data(ii).unit_num = unit_nums(ii);
+end
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function session = format_trials(session)
+	
+RFONCD = 1007;
+RFOFFCD = 1010;
+RWCD = 1012;
+PATNUMCD = 3000;
+PATRCD = 5000;
+PATGCD = 5300;
+PATBCD = 5600;
+PATXCD = 6000;
+PATYCD = 6500;
+PATONCD = 7000;
 
 % First dump trial #1
 session.trials = session.trials(2:end);
 
 for ii = 1:length(session.trials)
 	event_packet = [double([session.trials(ii).Events.Code]); double([session.trials(ii).Events.Time])]';
-	num_events = size(event_packet,1);
-	% Put in array number
-	session.trials(ii).Array = event_packet(find((event_packet(:,1) >= 2000) & (event_packet(:,1) < 3000)),1) - 2000;
-
-	% quewto loop "if" ho dovuto aggiungerlo perche'
-	% molti session.trials non c'era il code 1007?????????
-	% 16 aprile 02
-	if ~isempty (session.trials(ii).Events(find(event_packet(:,1) == 1007)))
-		rf_on_time = double(event_packet(find(event_packet(:,1)==1007),2));
+	if ~isempty (session.trials(ii).Events(find(event_packet(:, 1) == RFONCD)))
+		rf_on_time = double(event_packet(find(event_packet(:, 1) == RFONCD), 2));
 
 		if rf_on_time < 8000
+			
+			session.trials(ii).rf_on_time = rf_on_time;
+			session.trials(ii).rf_off_time = double(event_packet(find(event_packet(:,1) == RFOFFCD), 2));
+			if isempty(session.trials(ii).rf_off_time)
+				session.trials(ii).rf_off_time = double(event_packet(find(event_packet(:,1) == RWCD), 2));
+			end
+			session.trials(ii).Rftime = session.trials(ii).rf_off_time - session.trials(ii).rf_on_time;
 
 			% Now find RF object information for each trial
-			first_patcd = min(find((event_packet(:,2) == rf_on_time) & (event_packet(:,1) > 3000))); % The 3000 code gives the # of objects following
+			first_patcd = min(find((event_packet(:,2) == rf_on_time) & (event_packet(:,1) > PATNUMCD))); % The 3000 code gives the # of objects following
 			last_patcd = max(find((event_packet(:,2) == rf_on_time) & (event_packet(:,1) > 5000))); % this is to double check
 			num_codes = last_patcd - first_patcd;
-			num_objs = double(event_packet(first_patcd,1)) - 3000;
+			num_objs = double(event_packet(first_patcd,1)) - PATNUMCD;
+			% disp(num2str(num_objs));
 			
 			expected_codes_per_obj = 6;
 			if (num_objs * expected_codes_per_obj ~= num_codes)
@@ -235,27 +243,19 @@ for ii = 1:length(session.trials)
 			% RF stimulus in each trial, but there's minimal overhead, and if it ain't broke...
 			counter = first_patcd + 1; % because first code is 3000 (number of objects)
 			for jj = 1:num_objs
-				session.trials(ii).obj(jj).pattern = event_packet(counter,1) - 7000;
+				session.trials(ii).obj(jj).pattern = event_packet(counter,1) - PATONCD;
 				counter = counter + 1;
-				session.trials(ii).obj(jj).xpos = (event_packet(counter,1) - 6000)/10;
+				session.trials(ii).obj(jj).xpos = (event_packet(counter,1) - PATXCD)/10;
 				counter = counter + 1;
-				session.trials(ii).obj(jj).ypos = (event_packet(counter,1) - 6500)/10;
+				session.trials(ii).obj(jj).ypos = (event_packet(counter,1) - PATYCD)/10;
 				counter = counter + 1;
-				session.trials(ii).obj(jj).red = event_packet(counter,1) - 5000;
+				session.trials(ii).obj(jj).red = event_packet(counter,1) - PATRCD;
 				counter = counter + 1;
-				session.trials(ii).obj(jj).green = event_packet(counter,1) - 5300;
+				session.trials(ii).obj(jj).green = event_packet(counter,1) - PATGCD;
 				counter = counter + 1;
-				session.trials(ii).obj(jj).blue = event_packet(counter,1) - 5600;
+				session.trials(ii).obj(jj).blue = event_packet(counter,1) - PATBCD;
 				counter = counter + 1;
 			end
-
-			session.trials(ii).rf_on_time = double(event_packet(find(event_packet(:,1)==1007),2));
-			if ~isempty(event_packet(find(event_packet(:,1)==1010),2)) 
-				session.trials(ii).rf_off_time = double(event_packet(find(event_packet(:,1)==1010),2));
-			else
-				session.trials(ii).rf_off_time = double(event_packet(find(event_packet(:,1)==1012),2));
-			end
-			session.trials(ii).Rftime = session.trials(ii).rf_off_time - session.trials(ii).rf_on_time;
 			
 		end
 	end
@@ -273,21 +273,22 @@ for ii = 1:length(session.trials)
 		session.trials(ii).rf_y = NaN;
 	end
 	
-	% Align by RF on time
+	% Format unit data
 	for jj = 1 : session.num_units
 		try
 			session.trials(ii).Units(jj).rf_aligned_times = session.trials(ii).Units(jj).Times - session.trials(ii).rf_on_time;
-			session.trials(ii).Units(jj).baseline_counts = histc(session.trials(ii).Units(jj).rf_aligned_times, session.baseline_edges);
-			session.trials(ii).Units(jj).response_counts = histc(session.trials(ii).Units(jj).rf_aligned_times, session.response_edges);
-			session.trials(ii).Units(jj).obs_period_counts = histc(session.trials(ii).Units(jj).rf_aligned_times, session.obs_period_edges);
-			session.trials(ii).Units(jj).all_counts_spike_density = 1000 * sdf(10, 1000, session.trials(ii).Units(jj).obs_period_counts);
+			session.trials(ii).Units(jj).baseline_counts = get_binned_counts(session.trials(ii).Units(jj).rf_aligned_times, session.baseline_period, session.bin_width);
+			session.trials(ii).Units(jj).response_counts = get_binned_counts(session.trials(ii).Units(jj).rf_aligned_times, session.response_period, session.bin_width);
+			session.trials(ii).Units(jj).raster_plotting_period_counts = get_binned_counts(session.trials(ii).Units(jj).rf_aligned_times, session.raster_plotting_period, session.bin_width);
+			% keyboard;
+			session.trials(ii).Units(jj).all_counts_spike_density = 1000 * sdf(10, 1000, session.trials(ii).Units(jj).raster_plotting_period_counts);
 			session.trials(ii).Units(jj).baseline_spike_density = 1000 * sdf(10, 1000, session.trials(ii).Units(jj).baseline_counts);
 			session.trials(ii).Units(jj).response_spike_density = 1000 * sdf(10, 1000, session.trials(ii).Units(jj).response_counts);
 		catch
 			session.trials(ii).Units(jj).rf_aligned_times = NaN;
 			session.trials(ii).Units(jj).baseline_counts = NaN;
 			session.trials(ii).Units(jj).response_counts = NaN;
-			session.trials(ii).Units(jj).obs_period_counts = NaN;
+			session.trials(ii).Units(jj).raster_plotting_period_counts = NaN;
 			session.trials(ii).Units(jj).all_counts_spike_density = NaN;
 			session.trials(ii).Units(jj).baseline_spike_density = NaN;
 			session.trials(ii).Units(jj).response_spike_density = NaN;
@@ -297,7 +298,7 @@ end
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function session = group_by_rfloc(session)
+function session = analyze_session(session)
 
 % Make the group index
 grouping_cols = [session.trials.rf_x;session.trials.rf_y]';
@@ -305,7 +306,6 @@ isnanmask = any(isnan(grouping_cols), 2);
 rfloc_groups = unique(grouping_cols(~isnanmask,:), 'rows');
 % Sort the RF locations
 rfloc_groups = sort_columns(rfloc_groups, [1,2], {'ascend', 'descend'});
-% keyboard;
 num_rfloc_groups = size(rfloc_groups, 1);
 rfloc_group_idx = nan(length(session.trials),1);
 for ii = 1 : num_rfloc_groups
@@ -322,99 +322,86 @@ for ii = 1 : session.num_units
 	unit_idx = base_unit_idx + ii;
 	this_unit_data = unit_data(unit_idx);
 	for jj = 1 : num_rfloc_groups
-		session.unit_data(ii).rf_loc(jj).rf_x = rfloc_groups(jj, 1);
-		session.unit_data(ii).rf_loc(jj).rf_y = rfloc_groups(jj, 2);
-		session.unit_data(ii).rf_loc(jj).per_trial = this_unit_data(rfloc_group_idx == jj);
+		this_rf_loc = struct();
+		this_rf_loc.rf_x = rfloc_groups(jj, 1);
+		this_rf_loc.rf_y = rfloc_groups(jj, 2);
+		this_rf_loc.per_trial = this_unit_data(rfloc_group_idx == jj);
 		% Make the arrays of spike counts
-		cumulative_rf_aligned = [session.unit_data(ii).rf_loc(jj).per_trial.rf_aligned_times];
+		cumulative_rf_aligned = [this_rf_loc.per_trial.rf_aligned_times];
 		% Add an array that associates each spike with the correct trial
-		spikes_per_trial = cellfun('length', {session.unit_data(ii).rf_loc(jj).per_trial.rf_aligned_times});
+		spikes_per_trial = cellfun('length', {this_rf_loc.per_trial.rf_aligned_times});
 		trial_id = [];
 		for kk = 1 : length(spikes_per_trial)
 			trial_id = [trial_id repmat(kk, 1, spikes_per_trial(kk))];
 		end
-		in_obs_period = cumulative_rf_aligned >= min(session.observation_period) & cumulative_rf_aligned <= max(session.observation_period);
-		session.unit_data(ii).rf_loc(jj).cumulative_rf_aligned = cumulative_rf_aligned(in_obs_period);
-		session.unit_data(ii).rf_loc(jj).trial_id = trial_id(in_obs_period);
+		in_raster_plotting_period = cumulative_rf_aligned >= min(session.raster_plotting_period) & cumulative_rf_aligned <= max(session.raster_plotting_period);
+		this_rf_loc.cumulative_rf_aligned = cumulative_rf_aligned(in_raster_plotting_period);
+		this_rf_loc.trial_id = trial_id(in_raster_plotting_period);
 		
-		% What follows should eventually be pulled out into its own function
-		all_counts = get_binned_counts(session.unit_data(ii).rf_loc(jj).cumulative_rf_aligned, session.obs_period_edges);
-		spike_freq = all_counts .* (1000 / session.bin_width);
 		% Make the spike density functions
 		% all counts
-		all_counts_sdfmat = vertcat(session.unit_data(ii).rf_loc(jj).per_trial.all_counts_spike_density);
+		all_counts_sdfmat = vertcat(this_rf_loc.per_trial.all_counts_spike_density);
 		all_counts_mean_spike_density = mean(all_counts_sdfmat, 1);
 		all_counts_sem_spike_density = std(all_counts_sdfmat,1) / sqrt(size(all_counts_sdfmat,1));
+		this_rf_loc.all_counts_mean_spike_density = all_counts_mean_spike_density;
+		this_rf_loc.all_counts_sem_spike_density = all_counts_sem_spike_density;
+		
+		% Comparison of response to baseline
 		% baseline period
-		baseline_sdfmat = vertcat(session.unit_data(ii).rf_loc(jj).per_trial.baseline_spike_density);
+		baseline_sdfmat = vertcat(this_rf_loc.per_trial.baseline_spike_density);
 		baseline_mean_spike_density = mean(baseline_sdfmat, 1);
 		baseline_sem_spike_density = std(baseline_sdfmat,1) / sqrt(size(baseline_sdfmat,1));
+		this_rf_loc.baseline_mean_spike_density = baseline_mean_spike_density;
+		this_rf_loc.baseline_sem_spike_density = baseline_sem_spike_density;
 		% response period
-		response_sdfmat = vertcat(session.unit_data(ii).rf_loc(jj).per_trial.response_spike_density);
+		response_sdfmat = vertcat(this_rf_loc.per_trial.response_spike_density);
 		response_mean_spike_density = mean(response_sdfmat, 1);
 		response_sem_spike_density = std(response_sdfmat,1) / sqrt(size(response_sdfmat,1));
-		% other stuff...
-		baseline_counts = get_binned_counts(session.unit_data(ii).rf_loc(jj).cumulative_rf_aligned, session.baseline_edges);
+		this_rf_loc.response_mean_spike_density = response_mean_spike_density;
+		this_rf_loc.response_sem_spike_density = response_sem_spike_density;
+		% Metric of difference between response and baseline activity
+		this_rf_loc.response_v_baseline_spike_density = mean(response_mean_spike_density) - mean(baseline_mean_spike_density);
+		
+		% Significance of difference between response and baseline activity
+		% baseline
+		baseline_counts = get_binned_counts(this_rf_loc.cumulative_rf_aligned, session.baseline_period, session.bin_width);
 		baseline_count_distribution = get_count_distribution(baseline_counts);
-		max_baseline_counts = max(baseline_counts);
-		response_counts = get_binned_counts(session.unit_data(ii).rf_loc(jj).cumulative_rf_aligned, session.response_edges);
+		% response
+		response_counts = get_binned_counts(this_rf_loc.cumulative_rf_aligned, session.response_period, session.bin_width);
 		response_count_distribution = get_count_distribution(response_counts);
+		% adjust the number of bins
+		max_baseline_counts = max(baseline_counts);
 		max_response_counts = max(response_counts);
 		bins = 0 : max(max_baseline_counts, max_response_counts);
 		baseline_count_distribution(length(baseline_count_distribution)+1 : length(bins)) = 0;
 		response_count_distribution(length(response_count_distribution)+1 : length(bins)) = 0;
-		% bins = 0 : (length(baseline_count_distribution) - 1);
-		% n = sum(baseline_count_distribution);
-		% lambdaHat = sum(bins.*baseline_count_distribution) / n;
-		% expCounts = n * poisspdf(bins, lambdaHat);
-		% [h,p,st] = chi2gof(bins, 'nbins', length(bins), 'frequency', baseline_count_distribution, 'expected', expCounts, 'nparams', 1);
+		this_rf_loc.baseline_count_distribution = baseline_count_distribution;
+		this_rf_loc.response_count_distribution = response_count_distribution;
+		% calculate significance
 		if max(bins) > 0
-			[chi2_h, chi2_p, chi2_stats] = chi2gof(bins, 'ctrs', bins, 'frequency', response_count_distribution, 'expected', baseline_count_distribution);
+			% Figure out if there's a signficant difference from baseline
+			% Test against the Poisson distribution by specifying observed and
+			% expected counts (see Example 4 from http://www.mathworks.com/help/stats/chi2gof.html)
+			% bins = 0:5; obsCounts = [6 16 10 12 4 2]; n = sum(obsCounts);
+			% lambdaHat = sum(bins.*obsCounts) / n;
+			% expCounts = n * poisspdf(bins,lambdaHat);
+			% [h,p,st] = chi2gof(bins,'ctrs',bins,'frequency',obsCounts, ...
+			%                    'expected',expCounts,'nparams',1)
+			% 
+			% bins = 0 : (length(baseline_count_distribution) - 1);
+			% n = sum(baseline_count_distribution);
+			% lambdaHat = sum(bins.*baseline_count_distribution) / n;
+			% expCounts = n * poisspdf(bins, lambdaHat);
+			% [h,p,st] = chi2gof(bins, 'nbins', length(bins), 'frequency', baseline_count_distribution, 'expected', expCounts, 'nparams', 1);
+			[is_sig, pval, sig_test_stats] = chi2gof(bins, 'ctrs', bins, 'frequency', response_count_distribution, 'expected', baseline_count_distribution);
 		else
-			[chi2_h, chi2_p, chi2_stats] = deal(false, NaN, struct());
+			[is_sig, pval, sig_test_stats] = deal(false, NaN, struct());
 		end
+		this_rf_loc.is_sig = is_sig;
+		this_rf_loc.pval = pval;
+		this_rf_loc.sig_test_stats = sig_test_stats;
 		
-		session.unit_data(ii).rf_loc(jj).all_counts = all_counts;
-		session.unit_data(ii).rf_loc(jj).spike_freq = spike_freq;
-		session.unit_data(ii).rf_loc(jj).all_counts_mean_spike_density = all_counts_mean_spike_density;
-		session.unit_data(ii).rf_loc(jj).all_counts_sem_spike_density = all_counts_sem_spike_density;
-		session.unit_data(ii).rf_loc(jj).baseline_counts = baseline_counts;
-		session.unit_data(ii).rf_loc(jj).baseline_count_mean = mean(baseline_counts);
-		session.unit_data(ii).rf_loc(jj).baseline_count_var = var(baseline_counts);
-		session.unit_data(ii).rf_loc(jj).baseline_count_distribution = baseline_count_distribution;
-		session.unit_data(ii).rf_loc(jj).baseline_mean_spike_density = baseline_mean_spike_density;
-		session.unit_data(ii).rf_loc(jj).baseline_sem_spike_density = baseline_sem_spike_density;
-		session.unit_data(ii).rf_loc(jj).response_counts = response_counts;
-		session.unit_data(ii).rf_loc(jj).response_counts_mean = mean(response_counts);
-		session.unit_data(ii).rf_loc(jj).response_counts_var = var(response_counts);
-		session.unit_data(ii).rf_loc(jj).response_count_distribution = response_count_distribution;
-		session.unit_data(ii).rf_loc(jj).response_mean_spike_density = response_mean_spike_density;
-		session.unit_data(ii).rf_loc(jj).response_sem_spike_density = response_sem_spike_density;
-		session.unit_data(ii).rf_loc(jj).chi2_h = chi2_h;
-		session.unit_data(ii).rf_loc(jj).chi2_p = chi2_p;
-		session.unit_data(ii).rf_loc(jj).chi2_stats = chi2_stats;
-		session.unit_data(ii).rf_loc(jj).response_ratio = (mean(response_counts) - mean(baseline_counts)) / mean(baseline_counts);
-		session.unit_data(ii).rf_loc(jj).response_v_baseline_spike_density = mean(response_mean_spike_density) - mean(baseline_mean_spike_density);
-		% session.unit_data(ii).rf_loc(jj).baseline_lambdaHat = lambdaHat;
-		% session.unit_data(ii).rf_loc(jj).baseline_pois_lambda = poissfit(baseline_counts);
-		% keyboard;
-		
-		
-		% Poisson fit
-		% baseline_counts = histc(session.unit_data(ii).rf_loc(jj).cumulative_rf_aligned, session.baseline_edges);
-		% session.unit_data(ii).rf_loc(jj).baseline_pois_lambda = poissfit(baseline_counts);
-		% session.unit_data(ii).rf_loc(jj).sig_diff_counts = poissinv(session.alpha, session.unit_data.rf_loc(jj).baseline_pois_lambda);
-		% keyboard;
-		
-		% Figure out if there's a signficant difference from baseline
-		% Test against the Poisson distribution by specifying observed and
-		% expected counts (see Example 4 from http://www.mathworks.com/help/stats/chi2gof.html)
-		
-		       % bins = 0:5; obsCounts = [6 16 10 12 4 2]; n = sum(obsCounts);
-		       % lambdaHat = sum(bins.*obsCounts) / n;
-		       % expCounts = n * poisspdf(bins,lambdaHat);
-		       % [h,p,st] = chi2gof(bins,'ctrs',bins,'frequency',obsCounts, ...
-		       %                    'expected',expCounts,'nparams',1)
+		session.unit_data(ii).rf_loc(jj) = this_rf_loc;
 	end
 end
 
@@ -439,30 +426,27 @@ else
 end
 
 
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% function num_units = getNumUnits(session)
-% num_units = 0;
-% for ii = 1 : length(session.trials)
-% 	num_units = max(num_units, length(session.trials(ii).Units));
-% end
-
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function session = get_unit_nums(session)
+function binned_counts = get_binned_counts(spike_times, bin_range, bin_width)
 
-unit_nums = [session.trials(1).Units.Code];
-num_units = length(unit_nums);
-session.num_units = num_units;
-
-for ii = 1 : num_units
-	session.unit_data(ii).unit_num = unit_nums(ii);
-end
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function binned_counts = get_binned_counts(spike_times, spike_bin_edges)
-
+spike_bin_edges = get_bin_edges(bin_range, bin_width);
 binned_counts = histc(spike_times, spike_bin_edges);
+binned_counts = binned_counts(1:end-1);
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function bin_edges = get_bin_edges(bin_range, bin_width)
+
+bin_half_width = bin_width / 2;
+bin_edges = [(min(bin_range) - bin_half_width) : bin_width : (max(bin_range) + bin_half_width)];
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function bin_centers = get_bin_centers(bin_range, bin_width)
+
+bin_edges = get_bin_edges(bin_range, bin_width);
+bin_half_width = bin_width / 2;
+bin_centers = bin_edges(1:end-1) + bin_half_width;
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -476,7 +460,7 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % --- Used to updated the UnitNumPopupmenu widget
-function handles = UpdateUnitNum(handles)
+function handles = update_unit_num(handles)
 
 unit_data = handles.session.unit_data;
 unit_num_string_cell = {};
@@ -487,12 +471,12 @@ set(handles.UnitNumPopupmenu, 'String', unit_num_string_cell);
 handles.unit_num_ind = get(handles.UnitNumPopupmenu, 'Value');
 
 % handles = make_heatmap(handles);
-handles = UpdateRFLoc(handles);
+handles = update_rf_loc(handles);
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % --- Used to updated the RFLocSelectPopupmenu widget
-function handles = UpdateRFLoc(handles)
+function handles = update_rf_loc(handles)
 
 unit_num = handles.unit_num_ind;
 
@@ -530,30 +514,14 @@ axes(handles.HeatMapAxes);
 
 rf_x = [handles.session.unit_data(unit_num).rf_loc.rf_x]';
 rf_y = [handles.session.unit_data(unit_num).rf_loc.rf_y]';
-% vals = [handles.session.unit_data(unit_num).rf_loc.response_ratio]';
 raw_vals = [handles.session.unit_data(unit_num).rf_loc.response_v_baseline_spike_density]';
-sig = logical([handles.session.unit_data(unit_num).rf_loc.chi2_h]');
-%%%%%%%%%%%%%
-% % Trickery
-% rf_x = [-20, 0, 20, -20, 0, 20, -20, 0, 20]';
-% rf_y = [20, 20, 20, 0, 0, 0, -20, -20, -20]';
-% vals = repmat([-1, -.5, 0, .5, 1], 1, 3);
-% vals = vals(1:length(rf_x))';
-%%%%%%%%%%%%%
 scaled_vals = raw_vals ./ (max(abs(raw_vals)));
+is_sig = logical([handles.session.unit_data(unit_num).rf_loc.is_sig]');
 
 % And here's the plotting bit
 LegHands = [];
-% LegStr = fliplr({num2str(-1), num2str(1), 'Non-significant', 'Significant'});
-% LegMarkerProps = fliplr({...
-% 	struct('Color', 'k', 'LineStyle', 'none', 'Marker', 'o', 'MarkerFaceColor', 'b', 'MarkerSize', 10),...
-% 	struct('Color', 'k', 'LineStyle', 'none', 'Marker', 'o', 'MarkerFaceColor', 'r', 'MarkerSize', 10),...
-% 	struct('Color', nonsig_LineColor, 'LineStyle', 'none', 'LineWidth', nonsig_LineWidth, 'Marker', 'o', 'MarkerFaceColor', 'w', 'MarkerSize', 10),...
-% 	struct('Color', sig_LineColor, 'LineStyle', 'none', 'LineWidth', sig_LineWidth, 'Marker', 'o', 'MarkerFaceColor', 'w', 'MarkerSize', 10),...
-% 	});
 LegTags = {};
 FaceColor = {};
-% keyboard;
 for ii = 1 : length(scaled_vals)
 	rfloc_h = plot(rf_x(ii), rf_y(ii));
 	if ii == handles.rf_loc_ind
@@ -567,7 +535,7 @@ for ii = 1 : length(scaled_vals)
 		LineWidth = 1;
 	else
 		% Adjust border according to whether results are significant
-		if sig(ii)
+		if is_sig(ii)
 			LineColor = sig_LineColor;
 			LineWidth = sig_LineWidth;
 		else
@@ -625,19 +593,16 @@ for ii = 1 : length(LegStr)
 end
 legend_h = legend(LegHands, LegStr{:}, 'Location', 'NorthEastOutside');
 setlegendmarkerprops(legend_h, LegMarkerProps);
-% keyboard;
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function handles = make_rasterplot(handles)
 
-% unit_num = 1;
-
 unit_num = handles.unit_num_ind;
-% rf_loc_ind = 8;
-xlims = handles.session.observation_period;
-ylims = [-50 250];
-
 rf_loc_ind = handles.rf_loc_ind;
+
+xlims = handles.session.raster_plotting_period;
+ylims = [-50 250];
 
 axes(handles.RasterAxes);
 
@@ -645,15 +610,15 @@ axes(handles.RasterAxes);
 spike_times = handles.session.unit_data(unit_num).rf_loc(rf_loc_ind).cumulative_rf_aligned;
 spike_trialnums = handles.session.unit_data(unit_num).rf_loc(rf_loc_ind).trial_id;
 num_trials = length(unique(spike_trialnums));
-% keyboard;
+% This is a trick to make the trial numbers go from the lower part of the axes to the bottom
 space = abs(min(ylims));
 spacing = space / (num_trials+1);
-spike_trialnums = (-1 * spacing * spike_trialnums); % This is a trick to make the trial numbers go from the lower part of the axes to the bottom
+spike_trialnums = (-1 * spacing * spike_trialnums);
 spike_times = spike_times';
 spike_trialnums = spike_trialnums';
 
 % Get spike density data
-spike_bin_centers = handles.session.obs_period_centers;
+spike_bin_centers = handles.session.raster_plotting_period_centers;
 spike_bin_vals = handles.session.unit_data(unit_num).rf_loc(rf_loc_ind).all_counts_mean_spike_density;
 
 % Plot the data
@@ -666,7 +631,6 @@ hold on;
 % Draw RF on line
 rf_on_line_x = [0, 0];
 rf_on_line_y = ylims;
-% plot(rf_on_line_x, rf_on_line_y, 'Color', [.75, .75, .75], 'LineStyle', '-', 'LineWidth', 0.5, 'Marker', 'none');
 plot(rf_on_line_x, rf_on_line_y, 'Color', 'k', 'LineStyle', '-', 'LineWidth', 0.5, 'Marker', 'none');
 % Draw line for spike density == 0
 spikedens0_x = xlims;
@@ -690,9 +654,9 @@ xlim(spikedensity_axhand, xlims);
 xlim(spikeraster_axhand, xlims);
 ylim(spikedensity_axhand, ylims);
 ylim(spikeraster_axhand, ylims);
-% ylim(gca, ylims);
 hold off;
 
+% Formatting
 set(spikeraster_h, 'Color', 'k', 'LineStyle', 'none', 'Marker', '.', 'MarkerSize', 2);
 set(spikedensity_h, 'Color', 'k', 'LineStyle', '-', 'LineWidth', 1.5, 'Marker', 'none');
 xlabel(spikedensity_axhand, 'Time relative to RF on (ms)');
@@ -701,17 +665,6 @@ set(spikedensity_axhand, 'YColor', 'k', 'YTick', [0 : 50 : max(ylims)]);
 set(spikeraster_axhand, 'YTick', []);
 
 % Legend
-% LegStr = {['+' num2str(max(raw_vals)) ' Hz'], [num2str(min(raw_vals)) ' Hz'], 'Significant', 'Non-significant', 'Selected location'};
 LegStr = {'Baseline period', 'Response period'};
-% LegMarkerProps = {...
-% 	struct('Color', 'k', 'LineStyle', 'none', 'Marker', 'o', 'MarkerFaceColor', FaceColor{min(find(raw_vals==max(raw_vals)))}, 'MarkerSize', 10),...
-% 	struct('Color', 'k', 'LineStyle', 'none', 'Marker', 'o', 'MarkerFaceColor', FaceColor{min(find(raw_vals==min(raw_vals)))}, 'MarkerSize', 10),...
-% 	struct('Color', sig_LineColor, 'LineStyle', 'none', 'LineWidth', sig_LineWidth, 'Marker', 'o', 'MarkerFaceColor', 'w', 'MarkerSize', 10),...
-% 	struct('Color', nonsig_LineColor, 'LineStyle', 'none', 'LineWidth', nonsig_LineWidth, 'Marker', 'o', 'MarkerFaceColor', 'w', 'MarkerSize', 10),...
-% 	struct('Color', 'k', 'LineStyle', 'none', 'Marker', selected_location_Marker, 'MarkerFaceColor', 'w', 'MarkerSize', 10),...
-% 	};
 LegHands = [baseline_patch_h, response_patch_h];
-% for ii = 1 : length(LegStr)
-% 	LegHands = [LegHands; findobj(axhand, 'Tag', LegTags{ii})];
-% end
 legend_h = legend(LegHands, LegStr{:}, 'Location', 'NorthEastOutside');
